@@ -1,0 +1,74 @@
+<!--
+  Torsion TorqueScript IDE - Copyright (C) Sickhead Games, LLC
+  This file is subject to the terms and conditions defined in
+  file 'LICENSE.txt', which is part of this source code package.
+-->
+
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+<!-- Import the local settings file which should define things like SVN checkouts -->
+<!-- <Import Project="localSettings.target" Condition="Exists('localSettings.target')"/> -->
+
+<!-- The solutions we'll be building -->
+<ItemGroup>
+	<VCSolutionFile Include="code\wxWidgets\build\msw\wx.sln"/>
+	<VCSolutionFile Include="code\wxWidgets\contrib\build\stc\stc.sln"/>
+	<VCSolutionFile Include="code\wxWidgets\contrib\build\propgrid\propgrid.2.6.3.sln"/>
+	<VCSolutionFile Include="code\Torsion\Torsion.sln"/>
+</ItemGroup>
+
+<!-- Misc properties we need -->
+<PropertyGroup>
+
+	<ASPCompiler>"C:\Program Files\ASProtect SKE 2.2 Release\ASProtect.exe"</ASPCompiler>
+	<ASPProject>"$(MSBuildProjectDirectory)\media\Torsion.aspr2"</ASPProject>
+
+	<HelpCompiler>"$(MSBuildProjectDirectory)\bin\HTMLHelpWorkshop\HHC.exe"</HelpCompiler>
+	<HelpProject>Torsion.hhp</HelpProject>
+	<HelpWorkingDir>docs</HelpWorkingDir>
+
+	<InstallCompiler>"$(MSBuildProjectDirectory)\bin\InnoSetup\ISCC.exe"</InstallCompiler>
+	<InstallScript>torsion.iss</InstallScript>
+	<InstallWorkingDir>installer</InstallWorkingDir>
+
+</PropertyGroup>
+
+<Target Name="Build">
+
+	<!-- Build the solutions --> 
+	<!-- <VCBuild
+		Projects="@(VCSolutionFile)"
+		Configuration="Release"
+		Rebuild="true"
+	/> -->
+
+	<!-- Run the trial protection on the executable -->
+	<Exec 
+		Command="$(ASPCompiler) -process $(ASPProject)"
+	/>
+
+	<CallTarget Targets="HelpFile"/>
+
+	<!-- Build the installer -->
+	<Exec 
+		Command="$(InstallCompiler) $(InstallScript)"
+		WorkingDirectory="$(InstallWorkingDir)"
+	/>
+
+</Target>
+
+<Target Name="HelpFile"> 
+
+	<Exec 
+		Command="$(HelpCompiler) $(HelpProject)"
+		WorkingDirectory="$(HelpWorkingDir)"
+		IgnoreExitCode="true">
+
+		<Output TaskParameter="ExitCode" PropertyName="ExitCode"/> 
+	</Exec>
+
+	<Error Text="The help file failed to compile!" Condition="$(ExitCode) != 1"/>
+
+</Target>
+
+</Project>

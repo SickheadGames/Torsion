@@ -1,0 +1,100 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Torsion", "Torsion.vcproj", "{6A1EC3A9-9AB3-4F16-B983-0145510FD809}"
+	ProjectSection(ProjectDependencies) = postProject
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682} = {92FB9898-F36D-47A6-8BFE-6770C5FA4682}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stc", "..\wxWidgets\contrib\build\stc\stc.vcproj", "{92FB9898-F36D-47A6-8BFE-6770C5FA4682}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		DLL Debug = DLL Debug
+		DLL Release = DLL Release
+		DLL Unicode Debug = DLL Unicode Debug
+		DLL Unicode Release = DLL Unicode Release
+		DLL Universal Debug = DLL Universal Debug
+		DLL Universal Release = DLL Universal Release
+		DLL Universal Unicode Debug = DLL Universal Unicode Debug
+		DLL Universal Unicode Release = DLL Universal Unicode Release
+		Release = Release
+		Unicode Debug = Unicode Debug
+		Unicode Release = Unicode Release
+		Universal Debug = Universal Debug
+		Universal Release = Universal Release
+		Universal Unicode Debug = Universal Unicode Debug
+		Universal Unicode Release = Universal Unicode Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Debug.ActiveCfg = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Debug.Build.0 = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Debug.ActiveCfg = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Debug.Build.0 = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Release.ActiveCfg = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Release.Build.0 = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Unicode Debug.ActiveCfg = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Unicode Debug.Build.0 = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Unicode Release.ActiveCfg = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Unicode Release.Build.0 = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Universal Debug.ActiveCfg = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Universal Debug.Build.0 = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Universal Release.ActiveCfg = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Universal Release.Build.0 = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Universal Unicode Debug.ActiveCfg = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Universal Unicode Debug.Build.0 = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Universal Unicode Release.ActiveCfg = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.DLL Universal Unicode Release.Build.0 = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Release.ActiveCfg = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Release.Build.0 = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Unicode Debug.ActiveCfg = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Unicode Debug.Build.0 = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Unicode Release.ActiveCfg = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Unicode Release.Build.0 = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Universal Debug.ActiveCfg = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Universal Debug.Build.0 = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Universal Release.ActiveCfg = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Universal Release.Build.0 = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Universal Unicode Debug.ActiveCfg = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Universal Unicode Debug.Build.0 = Debug|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Universal Unicode Release.ActiveCfg = Release|Win32
+		{6A1EC3A9-9AB3-4F16-B983-0145510FD809}.Universal Unicode Release.Build.0 = Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Debug.ActiveCfg = Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Debug.Build.0 = Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Debug.ActiveCfg = DLL Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Debug.Build.0 = DLL Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Release.ActiveCfg = DLL Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Release.Build.0 = DLL Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Unicode Debug.ActiveCfg = DLL Unicode Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Unicode Debug.Build.0 = DLL Unicode Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Unicode Release.ActiveCfg = DLL Unicode Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Unicode Release.Build.0 = DLL Unicode Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Universal Debug.ActiveCfg = DLL Universal Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Universal Debug.Build.0 = DLL Universal Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Universal Release.ActiveCfg = DLL Universal Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Universal Release.Build.0 = DLL Universal Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Universal Unicode Debug.ActiveCfg = DLL Universal Unicode Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Universal Unicode Debug.Build.0 = DLL Universal Unicode Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Universal Unicode Release.ActiveCfg = DLL Universal Unicode Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.DLL Universal Unicode Release.Build.0 = DLL Universal Unicode Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Release.ActiveCfg = Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Release.Build.0 = Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Unicode Debug.ActiveCfg = Unicode Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Unicode Debug.Build.0 = Unicode Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Unicode Release.ActiveCfg = Unicode Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Unicode Release.Build.0 = Unicode Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Universal Debug.ActiveCfg = Universal Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Universal Debug.Build.0 = Universal Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Universal Release.ActiveCfg = Universal Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Universal Release.Build.0 = Universal Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Universal Unicode Debug.ActiveCfg = Universal Unicode Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Universal Unicode Debug.Build.0 = Universal Unicode Debug|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Universal Unicode Release.ActiveCfg = Universal Unicode Release|Win32
+		{92FB9898-F36D-47A6-8BFE-6770C5FA4682}.Universal Unicode Release.Build.0 = Universal Unicode Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

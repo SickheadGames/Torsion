@@ -1,0 +1,59 @@
+:Base isetup.hlp
+:Title Inno Setup Help
+1 What is Inno Setup?=whatisinnosetup
+1 What's new in this version of Inno Setup?=whatsnew
+1 Documentation Conventions=conventions
+1 How to Use
+2 Creating Installations=creatinginstallations
+2 Script Format Overview=scriptformatoverview
+2 Parameters in Sections=params
+2 Constants=consts
+2 Common Parameters=commonparams
+2 Components and Tasks Parameters=componentstasksparams
+2 Setup Script Sections
+3 [Setup] section=setupsection
+3 [Types] section=typessection
+3 [Components] section=componentssection
+3 [Tasks] section=taskssection
+3 [Dirs] section=dirssection
+3 [Files] section=filessection
+3 [Icons] section=iconssection
+3 [INI] section=inisection
+3 [InstallDelete] section=installdeletesection
+3 [Languages] section=languagessection
+3 [Messages] section=messagessection
+3 [CustomMessages] section=custommessagessection
+3 [LangOptions] section=langoptionssection
+3 [Registry] section=registrysection
+3 [Run] section=runsection
+3 [UninstallDelete] section=uninstalldeletesection
+3 [UninstallRun] section=runsection
+2 Pascal Scripting
+3 Introduction=scriptintro
+3 Creating the [Code] Section=scriptcreating
+3 Event Functions=scriptevents
+3 Scripted Constants=scriptconstants
+3 Check Parameters=scriptcheck
+3 BeforeInstall and AfterInstall Parameters=scriptinstall
+3 Uninstall Code=scriptuninstall
+3 Examples=scriptexamples
+3 Support Functions Reference=scriptfunctions
+3 Support Classes Reference=scriptclasses
+3 Using Custom Wizard Pages=scriptpages
+3 Using DLLs=scriptdll
+3 Using COM Automation objects=scriptautomation
+1 Other Information
+2 Frequently Asked Questions=faq
+2 Wizard Pages=wizardpages
+2 Installation Order=installorder
+2 Install Mode: 32-bit vs. 64-bit=32vs64bitinstalls
+2 64-bit Installation Limitations=64bitlimitations
+2 Miscellaneous Notes=technotes
+2 Command Line Compiler Execution=compilercmdline
+2 Setup Command Line Parameters=setupcmdline
+2 Setup Exit Codes=setupexitcodes
+2 Uninstaller Command Line Parameters=uninstcmdline
+2 Uninstaller Exit Codes=uninstexitcodes
+2 Unsafe Files=unsafefiles
+2 Credits=credits
+2 Contacting Me=contactingme

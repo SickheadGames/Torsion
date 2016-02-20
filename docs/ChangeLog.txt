@@ -1,0 +1,453 @@
+
+Torsion TorqueScript IDE
+Copyright (c) Sickhead Games, LLC
+All Rights Reserved.
+http://www.sickheadgames.com
+
+
+  - 1.1.392 Final - February 28th, 2008 -
+  
+  * Fixed incorrect launch directory when opening .torsion files from Explorer.
+  * Fixed unselectable first item in editor pane member dropdown.
+  * We now always use the localhost address for "One Click" debugging.
+  * Improved ctrl click within an existing selection.
+  
+  
+  - 1.1.390 RC 1 - February 25th, 2008 -
+  
+  * Fixed occasional crash at the end of a debug session.
+  * Fixed periodic crash bug when canceling the debug connection.
+  * Fixed reselection bug in editor pane member dropdown.
+  * Added initial support for new Torque2 keywords and operators.
+  * Script document now gets focus when opened from project or find results panes.
+  * Reworked Debugger->Restart which could sometimes lock up.
+  * Bug fix for parameter call tips with C++ style syntax.
+  * Enhanced ScriptSense completion now occurs on any non-identifier character.
+  * ScriptSense now shows completion lists for unnamed object fields.  
+  * You can now specify the debug injection hook code from the project preferences.  
+  * Added TorqueScript keywords to ScriptSense completion list.  
+  * Fixed the delete key to work with the breakpoints panel.  
+  * Fixed occasional crash in wxSTC from ScriptSense tooltip.
+  * Fixed crash bug in wxSTC related to the display of ScriptSense completion lists.
+  * Fixed occasional lockup when using Goto Definition while Find In Files was executing.
+  * Ctrl+X will now cut the current line if the selection is empty.
+  * Fixed Shift+Delete to work like Ctrl+X.
+  * Added user defined code #regions.
+  * Fixed calltip formatting lockup on lines without spaces and longer than 80 characters.
+  
+  
+  - 1.1.130 Beta - June 11th, 2007 -
+   
+  * Config dialog changed to show full path.
+  * Config executables are no longer assumed to be absolute paths (fix for TGB 1.5).
+  * We now delete the output.log before generating exports to avoid duplicates.
+  * Fixed incorrect cursor position when hitting up arrow after closing curly bracket.
+  * You can now set the global variable color differently from local variables.
+  * Disabled the use of File->Save As to rename the active project.
+  * TorqueML commands are now properly escaped in the output window and tooltips.  
+  * Enhanced ScriptSense completion on ( and = defaults to off and is toggleable in preferences.
+  * We finally do parameter highlighting for function calltips.
+  * Parameter info properly removes %this from the calltip for member function.
+  * You can now configure calltip colors in the preferences dialog.
+  * Fixed selection copy when pressing ctrl before clicking and dragging.
+  * Major refactor of how the debugger launches EXEs to work with TGB 1.5.
+  * External Tools can support commands that use the global AppPaths registry key.
+  * You can now get calltips for globals outside of the current breakpointed function.
+  * Refactored ScriptSense database shutdown to hopefully resolve shutdown crashes.
+  * Fixed bug where member functions were evaluated as variables in debugger calltips.
+  * Watch window updates now display evaluation error messages.
+  * We no longer send watch variable updates on value edits that do not result in a change.
+  * Fixed bug where Find dialog could be stuck offscreen.
+  * Fixed performance problem when watch window would clip a very long string.
+  * We no longer show calltips for globals without a description.
+  * We will now open associated applications when launching a file from the Find Results window.
+  * Fixed bug where editor focus was not set when right clicking and ctrl+left clicking.
+  * Fixed crash bug when using Ctrl+Shift+F4 to close all documents.
+
+
+  - 1.1.53 Beta - March 26th, 2007 -
+    
+  * When switching editor tabs we now show the full file path in the status bar.  
+  * Ctrl+Space will also toggle the ScriptSense completion list just like Ctrl+J.
+  * Entering ( or = will now complete a ScriptSense completion list word.
+  * We now properly remove bookmarks for deleted or missing files or removed lines.
+  * Ctrl+F3 will now find the next occurrence of the current selection.
+  * Ctrl+page up/down move the caret to the top and bottom of the current page.
+  * Changed vertical caret positioning to behave more like VS.
+  * Ctrl+left mouse click now highlights the selected word.
+  * You can now use Shift+Delete to delete the entire editor line the cursor is on.
+  * Fixed bug where creating new script in empty folder would not update the tree.
+  * Fixed a DC leak that occurred on each editor cursor change. 
+  * The Torsion logo is now properly rendered when the output pane is hidden.
+  * Registration after trial has expired no longer quits Torsion.
+
+
+  - 1.1.28 Beta - March 1st, 2007 -
+ 
+  * Removed conflicted Alt+C accelerator for in Find dialog Close button. 
+  * Made another change to ScriptSense thread cleanup.
+  * Fixed memory leak in wxToolBar.
+  * wxStyledTextCtrl now uses the font list cache.
+  * Added extra cleanup code to wxStyledTextCtrl.
+  * Switched all use of fonts to use font list cache.
+  * Refactored icon caching method.
+  * Updated EULA to reflect both the indie and commercial licensing restrictions.
+
+
+  - 1.1.6 Beta - February 6th, 2007 -
+ 
+  * Fixed ScriptSense bug where an object declaration with a copy source would not have its fields parsed.
+  * Changed bug fix which forced the Find dialog to loose focus when 'Enter' was pressed.
+  * Fixed bug in the project config dialog where build exports checkbox would not be saved.
+  * Fixed ScriptSense bug where fields or overloaded functions could appear in member lists more than once.
+  * Replaced incorrect new script icon.
+  * Added additional GDI resource cleanup code.
+  * Changed technique for updating ScriptSense which reduced CPU usage by up to 80%.
+  * Fixed flicker of the types dropdown when updating ScriptSense data.
+  * Added error message when saving project over read-only or locked file.
+  * Fixed update check logic to work properly for minor version updates.
+  * Fixed ScriptSense generation thread to avoid COW strings; a possible cause of crashes on shutdown.
+  * Replaced low resolution project icon with new one.
+  * Added fix for Ignition registration system.
+  * Incremented minor version.
+
+
+  - 1.0.852 Final - January 31st, 2007 -
+  
+  * You can now use variables in an external tool command.
+  * Expanded external tools variables to include project name, config name, config exe, and config args.
+  * Added PDB to default excluded file list.
+  * Fixed bug where /*! */ includes the trailing */ in tips.
+  * Documentation comments now support the /** */ javadoc style.
+  * Changed 'Show Ignored Mods' and 'Show Scripts Only' in the project pane to 'Show All Mods' and 'Show All Files'.
+  * Removed 'Ignored Mods' from project settings and added optional 'Mods' setting.
+  * Fixed crash bug when you try to close Torsion while the debugger is running.
+  * Added Ctrl+F4 for closing the active script.
+  * Fixed bug where bookmarks or definitions on line zero wouldn't highlight the line.
+  * Added VisualStudio style selected check boxes to checkable menu items.
+  * Cleared up the flicker in the project tree, code browser, and status bar during window resize.
+  * Fixed bug where export documentation would report existence in all configs.
+  * Made adjustments to tooltip logic on editor tabs.
+  * Added VisualStudio style type and member dropdowns to editor panes.
+  * Fixed bug where "Go to Definition" would sometimes highlight several lines below the actual definition.
+  * Fixed toolbar drawing in output window.
+  * Fixed bug in switching projects which caused the editor pane would to not display without a resize.
+  * Fixed "Comment Selection" to not comment start of line following selected block.
+  * Added 'Add Watch' to context menu when clicking an identifier or text selection in editor.
+  * Torsion watermark logo now redraws properly on sash resizes.
+  * Added new Torsion logos and final icons.
+  * Fixed about box to display registration state.
+  * Added registration screen to startup.
+  * Integrated Ignition registration and trial system.
+  
+
+  - 1.0.821 Beta 2 - December 30th, 2006 -
+  
+  * Fixed "Yes to All" button in the reload modified file dialog.
+  * Clicking on a breakpoint in editor margin removes the breakpoint like VS2K5.
+  * Fixed periodic crash on Torsion close being caused by recursive deletion of the find thread.
+  * The 'Feature Request' menu item now links to the Torsion 2 bug tracker.
+  * Fixed crash bug that occurred on a quick change of window focus after hitting Ctrl+F7.
+  * Fixed bug that sometimes caused ScriptSense to work within comments.
+  * Fixed bug where project can sometimes appear in file history menu.
+  * The visibility state for the output and project panes is now saved.
+  * Fixed crash which occurred when the Torque EXE was locked and export generation was run.
+  * We now properly saves and restores the window position when closed in a maximized state.
+  * We no longer ask if we should delete DSOs on script file deletion... we just do.
+  * Fixed crash bug when opening file properties in project tree.
+  * Deleting a file from the project tree closes the open tab.
+  * Fixed bugs in basic printing feature.
+  * We now restore the previous project on startup (can be disabled in options).
+  * Renaming a file in project view also renames open file in the editor.
+  * Long code tips are now reformatted to wrap after 80 chars.
+  * Added Find Symbol dialog.
+  * The code tip for the selected item is now displayed in bottom of code browser pane.
+  * Added new icon art in preparation for final release (would appreciate some feedback).
+
+
+  - 1.0.767 Beta 1 - November 7th, 2006 -
+
+  * We're feature complete for 1.0... only bugs and small omissions will be corrected till release.
+  * You can now right click on one or more selected folders in the project tree to do a 'Find in Files'.
+  * In the Find in Files dialog Lookin 'Project' properly skips ignored mods and 'Base Directory' does not.
+  * Fixed crash bug when disabling Code Completion.
+  * You can now hit Ctrl+Break to stop a precompile.
+  * Added icon for Explore in project tree context menu.
+  * Refactored precompiler to fix a crash bug during cancel.
+  * Command line will will open a file and scroll to a line number when formatted: Torsion c:\path\script.cs:100
+  * Added 'Copy Full Path' and 'Open Containing Folder' to context menu on file tabs.
+  * You can start a debug session via the command line: Torsion -debug "Config Name" c:\path\project.torsion
+  * The tools menu now works.
+
+
+  - 1.0.716 Alpha - September 17th, 2006 -
+
+  * Popup menus under the Explorer shell menu are now properly initialized.
+  * The 'Precomple' shortcut is now F7.
+  * Added 'Precomple Active' to Project menu for single file precompiles.
+  * Precompile now skips scripts in ignored mod folders.
+  * Disabled Scintilla's 'paragraph matching' behavior.
+  * You can hit Ctrl+] to do brace matching.
+  * Escape now cancels the find/replace dialog.
+  * Fixed Find/replace dialog to properly focus on 'Find What:' editbox on display.
+  * Fixed bug where in rare occasions main.cs would get deleted.
+  * We now highlight exported object and datablock types as well as functions.
+  * Removed "LibraryWords" entry from preferences and hooked up engine exports to the syntax highlighter.
+  * Added editor bookmarks in Edit->Bookmarks menu.
+
+
+  - 1.0.685 Alpha - August 16th, 2006 -
+
+  * Crash logger now dumps module name and crash address minus the offset.
+  * Fixed infinite recursion bug in find and replace if the replace string contained a match to the find string.
+  * Your preferences are now stored immediately after changing them.
+  * Now we fully store the editor font state (this will reset your existing font settings).
+  * We now store and restore the last active open file tab.
+  * Disabled click and drag sorting of notebook tabs for now.
+  * The find and output windows now refresh their colors when changed.
+  * You can now set the bad brace colors in the preferences.
+  * Fixed bug causing incorrect file name to appear in title bar on Save All.
+  * Fixed bug that kept global and local vars from storing file and line numbers as well as code comments.
+  * Fixed "Yes to All" button in the reload modified file dialog.
+  * We now check and correct offscreen placement of the IDE window on startup.
+  * Copy now works in output and find windows.
+  * About box now shows version expiration information until we get out of beta.
+  * Fixed bugs in wxStyledTextCtrl which caused incorrect tab widths and line spacing.
+  * We now store and restore the sash sizes for the left and bottom panes.
+
+
+  - 1.0.654 Alpha - July 17th, 2006 -
+
+  * The precompiler now properly detects edso files.
+  * You can now set multiple DSO extensions in the app preferences.
+  * Added new VC++ 2005 style toolbars.
+  * Moved find commands to 'Find and Replace' submenu within the Edit menu.
+  * Removed 'Find Next' 'Find Previous' Edit menu items.
+  * We now store the state of 'Show Ignored Mods' toggle in project tree.
+  * You can now double click config in Project Settings dialog to edit it.
+  * Fixed bug where the order of the file and project history submenus was reversed on startup.
+  * File and project history submenus are now properly themed.
+  * Made some changes to the color calculations for the open file tabs.
+  * Further enhancements to match Visual Studio style menus.
+  * Output and find results windows now use same text and background color as the editor.
+  * You can now toggle the visibility of non-script files in the project tree.
+  * New icon for show mod folders.
+  * You can now toggle synchronization of the project tree and the active script file.
+  * We now play the appropriate bell on success/failure of precompile.
+  * Fixed display of newlines in scroll map tool tips.
+  * Output and find results windows now use wxStyledTextCtrl, no length limits and better responsiveness.
+  * Added t2d to default script extensions.
+  * New Find/Replace dialog added which includes search and replace dropdowns.
+  * Added find and replace functionality.
+  * Browse button now works in Find In Files dialog.
+  * Window focus changes when hitting breakpoints and continuing execution should work more consistently.
+  * We now disable debug commands while pre-compile is running.
+  * Fixed crash bug that periodically occurred when Torque is shutdown in a debug session.
+
+
+  - 1.0.614 Alpha - June 7th, 2006 -
+
+  * We now store and restore the selection highlight colors.
+  * Removed old hardcode which would always replace the Terminal font with Courier New.
+  * We now store and restore the last selected config when we open a project.
+  * Save As is working again for scripts and can now be used to save project as well.
+  * We now display and error message whem debug hook code cannot be injected.
+  * Fixed bug in debug injection which failed to detect errors related to read only files.
+  * Enter key now works in project tree view to open single or multiple items.
+  * Fixed major wxWindows bug that was causing crashes during code completion.
+  * The 'No' button is now the default in the "There were script errors. Continue?" message box.
+  * Removed conflicting Alt+C accelerator in Find in Files dialog.
+  
+  
+  - 1.0.607 Alpha - May 30th, 2006 -
+
+  * You can now toggle the project tree filter to display ignored mod paths.
+  * Reworked debug hook code yet again... we no longer make the file read only.
+  * Fixed some shutdown crash bugs and memory leaks.
+  * Added Visual Studio style menus with colored margins and disabled icons.
+  * Added better Torsion icon.
+  * Started storing doc comments for variable types.
+  * Fixed menu update issues that were causing commands to be unavailable at times.
+  * Fixed text coloring during project tree drag and drop.
+  * Added new icons for 'Find' and 'Find in Files'.
+  * Changed 'Find' to 'Find in Files' in toolbar to match VC++.
+  * Added checkbox to delete dialog to confirm deletion of DSOs for scripts.
+  * When you 'explore' a file or folder from the project tree you no longer get the folders explorer bar.
+  * Project tree view now supports multiple item selection with open, delete, move, and copy operations.
+  * Improved background code scanner performance when scripts change.
+  * Updated directory watcher so you can always delete a folder in the project tree.
+  * Added Explorer context menu in project tree context menu.
+  * Fixed bug where you could not delete from the project tree when no script was open.
+  * Fixed bug where you could delete the project root.
+  * Fixed project settings to not launch export generation unless the executable or config name changes.
+  * Added optional setModPaths to precompiler script to make it work on stock 1.4 and when TORQUE_SHIPPING is defined.
+  * Fixed run toolbar button to not be enabled when a project isn't loaded.
+  * Errors returned from TelnetDebugger now bell and display in the status bar.
+  * Fixed long standing debugger protocol bug left over from the original Lua editor.
+  * Fixed bug where SimObject members were not shown in ScriptSense dot completion.
+  * SimObject and SimXXXEvent classes now properly show as engine exports.
+  * Added ScriptSense menu to Edit menu along will accelerators that match VC++.
+  * Reworked the as you type ScriptSense a bit.
+  * Added extra protection to ensure that main.cs cannot be corrupted by the debug hook.
+  * Added 'New File' into project tree context menu.
+  * 'New Folder' in project tree context menu now works.
+  * Fixed some commands in the Edit menu that were not updating properly.
+  * You can now specify the script file extensions the ScriptSense scanner will process.
+  * Added script extensions and dso extension to Preferences dialog.
+  * We now use the native icons for all files in the project tree view.
+  * You can now adjust the files and folders which are always excluded from the project tree view in the Preferences.
+  * Added initial implementation of "Edit and Continue" and "Set Next Statement" (requires latest TelnetDebugger engine patch).
+  * Fixed case where script scanner could get stuck in endless loop if file ended with an operator.
+  * Fixed output window to autoscroll when the cursor is at the end of the text, but still needs some work.
+  * You can no longer create configs without a valid executable.
+  * Fixed all numpad keys to work in editor.
+  * Fixed bug that kept the question mark from working in the editor.
+  * Made some adjustments to the format and information in the crash reports.
+  * Your now shown a 'Save As' dialog when you Save a file that was deleted.
+
+
+  - 1.0.558 Alpha - April 12th, 2006 -
+
+  * Fixed script file extension association to not overwrite existing associations (like for C#).
+  * Fixed breakpoint insert/enable/disable/properties to work with multiple lines of selected text.
+  * The config dialog now shows the exe path as relative to the project base folder.
+  * Added more named colors to the color selection in the preferences dialog.
+  * You can now adjust the edge marker settings in the preferences.
+  * Fixed bugs causing "sticky" call tips.
+  * Installer now shows build version on first wizard page.
+  * Installer now checks for running instance before install.
+  * Added automated crash report submission to mantis bug tracker.
+  * Added shorter timeout to update checker.
+  * SPC, TAB, and NL are now properly highlighted as operators and not reserved words.
+  * Fixed syntax highlighting for !$varName case.
+  * Fixed syntax highlighting to properly color the entire identifier for $foo::bar and %foo::bar.
+  * Fixed editor call tips border to be black.
+  * Merged Scintilla 1.68.
+  * Merged wxPropertyGrid 1.1.5.
+  * Merged wxWindows 2.6.3.
+  * You can now close FireFox style by middle mouse button clicking on editor tabs.
+  * Fixed call tips to work properly with %this.
+  * Fixed call tip evaluation to only occur for the current breakpoint scope unless it's a global.
+  * Fixed word wrap in error tool tip from output window scroll map.
+  * Fixed release assert that would occur when changing fonts with open script files.
+  * Ctrl+F9 now toggles the enabled/disabled state of breakpoints.
+  * Engine exports are now colored in dark blue in the code browser tree.
+
+
+  - 1.0.550 Alpha - April 4th, 2006 -
+
+  * Double click no longer toggles item expansion in code browser.
+  * Help file now launched properly.
+  * Further reduced memory footprint of code browser.
+  * Fixed bug where find next and find previous would fail if find drop down had not been edited.
+  * Find next and find previous now properly wrap, set status messages, and bell like VC++ does.
+  * Added manual new version check to Help menu.
+  * Minor improvements to new version checking.
+  * The copy and delete buttons now function on the project config tab.
+  * Fixed bug with double tabs being inserted for one tab key press.
+
+
+  - 1.0.549 Alpha - April 3rd, 2006 -
+
+  * Added automatic check for new version on Torsion startup which can be disabled in Preferences.
+  * Added Ctrl+Alt+S as shortcut for Save As.
+  * You can convert a selection to uppercase via Ctrl+Shift+U or lowercase via Ctrl+U.
+  * Fixed issue with GetProcessId() which caused Torsion to not work on Win9x machines or WinXP machines without Service Pack 1 installed.
+  * You can now quickly comment block selections via Ctrl+K and Ctrl+Shift+K to uncomment.
+  * Script scanner now properly handles block comments.
+  * Fixed bug in script scanner that was locking up the ScriptSense thread.
+  * Project name now appears first in the application title.
+  * Posted a patch (http://www.garagegames.com/mg/forums/result.thread.php?qt=42065) for engine crash issue when debugging.	
+
+
+  - 1.0.544 Alpha - March 20th, 2006 -
+
+  * New project setting allows ignoring of select mod folders in both the project tree and for ScriptSense.
+  * You can now disable code folding.
+  * Added preferences dialog exposing all customizable IDE settings.
+  * Added visibility toggle of left and bottom panes in view menu.
+  * Enabled ScriptSense for fields within object and datablock declarations.
+  * Select script identifiers and press F1 to launch Elixir documentation (waiting for Elixir to launch now!).
+  * Added ScriptSense dot completion for %this within namespaced functions.
+  * Improved performance of script scanner.
+  * Fixed script scanner to detect tagged strings and embedded quotes.
+  * Overhaul of ScriptSense data generation with support for detecting multiply defined symbols.
+  * DSOs that do not have an associated script file are now visible in the project tree.
+  * When you delete a script file from the project view you are now asked if the DSO should be as well.
+  * Setup proper file associations for all Torsion related files on install.
+  * We no longer process mission files for ScriptSense data.
+  * Saving a script file now automatically deletes the DSO if it exists.
+  * Improved performance of the display of the ScriptSense completion list.
+  * Fixed prefs bug that put excluded folders into the excluded extensions list.
+  * Added progress dialog to the exports generation.
+  * Changed export generation to use default console log.
+  * New optional pre-compile dumps the syntax errors of modified scripts into output window before execution.
+  * Saved exports now include object member vars.
+  * You can now disable "OneClick" debug code injection in new project settings dialog.
+  * Reworked the project configurations and fixed a few executable path bugs.
+  * Added watermarked logo to unused appworkspace area.
+  * New scroll map left of output window for quick spotting and navigation of errors.
+  * You can now save and load text into the output window.
+  * New console command line window with drop down history.
+  * New error display within output window for spotting errors quickly.
+  * Bug fix: pressing enter in the find dropdown in the toolbar will now find next.
+  * Fixed bug in adding debug hook that could corrupt main.cs and keep you from debugging.
+  * Clearing DSOs will now skip DSOs which do not have companion script files.
+  * Set a minimum size for the application window.
+  * You no longer get ScriptSense prompts when typing inside a comment or string.
+  * C++ style block comments /**/ are now supported including folding.
+  * We now beep on an invalid line number when double clicking on the callstack.
+  * Made find and configuration dropdowns on toolbar wider.
+  * Script compiler errors are highlighted in the output window and they are double clickable.
+
+
+  - 1.0.357 Alpha - January 1st, 2006 -
+
+  * The order of breakpoint and line number margins in code editor match VS.	
+  * You can now edit variable values in the watch window.	
+  * Fix to remove tabs from ScriptSense and code folding tips.
+  * We now have an excluded folder list which helps to exclude CVS and SVN folders from the project tree.
+  * We now run each config to dump engine exports for ScriptSense.
+  * Fixed bugs in project MRU list.
+  * Initial support for function/datablock/object documentation via TDN's Elixir when you select text and press F1.
+  * Implemented code folding for all curly braced statements.
+  * Added drag and drop operations in project tree view for move and copy.
+  * Added rename and delete commands to project tree view.
+  * Improved performance of script scanner.
+  * Items in project tree are now properly sorted.
+  * Fixed bug where close button on notebook control did not work if project tab had focus.
+  * Fixed drawing bug in new notebook control.
+  * We now display the full path of a file via a tooltip on the editor tab.
+  * Fixed crash when opening the find in files dialog without an open document.
+  * Bug fix: new projects are now added to MRU list on first save.
+  * Fixed calltips to not appear when the popup menu is up.
+  * Fixed calltip from appearing when cursor first leaves editor window.
+  * Added conditional breakpoints including special conditional breakpoint icons.
+  * Added breakpoint management features.
+  * Fixed autoindent to not create extra undo steps when no indent was made.
+  * Added "(ro)" to titles for read only scripts.
+  * We now properly restore the original main.cs file modification times after debug.
+  * Modified automatic debugger injection to not allow editing of an injected main.cs.
+
+
+  - 1.0.310 Alpha - September 19th, 2005 -
+
+  * Added new custom notebook control which has a close button.
+  * First implementation of code browser tree (needs new icons and sort options).
+  * Added automatic variable evaluation when you hover them with your mouse.
+  * New unnamed script files get proper numerically incremented name.
+  * Initial implementation of dynamic as-you-type ScriptSense.
+  * Opening files which do not exist do not create then destroy a new tab anymore.
+  * Find in files/project now works.
+  * Smart tabbing and auto indenting added.
+  * New toolbar buttons for step in/out/over.
+  * Bug fix... project root can no longer be collapsed in project treeview pane.
+  * Added "Close Others" command to close all other documents but the selected tab.
+  * Fixed drawing bug in watch window.
+  * You can now connect and debug an existing instance of Torque.
+  * Lots more stuff before i started documenting changes.
+
+
+  - 1.0.0 Alpha - June 27th, 2005 -
+
+  * Initial alpha public release.

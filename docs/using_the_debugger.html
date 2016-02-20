@@ -1,0 +1,101 @@
+<html>
+<head>
+	<title>Using the Debugger</title>
+	<link rel="stylesheet" type="text/css" href="stylesheet.css">
+</head>
+<body>
+
+	<h2>Using the Debugger</h2>
+	
+	<p>The debugging features are arguably the most useful part of Torsion.  It is important that one becomes extremely comfortable using the debugger if your project relies on a lot of TorqueScript.  If you already <a href="creating_a_new_project.html">setup your project</a> then starting to debug is a single key press away.</p>
+	
+	<h3>Configs</h3>
+	<p>Before we can begin we need to make sure we have the correct config selected from the config dropdown on the toolbar:</p>
+
+	<center><img src="select_config.png"></center>
+	
+	<p>Configs are not only useful for selecting debug verses release executables, but can also be used as shortcuts to other game modes that are accessible via command line arguments.  This is an area where you should experiment and learn what works best for you and your project.</p>
+	
+	<h3>Start Debugging</h3>
+	<p>For now lets select our debug config and start the debugger by hitting the F11 key or using the <b>Debug->Step</b> menu command.  If the <a href="config_settings.html">precompile config setting</a> is enabled you'll first see the precompile step execute.  If your scripts contain no syntax errors then you'll soon see the <b>Connecting</b> dialog appear:</p>
+	
+	<center><img src="connecting.png"></center>
+
+	<p>When using the <b>Start</b>, <b>Step</b>, or <b>Step Over</b> commands the <b>Connecting</b> dialog will automatically launch the executable for the selected config and use the default <a href="project_settings.html">project debugging settings</a> to connect to the game.  If everything worked properly you'll soon see something like the following:</p>
+
+	<center><img src="debug_step.png"></center>
+
+	<p>Since we <b>Step</b>ped execution should have stopped at the first executable line of TorqueScript.  If we had used <b>Debug->Start</b> then execution would not have stopped until a breakpoint was hit or <b>Debug->Break</b> was called.  More on breakpoints below, but first make note of the script within the <font color="green">//BEGIN TORSION</font> <font color="green">//END TORSION</font> block at the top of your main script.  Torsion automatically injects this little bit of script into the top of your main script and will clean it up when the debugging session ends.  This is what makes the single click debugging work.</p>
+	
+	<h3>Step, Step Over, Step Out, and Continue</h3>
+	<p>So lets learn a few debugger basics... if your an experienced coder you may want to just skip over this section.  The <b>Debug->Step</b> menu command will move you from one command to the next command and is the finest level of control you have when debugging game code. For example:</p>
+	
+	<center><img src="debugger_step.png"></center>
+
+	<p>The <b>Debug->Step Over</b> menu command is the second most used command when debugging.  Step over will move you from one statement to the next without stepping into a function call.  In this way it "steps over" functions.  For example:</p>
+
+	<center><img src="debugger_stepover.png"></center>
+
+	<p>The <b>Debug->Step Out</b> menu command is also very useful.  It "steps out" of the current function returning you to code which called that function.  For example:</p>
+
+	<center><img src="debugger_stepout.png"></center>
+
+	<p>The <b>Debug->Continue</b> menu command is just what it sounds like.  It continues from the current break position and lets you return to game execution.  Execution will not stop again until a breakpoint is hit or the <b>Debug->Break</b> menu command is used.</p>
+
+	<p>Go ahead and experiment a bit with how the step functions work.  Finally we urge you to memorize the keyboard shortcuts for <b>Step</b> Ctrl+F11, <b>Step Over</b> Ctrl+F10, <b>Step Out</b> Shift+F11, and <b>Continue</b> Ctrl+F5.  You will use these features a lot if you do even a little debugging work and knowing the keyboard shortcuts will save you a tremendous amount of time.  Note that these shortcuts are the same as the ones using in most professional debuggers.</p>
+
+	<h3>Breakpoints</h3>
+	<p>Proper use of breakpoints can help you fix most any bug you come across.  A breakpoint allows you to specify a location in your scripts that when reached the debugger will stop.  Breakpoints are easy to by clicking on the line where you want to stop and hitting the F9 keyboard shortcut or by clicking in the leftmost gully:</p>
+
+	<center><img src="debugger_breakpoint.png"></center>
+
+	<p>With the breakpoint placed when ever that line of code is about to be executed the debugger will stop at that location.  Note that if you place your breakpoint in a location that will not be executed, the debugger will automatically move it to the next valid location if can find:</p>
+	
+	<center><img src="debugger_breakmove.png"></center>
+
+	<p>Aside from placing breakpoints they can be disabled to allow you to keep them around, but not have them fire.  This can be done by selecting the line and hitting Ctrl+F9 or via the the <b>Breakpoints</b> window:</p>
+
+	<center><img src="breakpoints_pane.png"></center>
+
+	<p>From here you get a picture of all the breakpoints placed in your project and can easily manage them.</p>
+
+	<p>Finally lets talk for a moment about conditional breakpoints.  Right click one of your breakpoints in the editor pane and select <b>Breakpoint Properties...</b>.  You'll then see the get the <b>Breakpoint Properties</b> dialog:</p>
+
+	<center><img src="breakpoint_properties.png"></center>
+
+	<p>Here you can set a condition as to when a breakpoint should be hit.  By default there are no conditions on a breakpoint.  For example you can set that the breakpoint is hit when a particular TorqueScript statement evaluates to true.  In addition you can have a breakpoint stop on a fixed amount of passes.  Smart use of conditional breakpoints can save you a lot of time.</p>
+
+	<h3>Output Window</h3>
+
+	<p>The <b>Output Window</b> is multi-purpose text log, but while debugging it echos the console spew found in the Torque console log.  How it improves upon this is by having <b>Next Error</b> and <b>Previous Error</b> buttons, saving, loading, and clearing of console output, and a visual scroll map which alerts you errors within the console stream and allows for quick navigation.</p>
+
+	<center><img src="output_pane.png"></center>
+
+	<h3>Watch Window</h3>
+
+	<p>The <b>Watch Window</b> is a critical tool in the debugging process.</p>
+
+	<center><img src="watch_window.png"></center>
+
+	<p>It allows you to enter variables or even script commands which are evaluated when your at a break line and every time your step the debugger.  This allows you to inspect the state of your code without the need for echo/print statements.  Also notice you can even put function calls in the watch window.  While this is helpful, it is also dangerous if the function has a side effect.  For instance putting <i>quit()</i> in the watch window will make your game quit while your debugging.</p>
+
+	<h3>Callstack Window</h3>
+
+	<p>The <b>Callstack Window</b> allows you to see the hierarchy of function calls when your at a break line:</p>
+
+	<center><img src="callstack_window.png"></center>
+
+	<p>The top most line is the position the debugger is currently stopped at.  By clicking on different callstack levels the editor will open that file and highlight that line.  This allows you to see the history of how you got to the current function.  You'll also notice that as you switch call levels that your watch window will update any changed local variables as well.</p>
+	
+	<p>So you should now have a good understanding of Torsion debugger features.  If your new to TorqueScript the debugger is a great way to learn the function of the language in intimate detail.  Within a short time you'll find the debugger indispensable part of your development process.</p>
+
+	<br>
+	<br>
+	<center>
+	<font size="-2">
+		Copyright &#169; <a target="_blank" href="http://www.sickheadgames.com">Sickhead Games, LLC</a>. All rights reserved.
+	</font>
+	</center>
+
+</body>
+</html>

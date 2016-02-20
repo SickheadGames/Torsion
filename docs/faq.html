@@ -1,0 +1,46 @@
+<html>
+<head>
+	<title>FAQ</title>
+	<link rel="stylesheet" type="text/css" href="stylesheet.css">
+</head>
+<body>
+
+	<h2>FAQ</h2>
+	
+	<p>
+	<b>Q: It seems the watch window doesn't evaluate variables properly... is this a bug?</b></p>
+	<p>
+	A: Yes it is a bug.  In particular it was a bug in the TelnetDebugger that seems to be fixed for TGE and TGB, but not for TGEA.  There is a <a href="http://www.garagegames.com/mg/forums/result.thread.php?qt=48310">bug fix posted here</a>.
+	</p>
+	<br>
+
+	<p>
+	<b>Q: Why can i not step thru code or set breakpoints on code outside of functions?</b></p>
+	<p>
+	A: By default the Torque engines disable this feature for performance.  Although it is arguable if it is much of a win at all, the extra breaklines is not enabled in release builds by default.  Open <i>engine\console\astNodes.cc/cpp</i> and enable the <b>TORQUE_EXTRA_BREAKLINES</b> define and rebuild your executable.
+	</p>
+	<br>
+
+	<p><b>Q: When i launch my game using Torsion nothing happens... what is wrong?</b></p>
+	<p>
+	A: Most likely you've tried to run your game from inside a mod folder.  Your project working directory should contain the subdirectory where you game scripts are and be the same folder where the Torque executable and entry script exist.
+	</p>
+
+	<br>
+	<br>
+	<p>
+	If you have a question not covered here please post it to the <a target="_blank" href="http://www.garagegames.com/mg/forums/result.area.php?qa=55">Torsion forums</a>.
+	</p>
+	
+	<br>
+	<br>
+	<br>
+	<br>
+	<center>
+	<font size="-2">
+		Copyright &#169; <a target="_blank" href="http://www.sickheadgames.com">Sickhead Games, LLC</a>. All rights reserved.
+	</font>
+	</center>
+
+</body>
+</html>

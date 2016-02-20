@@ -1,0 +1,54 @@
+<html>
+<head>
+	<title>Creating a New Project</title>
+	<link rel="stylesheet" type="text/css" href="stylesheet.css">
+</head>
+<body>
+
+	<h2>Creating a New Project</h2>
+	<p>When you start Torsion for the first time you'll be greeted by an empty environment.  To start a new project either select the <b>New Project</b> icon on the toolbar or select it from the <b>File->New->Project</b> menu item.  You will be presented with the <b>New Project</b> dialog:</p>
+
+	<center><img src="new_project.png"></center>
+
+	<p>Here you need to enter at least two basic fields.  The <b>Name</b> of your project and the path where your Torque EXE resides, the <b>Base Directory</b>.  Another field you'll find useful is <b>Mods</b>.  When it is left blank all mod folders are included in the Torsion project tree.  If you specify one or more semicolon separated mod names then only those mods are included in the project.  You can read more about this and the other optional fields on the <a href="project_settings.html">Project Settings</a> reference page.</p>
+	
+	<h3>Configurations</h3>
+	<p>So now flip over to the <b>Configurations</b> tab:</p>
+	
+	<center><img src="new_project_config.png"></center>
+
+	<p>Here we are required to create one or move project configs so that Torsion knows how to run your game.  Start by hitting the <b>New...</b> button.  This will bring up the <b>Configuration Settings</b> dialog:</p>
+
+	<center><img src="config_settings.png"></center>
+
+	<p>Let us start with a debug config.  Enter <i>Debug</i> for the config <b>Name</b> and browse the <b>Executable</b> to find the Torque debug EXE for your project.  If your project needs special command line parameters, say for instance to select which mod to execute you can enter it into the <b>Arguments</b> field.  Once you've enter everything hit <b>OK</b> to save the config.  To read in more detail about the config settings visit the <a href="config_settings.html">Configuration Settings</a> reference page.</p>
+
+	<p>So now you have the basic project setting complete and one config setup.  You can now hit <b>OK</b> to create the new project.  Torsion will display the project tree and start to generate the engine exports.</p>
+
+	<h3>Export Generation</h3>
+
+	<center><img src="build_exports.png"></center>
+
+	<p>The export generation process will usually take under a minute.  This step runs your game executable with a special script to dump all the objects and functions that can be invoked from TorqueScript.  If you ever add new features to the engine you can re-run the export generation from the <b>Project->Rebuild Exports</b> so that they appear during syntax highlighting, in the ScriptSense tips, and within the code browser.</b>
+
+	<p>At this point your project is created, but isn't saved quite yet.  Go ahead and hit the <b>File->Save</b> menu and specify the folder and name to use for your newly created project file.  Notice that by default it tries to put the project file in the project base directory using the project name.  This is recommended, but you can save it wherever you wish.  Just make note that internally the project uses relative paths and moving the project file after saving may break it.</p>
+	
+	<h3>Precompile Step</h3>
+	<p>Before we finish up lets run the game once to be sure everything is working correctly.  You do this via the <b>Debug->Start Without Debugging</b> menu or the Ctrl+F5 shortcut.  The first thing you'll notice is that in the output window you'll see the precompile step execute:</p>
+	
+	<center><img src="output_precompile.png"></center>
+	
+	<p>This is an extremely useful part of Torsion.  This step will run each script that has changed since the last execution to check it for syntax errors.  If an error is found a dialog will pop up prompting you if you want to stop and correct it.  If your project settings were entered properly and everything precompiles without errors then you should now be looking at your running game.</p>
+	
+	<p>So now you know how to setup a project and run it.  You can now move ahead to the <a href="using_the_debugger.html">Using the Debugger</a> walk thru.</p>
+	<br>
+	<br>
+
+	<center>
+	<font size="-2">
+		Copyright &#169; <a target="_blank" href="http://www.sickheadgames.com">Sickhead Games, LLC</a>. All rights reserved.
+	</font>
+	</center>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+Thanks for installing the Torsion TorqueScript IDE.
+
+As always give us feature suggestions and bug reports via our
+GitHub issues page:
+
+ https://github.com/SickheadGames/Torsion/issues
+
+Thanks again and happy Torque'ing.

@@ -1,0 +1,77 @@
+<html>
+<head>
+	<title>Project Settings</title>
+	<link rel="stylesheet" type="text/css" href="stylesheet.css">
+</head>
+<body>
+
+
+	<h2>Project Settings</h2>
+
+	<p>This dialog is used to edit the project settings and when creating a new project.</p>
+
+	<h4>Project Tab</h4>
+	<center><img src="project_settings.png"></center>
+	<br>
+	<br>
+	<blockquote>
+	<h4>General</h4>
+	<h5>Name</h5>
+	The default internal project name default project file name.
+	<h5>Base Directory</h5>
+	This is typically the folder where the Torque executable and entry script are located.
+	<h5>Entry Script</h5>
+	This is the first script loaded by the Torque executable when the game is launched.  Normally this is main.cs.  If an entry script is not specified then <b>OneClick Debugging</b> must be disabled for each configuration.
+	<h5>Script Scanner Extensions</h5>
+	A semicolon separated list of script file extensions the code completion scanner should process when generating the ScriptSense database.
+	<h5>Mods</h5>
+	An optional semicolon separated list of mods to include in the project tree and scan for inclusion in the ScriptSense database.
+	<h4>Debugging</h4>
+	<h5>Address</h5>
+	The IP address or DNS name of the debug target machine.  You normally use 127.0.0.1 for debugging on the local machine.
+	<h5>Password</h5>
+	The password to use when connecting to the debug target.
+	<h5>Port</h5>
+	The port on the debug target machine to use.  6060 is the Torque default.
+	<h5>Reload Modified Scripts</h5>
+	When enabled and supported by the engine you will be automatically prompted to reload changed scripts after continuing from a breakpoint.
+	<br><br><i><b>NOTE:</b> As of this time this feature is only supported by the <a href="http://www.garagegames.com/index.php?sec=mg&mod=resource&page=view&qid=13726">TorqueScript Edit and Continue resource</a>.</i>
+	<h5>Hook Code</h5>
+	The debugger startup hook code that will be injected into the entry script.  The strings #port# and #password# will be replaced with the correct values from the connection dialog.
+	<h4>Elixir</h4>
+	<i><b>NOTE:</b> At this time the Elixir documentation system is not availible.</i>
+	<h5>Search URL</h5>
+	The url to the Elixir search script.
+	<h5>Product</h5>
+	The Elixir product string.  This is typically TGE, TGEA, or TGB.
+	<h5>Version</h5>
+	The product version.  Use HEAD for the latest product documentation.
+	</blockquote>
+
+	<br>
+	<br>
+
+	<h4>Configuration Tab</h4>
+	<center><img src="project_settings2.png"></center>
+
+	<blockquote>
+	<h5>Edit...</h5>
+	Opens the <b>Configuration Settings</b> dialog for editing the currently selected config.
+	<h5>New...</h5>
+	Opens the <b>Configuration Settings</b> dialog for creating a new config.
+	<h5>Delete</h5>
+	Deletes the selected config from the list.
+	<h5>Copy</h5>
+	Creates a copy of the selected config and opens the <b>Configuration Settings</b> dialog for editing.
+	</blockquote>
+
+	<br>
+	<br>
+	<center>
+	<font size="-2">
+		Copyright &#169; <a target="_blank" href="http://www.sickheadgames.com">Sickhead Games, LLC</a>. All rights reserved.
+	</font>
+	</center>
+
+</body>
+</html>

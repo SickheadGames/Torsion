@@ -1,0 +1,208 @@
+<html>
+<head>
+	<title>Keyboard Shortcuts</title>
+	<link rel="stylesheet" type="text/css" href="stylesheet.css">
+</head>
+<body>
+
+	<h2>Keyboard Shortcuts</h2>
+	
+	<center>
+	<table width="600" border="0" cellpadding="4">
+	   <tr>
+	   <td bgcolor="E4E4E4" colspan="3">File Menu</td>
+	   </tr>
+	   <tr>
+	   <td bgcolor="E4E4E4" align="left">New->Project</td>
+	   <td bgcolor="F4F4F4" align="left">Ctrl+Shift+N</td>
+	   </tr>
+	   <tr>
+	   <td bgcolor="E4E4E4" align="left">New->Script</td>
+	   <td bgcolor="F4F4F4" align="left">Ctrl+N</td>
+	   </tr>
+	   <tr>
+	   <td bgcolor="E4E4E4" align="left">Open->Project...</td>
+	   <td bgcolor="F4F4F4" align="left">Ctrl+Shift-O</td>
+	   </tr>
+	   <tr>
+	   <td bgcolor="E4E4E4" align="left">Open->Script...</td>
+	   <td bgcolor="F4F4F4" align="left">Ctrl+O</td>
+	   </tr>
+	   <tr>
+	   <td bgcolor="E4E4E4" align="left">Close</td>
+	   <td bgcolor="F4F4F4" align="left">Ctrl+F4</td>
+	   </tr>
+	   <tr>
+	   <td bgcolor="E4E4E4" align="left">Save</td>
+	   <td bgcolor="F4F4F4" align="left">Ctrl+S</td>
+	   </tr>
+	   <tr>
+	   <td bgcolor="E4E4E4" align="left">Save As...</td>
+	   <td bgcolor="F4F4F4" align="left">Ctrl+Alt+S</td>
+	   </tr>
+	   <tr>
+	   <td bgcolor="E4E4E4" align="left">Save All</td>
+	   <td bgcolor="F4F4F4" align="left">Ctrl+Shift+S</td>
+	   </tr>
+	   <tr>
+	   <td bgcolor="E4E4E4" align="left">Print...</td>
+	   <td bgcolor="F4F4F4" align="left">Ctrl+P</td>
+	   </tr>
+
+	</table>
+
+   <!-- 
+   m_EditMenu = new tsMenu;
+   {
+      m_EditMenu->AppendIconItem( wxID_UNDO,   _T( "&Undo\tCtrl+Z" ), undo16b_xpm );
+      m_EditMenu->AppendIconItem( wxID_REDO,   _T( "&Redo\tCtrl+Y" ), redo16b_xpm );
+
+      m_EditMenu->AppendSeparator();
+      m_EditMenu->AppendIconItem( wxID_CUT,     _T( "Cu&t\tCtrl+X" ), cut_clipboard16_xpm );
+      m_EditMenu->AppendIconItem( wxID_COPY,    _T( "&Copy\tCtrl+C" ), copy_clipboard16_xpm );
+      m_EditMenu->AppendIconItem( wxID_PASTE,   _T( "&Paste\tCtrl+V" ), paste_clipboard16_xpm );
+      m_EditMenu->AppendIconItem( wxID_DELETE,  _T( "&Delete\tDel" ), delete_x16_xpm );
+
+      m_EditMenu->AppendSeparator();
+      m_EditMenu->Append( wxID_SELECTALL,   _T( "Select &All\tCtrl+A" ) );
+      m_EditMenu->AppendSeparator();
+      tsMenu* findMenu = new tsMenu;
+      findMenu->AppendIconItem( wxID_FIND,       _T( "&Find\tCtrl+F" ), search16_xpm );
+      findMenu->AppendIconItem( wxID_REPLACE,    _T( "R&eplace\tCtrl+H" ), findreplace_xpm );
+      findMenu->AppendIconItem( tsID_FINDINFILES, _T( "F&ind in Files\tCtrl+Shift+F" ), findinfiles16_xpm );
+      findMenu->AppendIconItem( tsID_FINDSYMBOL, _T( "Find S&ymbol\tCtrl+Shift+Y" ), searchblock_xpm );
+      m_EditMenu->Append( wxID_ANY, _T( "&Find and Replace" ), findMenu );
+      m_EditMenu->Append( tsID_GOTO,       _T( "&Goto...\tCtrl+G" ) );
+      m_EditMenu->AppendSeparator();
+
+      tsMenu* advancedMenu = new tsMenu;
+      advancedMenu->Append( tsID_UPPER_SELECTION,  _T( "Make &Uppercase\tCtrl+Shift+U" ) );
+      advancedMenu->Append( tsID_LOWER_SELECTION,  _T( "Make &Lowecase\tCtrl+U" ) );
+      advancedMenu->Append( tsID_COMMENT_SELECTION,  _T( "&Comment Selection\tCtrl+K" ) );
+      advancedMenu->Append( tsID_UNCOMMENT_SELECTION,  _T( "Uncomment Selection\tCtrl+Shift+K" ) );
+      advancedMenu->Append( tsID_INDENT_SELECTION,  _T( "&Indent Selection" ) );
+      advancedMenu->Append( tsID_UNINDENT_SELECTION,  _T( "Unindent Selection" ) );
+      advancedMenu->Append( tsID_MATCH_BRACE,  _T( "Match Brace\tCtrl+]" ) );
+      m_EditMenu->Append( wxID_ANY, _T( "Ad&vanced" ), advancedMenu );
+
+      tsMenu* bookmarkMenu = new tsMenu;
+      bookmarkMenu->Append( tsID_BOOKMARK_TOGGLE,  _T( "&Toggle Bookmark\tCtrl+F2" ) );
+      bookmarkMenu->Append( tsID_BOOKMARK_NEXT,  _T( "&Next Bookmark\tF2" ) );
+      bookmarkMenu->Append( tsID_BOOKMARK_PREV,  _T( "&Previous Bookmark\tShift+F2" ) );
+      bookmarkMenu->Append( tsID_BOOKMARK_CLEARALL,  _T( "&Clear All" ) );
+      m_EditMenu->Append( wxID_ANY, _T( "Boo&kmarks" ), bookmarkMenu );
+
+      tsMenu* foldingMenu = new tsMenu;
+      foldingMenu->Append( tsID_FOLDING_TOGGLEBLOCK, "&Collapse Block" );
+      foldingMenu->Append( tsID_FOLDING_TOGGLEALLINBLOCK, "Collapse &All In Block" );
+      foldingMenu->Append( tsID_FOLDING_TOGGLEALL, "E&xpand All" );
+      foldingMenu->Append( tsID_FOLDING_COLLAPSETODEFS, "Collapse To &Definitions" );
+      m_EditMenu->Append( wxID_ANY, _T( "Foldi&ng" ), foldingMenu );
+
+      tsMenu* scriptSenseMenu = new tsMenu;
+      scriptSenseMenu->Append( tsID_LIST_MEMBERS,  _T( "List Mem&bers\tCtrl+J" ) );
+      scriptSenseMenu->Append( tsID_PARAMETER_INFO,  _T( "Parameter Inf&o\tCtrl+Shift+Space" ) );
+      scriptSenseMenu->Append( tsID_QUICK_INFO,  _T( "&Quick Info\tCtrl+Q" ) );
+      scriptSenseMenu->Append( tsID_COMPLETE_WORD,  _T( "Complete &Word\tAlt+Right Arrow" ) );
+      m_EditMenu->Append( wxID_ANY, _T( "Script&Sense" ), scriptSenseMenu );
+   }
+
+   tsMenu* viewMenu = new tsMenu;
+   {
+      viewMenu->Append( tsID_PROJECT_OPENWITH, _T( "Open Wit&h..." ) );
+      viewMenu->AppendIconItem( tsID_EXPLORE, _T( "Open Containing &Folder" ), explorer16_xpm );
+      viewMenu->AppendSeparator();
+      viewMenu->AppendCheckIconItem( tsID_TABSANDSPACES,  _T( "Show Whi&tespace" ), showspace_xpm );
+      viewMenu->AppendCheckItem( tsID_LINEBREAKS,     _T( "Show Line B&reaks" ) );
+      viewMenu->AppendCheckIconItem( tsID_LINENUMBERS,    _T( "Enable Line &Numbers" ), showlinenumbers_xpm );
+      viewMenu->AppendCheckIconItem( tsID_LINEWRAP,       _T( "Enable Line &Wrap" ), togglewordwrap_xpm );
+      viewMenu->AppendSeparator();
+      viewMenu->AppendCheckItem( tsID_SHOW_LEFTPANE,    _T( "Show &Project Pane\tCtrl+Alt+P" ) );
+      viewMenu->AppendCheckItem( tsID_SHOW_BOTTOMPANE,    _T( "Show &Output Pane\tCtrl+Alt+O" ) );
+      //viewMenu->->AppendSeparator();
+      //viewMenu->AppendWithIcon( wxID_ANY, _T( "Navigate &Backward" ) );
+      //viewMenu->AppendWithIcon( wxID_ANY, _T( "Navigate &Forward" ) );
+   }
+
+   m_ProjectMenu = new tsMenu;
+   {
+      //AppendWithIcon( projectMenu, wxID_ANY,          _T( "&Add Script" ) );
+      //projectMenu->AppendSeparator();
+      m_ProjectMenu->Append( tsID_PROJECT_REBUILDEXPORTS, _T( "&Rebuild Exports" ) );
+      m_ProjectMenu->AppendSeparator();
+      m_ProjectMenu->AppendIconItem( tsID_PROJECT_PRECOMPILE, _T( "Pre&Compile\tF7" ), precompile_changes_xpm );
+      m_ProjectMenu->AppendIconItem( tsID_PROJECT_PRECOMPILE_ACTIVE, _T( "PreCompile Active\tCtrl+F7" ), precompile_file_xpm );
+      m_ProjectMenu->AppendIconItem( tsID_PROJECT_PRECOMPILEALL, _T( "PreCompile &All\tCtrl+Shift+F7" ), precompile_all_xpm );
+      m_ProjectMenu->AppendIconItem( tsID_CLEARDSOS,          _T( "&Delete DSOs" ), deletedso16_xpm );   
+      m_ProjectMenu->AppendSeparator();
+      m_ProjectMenu->Append( tsID_PROJECT_PROPERTIES, _T( "&Properties..." ) );
+   }
+
+   m_DebugMenu = new tsMenu; 
+   {
+      m_DebugMenu->AppendIconItem( tsID_DEBUG_START,       _T( "&Start\tF5" ), start16_xpm );
+      m_DebugMenu->AppendIconItem( tsID_DEBUG_START_WITHOUT_DEBUGGING, _T( "Start Without Debu&gging\tCtrl+F5" ), startnodebug_xpm );
+      m_DebugMenu->AppendIconItem( tsID_DEBUG_CONNECT,     _T( "Connect" ), debugconnect16_xpm );
+      m_DebugMenu->Append( tsID_DEBUG_RESTART,     _T( "&Restart\tCtrl+Shift+F5" ) );
+      m_DebugMenu->AppendIconItem( tsID_DEBUG_STOP,        _T( "&Stop\tShift+F5" ), stop16_xpm );
+      m_DebugMenu->AppendSeparator();
+      m_DebugMenu->AppendIconItem( tsID_DEBUG_BREAK,       _T( "&Break\tCtrl+Alt+Break" ), break16_xpm );
+      m_DebugMenu->AppendIconItem( tsID_DEBUG_STEP,        _T( "&Step\tF11" ), stepin16_xpm );
+      m_DebugMenu->AppendIconItem( tsID_DEBUG_STEP_OVER,   _T( "Step &Over\tF10" ), stepover16_xpm );
+      m_DebugMenu->AppendIconItem( tsID_DEBUG_STEP_OUT,    _T( "Step O&ut\tShift+F11" ), stepout16_xpm );
+      m_DebugMenu->AppendSeparator();
+      m_DebugMenu->Append( tsID_RELOAD_SCRIPTS,    _T( "Re&load Scripts\tCtrl+Shift+R" ) );
+      m_DebugMenu->AppendSeparator();
+      m_DebugMenu->AppendIconItem( tsID_DEBUG_NEWBREAKPOINT, _T( "New Breakpoint...\tCtrl+B" ), newbreak16_xpm );
+      m_DebugMenu->AppendIconItem( tsID_DEBUG_CLEARALLBREAKPOINTS, _T( "Delete All Breakpoints\tCtrl+Shift+F9" ), breakclearall16_xpm );
+      m_DebugMenu->AppendIconItem( tsID_DEBUG_DISABLEALLBREAKPOINTS, _T( "Disable All Breakpoints" ), breakdisableall16_xpm );
+   }
+
+   m_ToolsMenu = new tsMenu;
+   UpdateToolsMenu();
+
+   m_WindowMenu = new tsMenu;
+   {
+      m_WindowMenu->Append( tsID_NEXTVIEW,      _T( "Next\tCtrl+Tab" ) );
+      m_WindowMenu->Append( tsID_PREVIOUSVIEW,  _T( "Previous\tCtrl+Shift+Tab" ) );
+      m_WindowMenu->AppendSeparator();
+      m_WindowMenu->Append( wxID_CLOSE_ALL,  _T( "C&lose All Files" ) );
+      //m_WindowMenu->Append( tsID_WINDOW_FIRST, "", "", wxITEM_SEPARATOR ); 
+      //m_WindowList.UseMenu( windowMenu );
+   }
+
+   tsMenu *helpMenu = new tsMenu;
+   {
+      helpMenu->AppendIconItem( wxID_HELP,         _T( "&Topics" ), topics16_xpm );
+      helpMenu->AppendSeparator();
+      helpMenu->Append( tsID_FEATUREREQUEST,  _T( "&Feature Request" ) );
+      helpMenu->Append( tsID_BUGTRACKER,  _T( "&Bug Report" ) );
+      helpMenu->Append( tsID_UPDATECHECK,  _T( "Check New &Version" ) );
+      /*
+      #ifdef IGNITION_ENABLED
+         helpMenu->Append( tsID_REGISTER,  _T( "&Register" ) );      
+      #endif
+      */
+      wxMenuItem* item = helpMenu->Append( wxID_ABOUT, _T( "&About Torsion" ) );
+      #ifdef __WXMSW__
+         wxBitmap bmp;
+         bmp.CopyFromIcon( wxIcon( "\"AAAAAAIDI_MAINFRAME\"", wxBITMAP_TYPE_ICO_RESOURCE, 16, 16 ) );
+         item->SetBitmap( bmp );
+      #else
+         item->SetBitmap( wxBitmap( torsion16_xpm ) );
+      #endif
+   }
+   -->
+
+	</center>
+	
+	<br>
+	<br>
+	<center>
+	<font size="-2">
+		Copyright &#169; <a target="_blank" href="http://www.sickheadgames.com">Sickhead Games, LLC</a>. All rights reserved.
+	</font>
+	</center>
+
+</body>
+</html>

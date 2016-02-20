@@ -1,0 +1,95 @@
+<html>
+<head>
+	<title>FAQ</title>
+	<link rel="stylesheet" type="text/css" href="stylesheet.css">
+</head>
+<body>
+
+	<!--
+	<table class="header">
+		<tr>
+			<td><img src="banner.jpg" alt="Torque Pipeline for Cartography Shop"></td>
+		</tr>
+	</table>
+	-->
+
+	<h2>FAQ</h2>
+	
+	<!--
+	<p>
+	<b>Q: What are orphaned polygons?</b>
+	</p>
+	<p>
+	A: Orphaned polygons reported as warnings in the export process are simply polygons that are not within a portal zone.  Having some orphaned polygons is perfectly normal.  You can view the orphaned polygons via the console command, <i>setInteriorRenderMode(4);</i>, in a debug build of Torque.
+	</p>
+
+	<p>
+	<b>Q: What are ambiguous brushes?</b>
+	</p>
+	<p>
+	A: Ambiguous brushes (do not confuse this message with "ambiguous planes" explained below) are brushes which have one or more surface planes which are the same, but the texturing parameters differ.  Think of a cylinder where one side is vertex manipulated to be flat and not all the texture parameters (texture name, offset, scale, and rotation) on the faces that make up that side are the same.  Only the first surface plane is kept and the rest are thrown out of the export.  It does not effect performance in any way, but your texturing on that brush will not reflect what you see in Cartshop.  To fix this use the console command, <i>setInteriorRenderMode(3);</i>, in a debug build of Torque to identify the brush and split it into two separate brushes.
+	</p>
+
+	<p>
+	<b>Q: I get a warning that says "Dropped N ambiguous plane(s)".  What does this mean?</b>
+	</p>
+	<p>
+	A: The ambiguous plane warning (do not confuse this message with "ambiguous brushes" explained above) is generated during creation of the shadow volumes when lighting the interior.  When the shadow volume is generated an odd sliver of a polygon can be created which cannot be classified as fully inside, outside, or split by the volume.  These are just tossed out and can be safely ignored.
+	</p>
+	
+	<p>
+	<b>Q: I get errors that say <i>"::createBaseWinding: Bad face on brush."</i>.  How do i fix my map?</b>
+	</p>
+	<p>
+	A: These are typically caused by small or abnormal brushes in your map which force the BSP process to generate faces it cannot handle.  Look closely to be sure that your carved brushes didn't generate bad geometry, be sure everything is on the grid, and consider using <a href="detail_brushes.html">detail brushes</a> in the appropriate places.
+	</p>
+
+	<p>
+	<b>Q: I get an error on export that says <i>"Error, > 256 surfaces on an interior hull"</i>.  What is causing this?</b>
+	</p>
+	<p>
+	A: This is a limitation in the DIF format which is typically hit when a brush surface has been split into too many smaller surfaced by intersecting/touching geometry.  See <a target="_blank" href="http://www.garagegames.com/mg/forums/result.thread.php?qt=30911">this forum post</a> for a graphical explanation of the problem and how to fix it.
+	</p>
+
+	<p>
+	<b>Q: I get a warning about degenerate surfaces in my brushes.  How do i fix this?</b>
+	</p>
+	<p>
+	A: Degenerate surfaces are brush faces who have less than 3 unique points.  You'll get this warning every time from wedge primitives as they are made from a box with one side squished into a line.  You can also generate these warnings yourself if your not careful in vertex editing. Degenerate surfaces are just thrown away and usually do not effect your final map.
+	</p>
+
+	<p>
+	<b>Q: How tall should i make my doors and/or how big is the Torque Orc?</b>
+	</p>
+	<p>
+	A: The default Orc character in Torque has a collision box of 1.2 x 1.2 x 2.3 meters.  This means 
+	the Orc is over 7 foot 5 inches tall.  To convert meters into CartShop units you multiply it by the
+	geometry_scale set in the <a href="worldspawn.html">worldspawn</a> entity. As the default 
+	geometry_scale is 32, a doorway should never be smaller than 40 x 74 CartShop units (this is rounded
+	up to a multiple of 2).
+	</p>
+	
+	<p>
+	<b>Q: How would i create an arched doorway in my map?</b>
+	</p>
+	<p>
+	A: Will Harrison has produced an awesome step by step tutorial over <a target="_blank" href="http://www.garagegames.com/mg/forums/result.thread.php?qt=26985">here</a>.
+	</p>
+	-->
+
+	<br>
+	<br>
+	<p>
+	If you have a question not covered here please post it to our <a target="_blank" href="http://forums.sickheadgames.com/">forums</a>.
+	</p>
+	
+	<br>
+	<br>
+	<center>
+	<font size="-2">
+		Copyright &#169; <a target="_blank" href="http://www.sickheadgames.com">Sickhead Games, LLC</a>. All rights reserved.
+	</font>
+	</center>
+
+</body>
+</html>

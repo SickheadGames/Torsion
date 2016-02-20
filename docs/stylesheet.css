@@ -1,0 +1,100 @@
+/* 
+  Torsion TorqueScript IDE - Copyright (C) Sickhead Games, LLC
+  This file is subject to the terms and conditions defined in
+  file 'LICENSE.txt', which is part of this source code package.
+*/
+
+
+body {
+
+	color: #000000;
+	background: #FFFFFF;
+	font-family: "Verdana", "Arial", "Helvetica", sans-serif;
+	font-size: smaller;
+
+	margin-top: 25px;
+}
+
+pre {
+	font-family: "Verdana", "Arial", "Helvetica", sans-serif;
+	font-size: smaller;
+}
+
+table {
+
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+table.header {
+
+	position: absolute;
+
+	top: 0;
+	left: 0;
+	width: 104%;
+
+	padding: 0;
+	border: 0 none;
+	margin: 0;
+
+	background-repeat: repeat;
+	background-image: url( 'banner_repeat.jpg' );
+	background-position: 0 2;
+}
+
+img.invisible {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 0;
+	height: 0;
+	visibility: hidden;
+}
+
+td {
+
+	color: #000000;
+	font-family: "Verdana", "Arial", "Helvetica", sans-serif;
+	font-size: smaller;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+tr {
+
+	margin: 0;
+	padding: 0;
+	border: 0 none;
+}
+
+h5 {
+
+	color: #000000;
+	margin-top: 15px;
+	margin-bottom: 5px;
+	font-size: -2;
+}
+
+h2 {
+
+	color: #000000;
+	margin-bottom: 5px;
+}
+
+a {
+
+	color: #F49E00;
+	font-weight: bold;
+}
+
+blockquote {
+	margin-left: 100px;
+}
+
+img {
+
+	border-color: #F49E00;
+}

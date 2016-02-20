@@ -1,0 +1,37 @@
+<html>
+<head>
+	<title>Remote Debugging</title>
+	<link rel="stylesheet" type="text/css" href="stylesheet.css">
+</head>
+<body>
+
+	<h2>Remote Debugging</h2>
+	
+	<p>To perform debugging between two different machines you must use the <b>Debug->Connect</b> menu command.</p>
+	
+	<center><img src="remote_connect.png"></center>
+
+	<p>When it opens you can select the remote machine address as well as the port and password.  On the machine running Torsion you must have an identical set of script files to the ones running on the local machine, else you'll get missing file errors and incorrect line numbers.  Other than that the local machine is ready.</p>
+	
+	<h3>On the Remote Machine</h3>
+	
+	<p>The remote machine needs to have your game already running and the TelnetDebugger enabled.  To do this you must either add the following code into one of your scripts, preferably your main entry script, or enter that command into the console...</p>
+
+	<center><pre>dbgSetParameters( 6060, "password", true );</pre></center>
+
+	<p>Now be sure that the port and password match the settings in Torsion.  The final <b>true</b> value tells the game to stop and wait until Torsion connects.  If that is set to <b>false</b> the game will continue running until Torsion connects to it.</p>
+
+	<h3>Ready to Debug</h3>
+
+	<p>Your now ready to debug your remote machine, so hit the <b>Connect</b> button in dialog.  If everything worked correctly you should now be in the debugger where everything works just like it was a local debug session.</p>
+
+	<br>
+	<br>
+	<center>
+	<font size="-2">
+		Copyright &#169; <a target="_blank" href="http://www.sickheadgames.com">Sickhead Games, LLC</a>. All rights reserved.
+	</font>
+	</center>
+
+</body>
+</html>
