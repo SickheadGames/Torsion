@@ -7,7 +7,7 @@ Torsion is a powerful development environment for creating TorqueScript based ga
 
 The documentation can be found [here in the repo](/docs).
 
-For further help and questions feel free to [post an issue on GitHub](https://github.com/SickheadGames/Torsion/issues) or come [![join the chat at https://gitter.im/SickheadGames/Torsion](https://badges.gitter.im/SickheadGames/Torsion.svg)](https://gitter.im/SickheadGames/Torsion?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+For further help and questions feel free to [post an issue on GitHub](https://github.com/SickheadGames/Torsion/issues) or come [![join the chat at https://gitter.im/SickheadGames/Torsion](https://badges.gitter.im/SickheadGames/Torsion.svg)](https://gitter.im/SickheadGames/Torsion)
 
 If you want to improve Torsion please read [our contributors guide](CONTRIBUTING.md) first!
 
