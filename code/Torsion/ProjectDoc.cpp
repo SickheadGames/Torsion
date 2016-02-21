@@ -17,6 +17,7 @@
 #include "BreakpointsPanel.h"
 #include "Platform.h"
 #include "BuildExportsDlg.h"
+#include "Breakpoint.h"
 
 #include <wx/file.h>
 #include <wx/textfile.h>
@@ -30,7 +31,7 @@
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY(FileInfoArray);
 
-IMPLEMENT_DYNAMIC_CLASS( ProjectDoc, wxDocument )
+IMPLEMENT_DYNAMIC_CLASS(ProjectDoc, wxDocument)
 
 const wxString ProjectDoc::sm_SearchURL = "http://tdn.garagegames.com/elixir/search.php";
 

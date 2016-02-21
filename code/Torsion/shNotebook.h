@@ -18,7 +18,7 @@ enum
     shNB_HITTEST_ONITEM  = 2 | 4
 };
 
-class WXDLLEXPORT shNotebookEvent : public wxNotifyEvent
+class shNotebookEvent : public wxNotifyEvent
 {
 public:
 
