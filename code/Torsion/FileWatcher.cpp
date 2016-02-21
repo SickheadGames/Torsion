@@ -46,7 +46,9 @@ bool FileWatcher::SetWatch( const wxString& file, int flags )
 
    m_Flags = flags;
 
-   wxZeroMemory( m_LastStatus );
+   //wxZeroMemory( m_LastStatus );
+   memset(&m_LastStatus, 0, sizeof m_LastStatus);
+    
    return wxStat( m_File.GetFullPath(), &m_LastStatus ) == 0;
 }
 
@@ -57,7 +59,8 @@ bool FileWatcher::IsSignaled( unsigned long wait )
 
    // Look for false signals.
    wxStructStat Status;
-   wxZeroMemory( Status );
+   //wxZeroMemory( Status );
+   memset(&Status, 0, sizeof Status);
    wxStat( m_File.GetFullPath(), &Status );
 
    if (  ( !(m_Flags & FILECHANGE_LAST_WRITE) || m_LastStatus.st_mtime == Status.st_mtime ) &&

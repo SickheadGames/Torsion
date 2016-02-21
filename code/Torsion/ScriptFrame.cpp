@@ -95,7 +95,8 @@ void ScriptFrame::AddScriptPage( ScriptView* scriptView, wxWindow* ctrl )
    wxDocument* doc = scriptView->GetDocument();
    wxASSERT( doc );
    wxString title;
-   doc->GetPrintableName(title);
+   //TODO ? doc->GetPrintableName(title);
+   title = doc->GetTitle();
    wxASSERT( ctrl->GetParent() == m_ScriptNotebook );
    m_ScriptNotebook->AddPage( ctrl, title, doc->GetFilename(), true, 0 );
 
@@ -357,7 +358,8 @@ void ScriptFrame::SetTabState( ScriptView* view, bool modified, bool readonly )
 
    wxString title, tabTitle, toolTip;
    wxASSERT( view->GetDocument() );
-   view->GetDocument()->GetPrintableName(title);
+   //view->GetDocument()->GetPrintableName(title);
+   title = view->GetDocument()->GetTitle();
    toolTip = view->GetDocument()->GetFilename();
    tabTitle = title;
 

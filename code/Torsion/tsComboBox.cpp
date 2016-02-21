@@ -8,6 +8,6 @@
 
 void tsComboBox::EnableReselection()
 {
-   m_selectionOld = -1;
+   //m_selectionOld = -1;
 }
 

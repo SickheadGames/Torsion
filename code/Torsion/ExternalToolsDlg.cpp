@@ -126,7 +126,7 @@ void ExternalToolsDlg::CreateControls()
    itemBoxSizer3->Add(itemBoxSizer4, 0, wxALIGN_LEFT|wxBOTTOM, 5);
 
    wxStaticText* itemStaticText5 = new wxStaticText( itemDialog1, wxID_STATIC, _("Me&nu contents:"), wxDefaultPosition, wxDefaultSize, 0 );
-   itemBoxSizer4->Add(itemStaticText5, 0, wxALIGN_TOP|wxLEFT|wxTOP|wxBOTTOM|wxADJUST_MINSIZE, 0);
+   itemBoxSizer4->Add(itemStaticText5, 0, wxALIGN_TOP|wxLEFT|wxTOP|wxBOTTOM, 0);
 
    wxBoxSizer* itemBoxSizer6 = new wxBoxSizer(wxHORIZONTAL);
    itemBoxSizer3->Add(itemBoxSizer6, 1, wxGROW|wxALL, 0);
@@ -165,7 +165,7 @@ void ExternalToolsDlg::CreateControls()
    itemBoxSizer16->Add(itemBoxSizer17, 0, wxGROW, 0);
 
    wxStaticText* itemStaticText18 = new wxStaticText( itemDialog1, wxID_STATIC, _("&Title:"), wxDefaultPosition, wxSize(100, -1), wxALIGN_LEFT );
-   itemBoxSizer17->Add(itemStaticText18, 0, wxALIGN_CENTER_VERTICAL|wxADJUST_MINSIZE, 5);
+   itemBoxSizer17->Add(itemStaticText18, 0, wxALIGN_CENTER_VERTICAL, 5);
 
    m_TitleCtrl = new wxTextCtrl( itemDialog1, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize, 0 );
    itemBoxSizer17->Add(m_TitleCtrl, 3, wxALIGN_CENTER_VERTICAL|wxALL, 0);
@@ -174,7 +174,7 @@ void ExternalToolsDlg::CreateControls()
    itemBoxSizer16->Add(itemBoxSizer20, 0, wxGROW|wxTOP, 5);
 
    wxStaticText* itemStaticText21 = new wxStaticText( itemDialog1, wxID_STATIC, _("&Command:"), wxDefaultPosition, wxSize(100, -1), wxALIGN_LEFT );
-   itemBoxSizer20->Add(itemStaticText21, 0, wxALIGN_CENTER_VERTICAL|wxADJUST_MINSIZE, 5);
+   itemBoxSizer20->Add(itemStaticText21, 0, wxALIGN_CENTER_VERTICAL, 5);
 
    m_CmdCtrl = new wxTextCtrl( itemDialog1, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize, 0 );
    itemBoxSizer20->Add(m_CmdCtrl, 3, wxALIGN_CENTER_VERTICAL|wxALL, 0);
@@ -186,7 +186,7 @@ void ExternalToolsDlg::CreateControls()
    itemBoxSizer16->Add(itemBoxSizer24, 0, wxGROW|wxTOP, 5);
 
    wxStaticText* itemStaticText25 = new wxStaticText( itemDialog1, wxID_STATIC, _("A&rguments:"), wxDefaultPosition, wxSize(100, -1), wxALIGN_LEFT );
-   itemBoxSizer24->Add(itemStaticText25, 0, wxALIGN_CENTER_VERTICAL|wxADJUST_MINSIZE, 5);
+   itemBoxSizer24->Add(itemStaticText25, 0, wxALIGN_CENTER_VERTICAL, 5);
 
    m_ArgCtrl = new wxTextCtrl( itemDialog1, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize, 0 );
    itemBoxSizer24->Add(m_ArgCtrl, 3, wxALIGN_CENTER_VERTICAL|wxALL, 0);
@@ -198,7 +198,7 @@ void ExternalToolsDlg::CreateControls()
    itemBoxSizer16->Add(itemBoxSizer28, 0, wxGROW|wxTOP, 5);
 
    wxStaticText* itemStaticText29 = new wxStaticText( itemDialog1, wxID_STATIC, _("&Initial Directory:"), wxDefaultPosition, wxSize(100, -1), wxALIGN_LEFT );
-   itemBoxSizer28->Add(itemStaticText29, 0, wxALIGN_CENTER_VERTICAL|wxADJUST_MINSIZE, 5);
+   itemBoxSizer28->Add(itemStaticText29, 0, wxALIGN_CENTER_VERTICAL, 5);
 
    m_DirCtrl = new wxTextCtrl( itemDialog1, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize, 0 );
    itemBoxSizer28->Add(m_DirCtrl, 3, wxALIGN_CENTER_VERTICAL|wxALL, 0);
@@ -516,7 +516,7 @@ void ExternalToolsDlg::OnCmdMenuClick( wxCommandEvent& event )
       wxString path = wxFileSelector( "Choose a command executable", 
          cmd, wxEmptyString, wxEmptyString, 
          "All Executables (*.exe;*.com;*.pif;*.bat;*.cmd)|*.exe;*.com;*.pif;*.bat;*.cmd|All Files (*.*)|*.*",
-         wxOPEN | wxFILE_MUST_EXIST, this );
+         wxFD_OPEN | wxFD_FILE_MUST_EXIST, this );
       
       if ( path.IsEmpty() )
          return;

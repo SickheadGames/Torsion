@@ -72,7 +72,8 @@ protected:
 WX_DEFINE_ARRAY( Breakpoint*, BreakpointArray );
 
 
-DECLARE_EVENT_TYPE(EVT_COMMAND_BREAKPOINT, -1) 
+DECLARE_LOCAL_EVENT_TYPE(EVT_COMMAND_BREAKPOINT, -1)
+
 
 class WXDLLEXPORT BreakpointEvent : public wxEvent
 {

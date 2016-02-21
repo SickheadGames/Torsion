@@ -6,10 +6,10 @@
 #define TORSION_XMLFILE_H
 #pragma once
 
-#include "MarkupSTL.h"
+#include "Markup.h"
 
 
-class XmlFile : public CMarkupSTL
+class XmlFile : public CMarkup
 {
 public:
    XmlFile();
@@ -52,12 +52,12 @@ protected:
 
 inline bool XmlFile::StringToBool( const wxChar* boolean )
 {
-   return stricmp( boolean, "true" ) == 0 || atoi( boolean );
+   return wxStrcmp( boolean, "true" ) == 0 || wxAtoi( boolean );
 }
 
 inline int XmlFile::StringToInt( const wxChar* integer )
 {
-   return atoi( integer );
+   return wxAtoi( integer );
 }
 
 inline wxString XmlFile::BoolToString( bool value )
@@ -67,7 +67,7 @@ inline wxString XmlFile::BoolToString( bool value )
 
 inline wxString XmlFile::IntToString( int value )
 {
-   return itoa( value, s_Temp, 10 ); 
+	return wxString::Format("%i", value);
 }
 
 #endif // TORSION_XMLFILE_H

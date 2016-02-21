@@ -116,7 +116,7 @@ void BuildExportsDlg::CreateControls()
     itemBoxSizer2->Add(itemBoxSizer3, 0, wxALIGN_CENTER_VERTICAL|wxALL, 7);
 
     wxStaticText* itemStaticText4 = new wxStaticText( itemDialog1, wxID_STATIC, _("Torsion is executing project configurations to generate a database\nof engine exports.  This may take up to a minute to complete."), wxDefaultPosition, wxDefaultSize, 0 );
-    itemBoxSizer3->Add(itemStaticText4, 0, wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxADJUST_MINSIZE, 14);
+    itemBoxSizer3->Add(itemStaticText4, 0, wxALIGN_CENTER_HORIZONTAL|wxBOTTOM, 14);
 
     m_Progress = new wxGauge( itemDialog1, ID_GAUGE, 100, wxDefaultPosition, wxSize(200, 20), 0 );
     m_Progress->SetValue(0);

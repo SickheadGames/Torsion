@@ -8,6 +8,7 @@
 
 #include "AutoCompClass.h"
 #include <wx/regex.h>
+#include "Markup.h"
 
 class wxFileInputStream;
 class wxTextInputStream;
@@ -51,12 +52,12 @@ class AutoCompExports
       void _ReadDoxygenClass( const wxString& name, const wxString& base );
       bool _ReadDoxygenComment( const wxString& line, wxString& comment );
 
-      static void _LoadClasses( CMarkupSTL& xml, AutoCompClassArray& classes );
-      static void _LoadFunctions( CMarkupSTL& xml, const wxString& elem, AutoCompFunctionArray& functions );
-      static void _LoadVars( CMarkupSTL& xml, const wxString& elem, AutoCompVarArray& vars );
-      static void _SaveClasses( CMarkupSTL& xml, const AutoCompClassArray& classes );
-      static void _SaveFunctions( CMarkupSTL& xml, const wxString& elem, const AutoCompFunctionArray& functions );
-      static void _SaveVars( CMarkupSTL& xml, const wxString& elem, const AutoCompVarArray& vars );
+      static void _LoadClasses( CMarkup& xml, AutoCompClassArray& classes );
+      static void _LoadFunctions( CMarkup& xml, const wxString& elem, AutoCompFunctionArray& functions );
+      static void _LoadVars( CMarkup& xml, const wxString& elem, AutoCompVarArray& vars );
+      static void _SaveClasses( CMarkup& xml, const AutoCompClassArray& classes );
+      static void _SaveFunctions( CMarkup& xml, const wxString& elem, const AutoCompFunctionArray& functions );
+      static void _SaveVars( CMarkup& xml, const wxString& elem, const AutoCompVarArray& vars );
 
       wxFileInputStream*   m_InStream;
       wxTextInputStream*   m_TextStream;

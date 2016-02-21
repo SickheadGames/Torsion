@@ -110,7 +110,7 @@ void FindSymbolDlg::CreateControls()
    itemBoxSizer3->Add(itemBoxSizer4, 0, wxALIGN_LEFT|wxTOP|wxBOTTOM, 2);
 
    wxStaticText* itemStaticText5 = new wxStaticText( itemDialog1, wxID_STATIC, _("Fi&nd what:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-   itemBoxSizer4->Add(itemStaticText5, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxADJUST_MINSIZE, 7);
+   itemBoxSizer4->Add(itemStaticText5, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 7);
 
    itemBoxSizer4->Add(0, 5, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 14);
 

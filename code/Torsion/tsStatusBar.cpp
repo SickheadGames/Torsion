@@ -50,7 +50,7 @@ END_EVENT_TABLE()
       // Unhook ourselves from message handling for a sec
       // and let the native control render to our buffered dc.
       SetEvtHandlerEnabled( false );
-      ::SendMessage( GetHwnd(), WM_PRINT, (WPARAM)GetHdcOf( dc ), PRF_CLIENT );
+      ::SendMessage( GetHWND(), WM_PRINT, (WPARAM)dc.GetHDC(), PRF_CLIENT );
       SetEvtHandlerEnabled( true );
    }
 

@@ -28,9 +28,9 @@ wxBitmap ts_right_bmp( right_mono_bits, right_mono_width, right_mono_height );
 #endif 
 
 
-DEFINE_EVENT_TYPE(EVT_COMMAND_SH_NOTEBOOK_PAGE_CHANGING)
-DEFINE_EVENT_TYPE(EVT_COMMAND_SH_NOTEBOOK_PAGE_CHANGED)
-DEFINE_EVENT_TYPE(EVT_COMMAND_SH_NOTEBOOK_PAGE_CLOSE)
+DEFINE_LOCAL_EVENT_TYPE(EVT_COMMAND_SH_NOTEBOOK_PAGE_CHANGING)
+DEFINE_LOCAL_EVENT_TYPE(EVT_COMMAND_SH_NOTEBOOK_PAGE_CHANGED)
+DEFINE_LOCAL_EVENT_TYPE(EVT_COMMAND_SH_NOTEBOOK_PAGE_CLOSE)
 
 
 IMPLEMENT_CLASS( shNotebook, wxControl )
@@ -282,7 +282,7 @@ int shNotebook::HitTest( const wxPoint& pt, long *flags )
       *flags = shNB_HITTEST_NOWHERE;
 
    // Are we outside the tabs?
-   if ( !m_TabArea.Inside( pt ) || pt.x < m_TabSpacer.GetX() ) {
+   if ( !m_TabArea.Contains( pt ) || pt.x < m_TabSpacer.GetX() ) {
       return wxNOT_FOUND;
    }
 

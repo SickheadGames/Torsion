@@ -392,7 +392,7 @@ void TorsionApp::RegisterScriptExts()
          // The extension does not exist... so we create 
          // it and own it.
          key.Create();
-         key.SetValue( NULL, "TorsionTorqueScript" );
+         key.SetValue( wxEmptyString, "TorsionTorqueScript" );
          key.SetValue( "Content Type", "text/plain" );
          key.SetValue( "PerceivedType", "text" );
          continue;
@@ -402,10 +402,10 @@ void TorsionApp::RegisterScriptExts()
       // it's empty we can take over this ext.  If it's already
       // set to TorsionTorqueScript refresh it.
       wxString value;
-      if (  key.QueryValue( NULL, value ) && 
+      if (  key.QueryValue( wxEmptyString, value ) && 
             ( value.IsEmpty() || value == "TorsionTorqueScript" ) )
       {
-         key.SetValue( NULL, "TorsionTorqueScript" );
+         key.SetValue( wxEmptyString, "TorsionTorqueScript" );
          key.SetValue( "Content Type", "text/plain" );
          key.SetValue( "PerceivedType", "text" );
          continue;
@@ -431,11 +431,11 @@ void TorsionApp::UnregisterScriptExts( const wxArrayString& exts )
 
       // Check the default key for our value 'TorsionTorqueScript'.
       wxString value;
-      key.QueryValue( NULL, value );
+      key.QueryValue( wxEmptyString, value );
       if ( value == "TorsionTorqueScript" )
       {
          // We own this... delete stuff we put in it.
-         key.DeleteValue( NULL );
+         key.DeleteValue( wxEmptyString );
          key.DeleteValue( "Content Type" );
          key.DeleteValue( "PerceivedType" );
       }

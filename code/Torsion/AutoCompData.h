@@ -20,11 +20,12 @@ class AutoCompData
 protected:
 
    AutoCompData();
-   ~AutoCompData();
+  
 
    void Build( const AutoCompPageArray& pages, AutoCompExports* exports );
 
 public:
+	~AutoCompData();
 
    // These are used to define what icon to use
    // for the string list identifier.

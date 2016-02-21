@@ -125,7 +125,7 @@ CodeBrowserCtrl::~CodeBrowserCtrl()
       // Unhook ourselves from message handling for a sec
       // and let the native control render to our buffered dc.
       SetEvtHandlerEnabled( false );
-      ::SendMessage( GetHwnd(), WM_PAINT, (WPARAM)GetHdcOf( dc ), 0 );
+      ::SendMessage( GetHandle(), WM_PAINT, (WPARAM)dc.GetHDC(), 0 );
       SetEvtHandlerEnabled( true );
    }
 

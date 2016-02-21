@@ -137,7 +137,7 @@ void BreakpointPropertyDlg::CreateControls()
     itemBoxSizer4->Add(itemBoxSizer5, 0, wxGROW|wxBOTTOM, 5);
 
     wxStaticText* itemStaticText6 = new wxStaticText( itemDialog1, wxID_STATIC, _("&File:"), wxDefaultPosition, wxSize(30, -1), 0 );
-    itemBoxSizer5->Add(itemStaticText6, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE, 0);
+    itemBoxSizer5->Add(itemStaticText6, 0, wxALIGN_CENTER_VERTICAL|wxALL, 0);
 
     m_File = new wxTextCtrl( itemDialog1, wxID_ANY, _T(""), wxDefaultPosition, wxSize(275, -1), wxTE_READONLY );
     itemBoxSizer5->Add(m_File, 0, wxALIGN_CENTER_VERTICAL|wxALL, 0);
@@ -149,7 +149,7 @@ void BreakpointPropertyDlg::CreateControls()
     itemBoxSizer4->Add(itemBoxSizer9, 0, wxGROW|wxBOTTOM, 5);
 
     wxStaticText* itemStaticText10 = new wxStaticText( itemDialog1, wxID_STATIC, _("&Line:"), wxDefaultPosition, wxSize(30, -1), 0 );
-    itemBoxSizer9->Add(itemStaticText10, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxTOP|wxBOTTOM|wxADJUST_MINSIZE, 0);
+    itemBoxSizer9->Add(itemStaticText10, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxTOP|wxBOTTOM, 0);
 
     m_Line = new wxSpinCtrl( itemDialog1, wxID_ANY, _T("0"), wxDefaultPosition, wxSize(75, -1), wxSP_ARROW_KEYS, 1, 2147483647, 0 );
     itemBoxSizer9->Add(m_Line, 0, wxALIGN_CENTER_VERTICAL|wxALL, 0);
@@ -273,7 +273,7 @@ void BreakpointPropertyDlg::OnBrowseClick( wxCommandEvent& event )
    wxFileName file( project->MakeAbsoluteTo( m_File->GetLabel() ) );
 
 
-   wxFileDialog dlg( this, "Select A TorqueScript", file.GetPath(), file.GetFullName(), fileFilter, wxOPEN | wxFILE_MUST_EXIST );
+   wxFileDialog dlg( this, "Select A TorqueScript", file.GetPath(), file.GetFullName(), fileFilter, wxFD_OPEN | wxFD_FILE_MUST_EXIST );
    if ( dlg.ShowModal() == wxID_OK ) {
 
       m_File->SetLabel( project->MakeReleativeTo( dlg.GetPath() ) );
@@ -312,7 +312,7 @@ void BreakpointPropertyDlg::OnOkClick( wxCommandEvent& event )
    }
 
    *m_Breakpoint = newBp;
-   wxDialog::OnOK( event );
+   //wxDialog::OnOK( event );
 }
 
 

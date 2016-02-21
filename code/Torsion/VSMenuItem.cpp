@@ -45,20 +45,26 @@ bool VSMenuItem::OnMeasureItem( size_t *pwidth, size_t *pheight )
    else
    {
       wxMemoryDC dc;
-
-      wxString strMenuText = m_strName.BeforeFirst('\t');
+      wxString strMenuText = GetItemLabelText();
       wxString str = wxStripMenuCodes(strMenuText);
 
-      dc.SetFont(GetFontToUse());
-      dc.GetTextExtent(str, (long *)pwidth, (long *)pheight);
+	  wxFont fnt;
+	  GetFontToUse(fnt);
+      dc.SetFont(fnt);
+      wxSize wh = dc.GetTextExtent(str);
+	  pwidth = (size_t*)wh.GetWidth();
+	  pheight = (size_t*)wh.GetHeight();
       dc.SetFont( wxNullFont );
 
       // If we have an accelerator then measure 
       // it seperately.
+	  wxString m_strAccel = GetItemLabelText().AfterFirst('\t');
       if ( !m_strAccel.empty() )
       {
          long w, h;
-         dc.GetTextExtent( m_strAccel, &w, &h );
+         wxSize wh = dc.GetTextExtent( m_strAccel );
+		 w = wh.GetWidth();
+		 h = wh.GetHeight();
 
          if ( *pheight < h )
             *pheight = h;
@@ -145,7 +151,7 @@ bool VSMenuItem::OnDrawItem( wxDC& dc, const wxRect& rc, wxODAction act, wxODSta
    }
    DWORD colMargin = GetSysColor(COLOR_BTNFACE);
 
-   HDC hdc = GetHdcOf(dc);
+   HDC hdc = dc.GetHDC();
    COLORREF colOldText = ::SetTextColor(hdc, colText),
             colOldBack = ::SetBkColor(hdc, colBack);
 
@@ -162,8 +168,9 @@ bool VSMenuItem::OnDrawItem( wxDC& dc, const wxRect& rc, wxODAction act, wxODSta
 
    // Draw the item background.
    {
-      AutoHBRUSH hMarginBrush( colMargin );
-      SelectInHDC marBrush( hdc, hMarginBrush );
+      //AutoHBRUSH hMarginBrush( colMargin );
+	   HBRUSH hMarginBrush = CreateSolidBrush(colMargin);
+      //TODO ? SelectInHDC marBrush( hdc, hMarginBrush );
       RECT marginRect = { 
                            rc.GetLeft()-1, 
                            rc.GetTop()-1,
@@ -173,8 +180,9 @@ bool VSMenuItem::OnDrawItem( wxDC& dc, const wxRect& rc, wxODAction act, wxODSta
       FillRect( hdc, &marginRect, hMarginBrush );
 
       // Draw the background color.
-      AutoHBRUSH menuBrush( colBack );
-      SelectInHDC bakBrush2( hdc, menuBrush );
+     // AutoHBRUSH menuBrush( colBack );
+	  HBRUSH menuBrush = CreateSolidBrush(colBack);
+      //TODO ? SelectInHDC bakBrush2( hdc, menuBrush );
       RECT rectFill = { 
                         xMargin, 
                         rc.GetTop() - 1,
@@ -186,8 +194,9 @@ bool VSMenuItem::OnDrawItem( wxDC& dc, const wxRect& rc, wxODAction act, wxODSta
       // Do we have a selection?
       if ( st & wxODSelected )
       {
-         AutoHBRUSH menuBrush( colSel );
-         SelectInHDC selBrush2( hdc, menuBrush );
+         //AutoHBRUSH menuBrush( colSel );
+		 HBRUSH menuBrush = CreateSolidBrush(colSel);
+         //TODO ? SelectInHDC selBrush2( hdc, menuBrush );
 
          RECT rectSel = {
                         rc.GetLeft(), 
@@ -198,8 +207,9 @@ bool VSMenuItem::OnDrawItem( wxDC& dc, const wxRect& rc, wxODAction act, wxODSta
          FillRect( hdc, &rectSel, menuBrush );
 
          // Render the border.
-         AutoHBRUSH borderBrush( colSelBorder );
-         SelectInHDC selBrush3( hdc, borderBrush );
+         //AutoHBRUSH borderBrush( colSelBorder );
+		 HBRUSH borderBrush = CreateSolidBrush(colSelBorder);
+         //TODO ? SelectInHDC selBrush3( hdc, borderBrush );
          FrameRect( hdc, &rectSel, borderBrush );
       }
    }
@@ -218,10 +228,11 @@ bool VSMenuItem::OnDrawItem( wxDC& dc, const wxRect& rc, wxODAction act, wxODSta
       int nPrevMode = SetBkMode(hdc, TRANSPARENT);
 
       // Set the font.
-      const wxFont& fontToUse = GetFontToUse();
-      SelectInHDC selFont(hdc, GetHfontOf(fontToUse));
+	  wxFont fontToUse;// = GetFontToUse();
+	  GetFontToUse(fontToUse);
+      //TODO ? SelectInHDC selFont(hdc, GetHfontOf(fontToUse));
 
-      wxString strMenuText = m_strName.BeforeFirst('\t');
+	  wxString strMenuText = GetItemLabelText();
 
       SIZE sizeRect;
       ::GetTextExtentPoint32(hdc, strMenuText.c_str(), strMenuText.Length(), &sizeRect);
@@ -233,8 +244,9 @@ bool VSMenuItem::OnDrawItem( wxDC& dc, const wxRect& rc, wxODAction act, wxODSta
       ::DrawText( hdc, strMenuText.c_str(), strMenuText.length(), &textRect, DT_LEFT | DT_TOP );
 
       // De have an accelerator to draw?
-      if ( !m_strAccel.empty() )
+      if ( !GetItemLabel().AfterFirst('\t').empty() )
       {
+		  wxString m_strAccel = GetItemLabel().AfterFirst('\t');
             int accel_width, accel_height;
             dc.GetTextExtent(m_strAccel, &accel_width, &accel_height);
 
@@ -288,8 +300,8 @@ bool VSMenuItem::OnDrawItem( wxDC& dc, const wxRect& rc, wxODAction act, wxODSta
       // If we're checked then draw the checked active box.
       if ( st & wxODChecked && !(st & wxODDisabled))
       {
-         AutoHBRUSH menuBrush( colSel );
-         SelectInHDC selBrush2( hdc, menuBrush );
+		  HBRUSH menuBrush = CreateSolidBrush(colSel);
+         //TODO ? SelectInHDC selBrush2( hdc, menuBrush );
 
          RECT rectSel = {
                         rc.GetLeft()+1, 
@@ -300,8 +312,9 @@ bool VSMenuItem::OnDrawItem( wxDC& dc, const wxRect& rc, wxODAction act, wxODSta
          FillRect( hdc, &rectSel, menuBrush );
 
          // Render the border.
-         AutoHBRUSH borderBrush( colSelBorder );
-         SelectInHDC selBrush3( hdc, borderBrush );
+         //AutoHBRUSH borderBrush( colSelBorder );
+		 HBRUSH borderBrush = CreateSolidBrush(colSelBorder);
+         //TODO ? SelectInHDC selBrush3( hdc, borderBrush );
          FrameRect( hdc, &rectSel, borderBrush );
       }
 

@@ -53,7 +53,7 @@ bool tsToolBar::Realize()
    /*
    WXDWORD style = MSWGetStyle( GetWindowStyle(), NULL );
    #define TB_SETSTYLE (WM_USER + 56)
-   ::SendMessage( GetHwnd(), TB_SETSTYLE, 0, style );
+   ::SendMessage( GetHWND(), TB_SETSTYLE, 0, style );
 
    static bool inRealize = false;
    */

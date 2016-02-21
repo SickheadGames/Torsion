@@ -19,8 +19,8 @@
 #endif 
 
 
-DEFINE_EVENT_TYPE(tsEVT_PRECOMPILER_OUTPUT)
-DEFINE_EVENT_TYPE(tsEVT_PRECOMPILER_DONE)
+DEFINE_LOCAL_EVENT_TYPE(tsEVT_PRECOMPILER_OUTPUT)
+DEFINE_LOCAL_EVENT_TYPE(tsEVT_PRECOMPILER_DONE)
 
 
 class PreCompilerThread : public wxThread
@@ -348,7 +348,7 @@ wxThread::ExitCode PreCompilerThread::Entry()
    memset(&se, 0, sizeof(se)); 
    se.cbSize = sizeof(se); 
    se.fMask = SEE_MASK_DOENVSUBST | SEE_MASK_NOCLOSEPROCESS | SEE_MASK_FLAG_NO_UI; 
-   se.lpVerb = "open";
+   se.lpVerb = L"open";
    se.lpFile = m_Exec.c_str();
    se.lpDirectory = m_WorkingDir.c_str();
    se.lpParameters = args.c_str(); 
@@ -411,10 +411,10 @@ void PreCompilerThread::UpdateOutput( const wxString& path, wxFileOffset& lastRe
       return;
 
    wxString buffer;
-   wxChar* log = buffer.GetWriteBuf( size );
+   wxChar* log = new wxChar(buffer.GetChar(size));
    memset( log, 0, size );
    file.Read( log, size );
-   buffer.UngetWriteBuf( size );
+   //buffer.UngetWriteBuf( size );
 
    lastReadPos += size;
    WriteOutput( buffer );

@@ -15,18 +15,18 @@ WX_DEFINE_OBJARRAY(ToolCommandArray);
 
 ToolCommand::VarEntry ToolCommand::smVarTable[] =
 {
-   { "", "" },
-   { "File Path",                   "$(FilePath)" },
-   { "File Directory",              "$(FileDir)" },
-   { "File Name",                   "$(FileName)" },
-   { "File Extension",              "$(FileExt)" },
-   { "Project Name",                "$(ProjectName)" },
-   { "Project Directory",           "$(ProjectDir)" },
-   { "Project File Name",           "$(ProjectFileName)" },
-   { "Project Working Directory",   "$(ProjectWorkingDir)" },
-   { "Config Name",                 "$(ConfigName)" },
-   { "Config Executable",           "$(ConfigExe)" },
-   { "Config Arguments",            "$(ConfigArgs)" },
+   { L"", L"" },
+   { L"File Path",                   L"$(FilePath)" },
+   { L"File Directory",              L"$(FileDir)" },
+   { L"File Name",                   L"$(FileName)" },
+   { L"File Extension",              L"$(FileExt)" },
+   { L"Project Name",                L"$(ProjectName)" },
+   { L"Project Directory",           L"$(ProjectDir)" },
+   { L"Project File Name",           L"$(ProjectFileName)" },
+   { L"Project Working Directory",   L"$(ProjectWorkingDir)" },
+   { L"Config Name",                 L"$(ConfigName)" },
+   { L"Config Executable",           L"$(ConfigExe)" },
+   { L"Config Arguments",            L"$(ConfigArgs)" },
 };
 
 const wxChar* ToolCommand::GetVarName( VAR var )

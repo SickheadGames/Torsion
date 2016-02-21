@@ -13,7 +13,7 @@ class AutoCompText;
 class AutoCompThread;
 class AutoCompExports;
 
-DECLARE_EVENT_TYPE(tsEVT_AUTOCOMPDATA_UPDATED, -1)
+DECLARE_LOCAL_EVENT_TYPE(tsEVT_AUTOCOMPDATA_UPDATED, -1)
 
 WX_DECLARE_LIST(wxEvtHandler, EvtHandlerList);
 

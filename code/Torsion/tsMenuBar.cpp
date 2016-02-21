@@ -55,7 +55,7 @@ WXLRESULT tsMenuBar::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam
    {
       wxBufferedPaintDC dc( this );
       SetEvtHandlerEnabled( false );
-      ::SendMessage( GetHwndOf( this ), WM_PAINT, (WXWPARAM)GetHdcOf( dc ), lParam );
+      ::SendMessage( GetHWND(), WM_PAINT, (WXWPARAM)GetHdcOf( dc ), lParam );
       SetEvtHandlerEnabled( true );
    }
 

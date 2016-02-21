@@ -213,30 +213,30 @@ bool ProjectDoc::OnSaveDocument( const wxString& filename )
    working.MakeRelativeTo( filePath );
 
 	XmlFile Xml;
-	Xml.AddElem( "TorsionProject" );
+	Xml.AddElem(L"TorsionProject" );
 	Xml.IntoElem();
-	Xml.AddElem( "Name", m_Name );
-	Xml.AddElem( "WorkingDir", working.GetFullPath() );
-   Xml.AddElem( "EntryScript", m_EntryScript );
-   Xml.AddElem( "DebugHook", m_DebugHook );   
-   Xml.AddArrayStringElems( "Mods", "Folder", m_Mods );
-   Xml.AddElem( "ScannerExts", GetScannerExtsString() );
+	Xml.AddElem(L"Name", m_Name.wc_str() );
+	Xml.AddElem(L"WorkingDir", working.GetFullPath().wc_str() );
+   Xml.AddElem(L"EntryScript", m_EntryScript.wc_str() );
+   Xml.AddElem(L"DebugHook", m_DebugHook.wc_str() );
+   Xml.AddArrayStringElems(L"Mods", L"Folder", m_Mods );
+   Xml.AddElem(L"ScannerExts", GetScannerExtsString().wc_str() );
 
-   Xml.AddElem( "Configs" );
+   Xml.AddElem(L"Configs" );
 	Xml.IntoElem();
    for ( size_t i=0; i < m_Configs.GetCount(); i++ ) {
 
-      Xml.AddElem( "Config" );
+      Xml.AddElem(L"Config" );
 	   Xml.IntoElem();
 
-         Xml.AddElem( "Name", m_Configs[i].GetName() );
+         Xml.AddElem(L"Name", m_Configs[i].GetName().wc_str() );
          wxString exe( m_Configs[i].GetRelativeExe( filePath ) );
-         Xml.AddElem( "Executable", exe );
-         Xml.AddElem( "Arguments", m_Configs[i].GetArgs() );
-         Xml.AddBoolElem( "HasExports", m_Configs[i].HasExports() );
-         Xml.AddBoolElem( "Precompile", m_Configs[i].Precompile() );
-         Xml.AddBoolElem( "InjectDebugger", m_Configs[i].InjectDebugger() );
-         Xml.AddBoolElem( "UseSetModPaths", m_Configs[i].UseSetModPaths() );
+         Xml.AddElem(L"Executable", exe.wc_str() );
+         Xml.AddElem(L"Arguments", m_Configs[i].GetArgs().wc_str() );
+         Xml.AddBoolElem(L"HasExports", m_Configs[i].HasExports() );
+         Xml.AddBoolElem(L"Precompile", m_Configs[i].Precompile() );
+         Xml.AddBoolElem(L"InjectDebugger", m_Configs[i].InjectDebugger() );
+         Xml.AddBoolElem(L"UseSetModPaths", m_Configs[i].UseSetModPaths() );
 
       Xml.OutOfElem();
    }
@@ -245,14 +245,14 @@ bool ProjectDoc::OnSaveDocument( const wxString& filename )
    //Xml.AddBoolElem( "OneClickDebugging", m_AllowDebugHook );
    //Xml.AddBoolElem( "Precompile", m_Precompile );
 
-   Xml.AddElem( "SearchURL", m_SearchURL );
-   Xml.AddElem( "SearchProduct", m_SearchProduct );
-   Xml.AddElem( "SearchVersion", m_SearchVersion );
+   Xml.AddElem(L"SearchURL", m_SearchURL.wc_str() );
+   Xml.AddElem(L"SearchProduct", m_SearchProduct.wc_str() );
+   Xml.AddElem(L"SearchVersion", m_SearchVersion.wc_str() );
 
    Xml.AddBoolElem( "ExecModifiedScripts", m_ExecModifiedScripts );
 
    // Store it.
-   std::string Buffer( Xml.GetDoc() );
+   std::wstring Buffer( Xml.GetDoc() );
 	File.Write( Buffer.c_str(), Buffer.length() );
 
    Modify( false );
@@ -280,14 +280,14 @@ bool ProjectDoc::OnOpenDocument( const wxString& filename )
 	XmlFile Xml;
    {
 	   size_t Length = File.Length();
-      char* Buffer = new char[ Length+1 ];
+      wchar_t* Buffer = new wchar_t[ Length+1 ];
 	   File.Read( Buffer, Length );
 	   Buffer[ Length ] = 0;
       Xml.SetDoc( Buffer );
 	   delete [] Buffer;
    }
 
-   if ( !Xml.FindElem( "TorsionProject" ) ) 
+   if ( !Xml.FindElem(L"TorsionProject" ) )
    {
       wxMessageBox(_("Sorry, this project file is corrupt."), wxTheApp->GetAppName(), wxOK|wxICON_EXCLAMATION,
                         GetDocumentWindow());
@@ -295,10 +295,10 @@ bool ProjectDoc::OnOpenDocument( const wxString& filename )
 	}
 	
 	Xml.IntoElem();
-	Xml.FindElem( "Name" );
+	Xml.FindElem(L"Name" );
 	m_Name = Xml.GetData().c_str();
 	Xml.ResetMainPos();
-	Xml.FindElem( "WorkingDir" );
+	Xml.FindElem(L"WorkingDir" );
    wxFileName working( Xml.GetData().c_str() );
 	working.MakeAbsolute( filePath );
    m_WorkingDir = working.GetFullPath();
@@ -313,13 +313,13 @@ bool ProjectDoc::OnOpenDocument( const wxString& filename )
    wxString exts = Xml.GetStringElem( "ScannerExts", "cs;gui" );
    SetScannerExtsString( exts );
 
-   if ( Xml.FindElem( "Configs" ) ) 
+   if ( Xml.FindElem(L"Configs" ) )
    {
       Xml.IntoElem();
 
       m_Configs.Clear();
 
-      while ( Xml.FindElem( "Config" ) && Xml.IntoElem() ) 
+      while ( Xml.FindElem(L"Config" ) && Xml.IntoElem() )
       {
          ProjectConfig config;
 	      config.SetName( Xml.GetStringElem( "Name", wxEmptyString ) );
@@ -436,14 +436,14 @@ void ProjectDoc::LoadOptions()
    XmlFile Xml;
    {
 	   size_t Length = File.Length();
-      char* Buffer = new char[ Length+1 ];
+      wchar_t* Buffer = new wchar_t[ Length+1 ];
 	   File.Read( Buffer, Length );
 	   Buffer[ Length ] = 0;
       Xml.SetDoc( Buffer );
 	   delete [] Buffer;
    }
 
-   if ( !Xml.FindElem( "TorsionProjectOptions" ) )
+   if ( !Xml.FindElem(L"TorsionProjectOptions" ) )
 		return;
 
    Xml.IntoElem();
@@ -454,25 +454,25 @@ void ProjectDoc::LoadOptions()
    
    m_LastConfig = Xml.GetStringElem( "LastConfig", wxEmptyString );
 
-   if ( Xml.FindElem( "Breakpoints" ) )
+   if ( Xml.FindElem(L"Breakpoints" ) )
    {
       Xml.IntoElem();
 
-      while ( Xml.FindElem( "Breakpoint" ) && Xml.IntoElem() ) 
+      while ( Xml.FindElem(L"Breakpoint" ) && Xml.IntoElem() )
       {
-	      Xml.FindElem( "File" );
-	      wxString File = Xml.GetData().c_str();
+	      Xml.FindElem(L"File" );
+		  wxString File = Xml.GetData();
 	      Xml.ResetMainPos();
-	      Xml.FindElem( "Line" );
-	      int Line = atoi( Xml.GetData().c_str() );
+	      Xml.FindElem(L"Line" );
+	      int Line = wxAtoi( Xml.GetData() );
 	      Xml.ResetMainPos();
-	      Xml.FindElem( "Pass" );
-	      int Pass = atoi( Xml.GetData().c_str() );
+	      Xml.FindElem(L"Pass" );
+	      int Pass = wxAtoi( Xml.GetData() );
 	      Xml.ResetMainPos();
-	      Xml.FindElem( "Condition" );
+	      Xml.FindElem(L"Condition" );
 	      wxString Condition = Xml.GetData().c_str();
 	      Xml.ResetMainPos();
-         bool Enabled = Xml.FindElem( "Enabled" );
+         bool Enabled = Xml.FindElem(L"Enabled" );
 
          if ( !File.IsEmpty() )
             AddBreakpoint( File, Line, Pass, Condition, Enabled );
@@ -485,17 +485,17 @@ void ProjectDoc::LoadOptions()
 
 	Xml.ResetMainPos();
 
-   if ( Xml.FindElem( "Bookmarks" ) )
+   if ( Xml.FindElem(L"Bookmarks" ) )
    {
       Xml.IntoElem();
 
-      while ( Xml.FindElem( "Bookmark" ) && Xml.IntoElem() ) 
+      while ( Xml.FindElem(L"Bookmark" ) && Xml.IntoElem() )
       {
-	      Xml.FindElem( "File" );
+	      Xml.FindElem(L"File" );
 	      wxString File = Xml.GetData().c_str();
 	      Xml.ResetMainPos();
-	      Xml.FindElem( "Line" );
-	      int Line = atoi( Xml.GetData().c_str() );
+	      Xml.FindElem(L"Line" );
+	      int Line = wxAtoi( Xml.GetData() );
 	      Xml.ResetMainPos();
 
          wxString absolutePath = MakeAbsoluteTo( File );
@@ -510,13 +510,13 @@ void ProjectDoc::LoadOptions()
 
 	Xml.ResetMainPos();
 
-   if ( Xml.FindElem( "OpenFiles" ) )
+   if ( Xml.FindElem(L"OpenFiles" ) )
    {
       Xml.IntoElem();
 
       wxASSERT( tsGetMainFrame() );
       ScriptView* activeView = NULL;
-      while ( Xml.FindElem( "File" ) ) 
+      while ( Xml.FindElem(L"File" ) )
       {
          wxString File = Xml.GetData().c_str();
 
@@ -527,11 +527,11 @@ void ProjectDoc::LoadOptions()
          ScriptDoc* doc = wxDynamicCast( view->GetDocument(), ScriptDoc );
          if ( doc )
          {
-            wxPoint scroll(   atoi( Xml.GetAttrib( "ScrollX" ).c_str() ),
-                              atoi( Xml.GetAttrib( "ScrollY" ).c_str() ) );
+            wxPoint scroll(   wxAtoi( Xml.GetAttrib(L"ScrollX" ) ),
+                              wxAtoi( Xml.GetAttrib(L"ScrollY" )) );
 
             // Store the active view!
-            if ( XmlFile::StringToBool( Xml.GetAttrib( "Active" ).c_str() ) )
+            if ( XmlFile::StringToBool( Xml.GetAttrib(L"Active" ).c_str() ) )
                activeView = view;
 
             doc->SetViewScrollOffset( scroll );
@@ -570,56 +570,56 @@ void ProjectDoc::SaveOptions()
 
    char temp[MAX_PATH];
 
-	CMarkupSTL Xml;
-	Xml.AddElem( "TorsionProjectOptions" );
+	CMarkup Xml;
+	Xml.AddElem(L"TorsionProjectOptions" );
 	Xml.IntoElem();
 
-	Xml.AddElem( "Address", m_Address );
-	Xml.AddElem( "Password", m_Password );
-	Xml.AddElem( "Port", itoa( m_Port, temp, 10 ) );
+	Xml.AddElem(L"Address", m_Address.wc_str() );
+	Xml.AddElem(L"Password", m_Password.wc_str() );
+	Xml.AddElem(L"Port", wxString(itoa( m_Port, temp, 10 )).wc_str() );
 
    // Capture what the last selected config is and store it.
    m_LastConfig = tsGetMainFrame()->GetActiveConfigName();
-   Xml.AddElem( "LastConfig", m_LastConfig );
+   Xml.AddElem(L"LastConfig", m_LastConfig.wc_str() );
 
-   Xml.AddElem( "Breakpoints" );
+   Xml.AddElem(L"Breakpoints" );
 	Xml.IntoElem();
    const BreakpointArray& breakpoints = GetBreakpoints();
    for ( int i = 0; i < breakpoints.GetCount(); i++ ) 
    {
-      Xml.AddElem( "Breakpoint" );
+      Xml.AddElem(L"Breakpoint" );
 	   Xml.IntoElem();
 
          wxASSERT( !wxFileName( breakpoints[i]->GetFile() ).IsAbsolute() );
-         Xml.AddElem( "File", breakpoints[i]->GetFile() );
-         Xml.AddElem( "Line", itoa( breakpoints[i]->GetLine(), temp, 10 ) );
-         Xml.AddElem( "Pass", itoa( breakpoints[i]->GetPass(), temp, 10 ) );
-         Xml.AddElem( "Condition", breakpoints[i]->GetCondition() );
+         Xml.AddElem(L"File", breakpoints[i]->GetFile().wx_str() );
+         Xml.AddElem(L"Line", wxString(itoa( breakpoints[i]->GetLine(), temp, 10 )).wc_str() );
+         Xml.AddElem(L"Pass", wxString(itoa( breakpoints[i]->GetPass(), temp, 10 )).wc_str() );
+         Xml.AddElem(L"Condition", breakpoints[i]->GetCondition().wc_str() );
 
          if ( breakpoints[i]->GetEnabled() )
-            Xml.AddElem( "Enabled" );
+            Xml.AddElem(L"Enabled" );
 
       Xml.OutOfElem();
    }
    Xml.OutOfElem();
 
-   Xml.AddElem( "Bookmarks" );
+   Xml.AddElem(L"Bookmarks" );
 	Xml.IntoElem();
    const BookmarkArray& bookmarks = GetBookmarks();
    for ( int i = 0; i < bookmarks.GetCount(); i++ ) 
    {
-      Xml.AddElem( "Bookmark" );
+      Xml.AddElem(L"Bookmark" );
 	   Xml.IntoElem();
 
          wxASSERT( !wxFileName( bookmarks[i]->GetFile() ).IsAbsolute() );
-         Xml.AddElem( "File", bookmarks[i]->GetFile() );
-         Xml.AddElem( "Line", itoa( bookmarks[i]->GetLine(), temp, 10 ) );
+         Xml.AddElem(L"File", bookmarks[i]->GetFile().wc_str() );
+         Xml.AddElem(L"Line", wxString(itoa( bookmarks[i]->GetLine(), temp, 10 )).wc_str() );
 
       Xml.OutOfElem();
    }
    Xml.OutOfElem();
 
-   Xml.AddElem( "OpenFiles" );
+   Xml.AddElem(L"OpenFiles" );
 	Xml.IntoElem();
 
    // The open files array is sorted by the creation
@@ -628,17 +628,17 @@ void ProjectDoc::SaveOptions()
    {
       wxString File = m_OpenFiles[i].Name;
       wxASSERT( !File.IsEmpty() && wxFileName( File ).IsAbsolute() );
-      Xml.AddElem( "File", MakeReleativeTo( File ) );
-      Xml.AddAttrib( "ScrollX", itoa( m_OpenFiles[i].Offset.x, temp, 10 ) );
-      Xml.AddAttrib( "ScrollY", itoa( m_OpenFiles[i].Offset.y, temp, 10 ) );
+      Xml.AddElem(L"File", MakeReleativeTo( File ).wc_str() );
+      Xml.AddAttrib(L"ScrollX", wxString(itoa( m_OpenFiles[i].Offset.x, temp, 10 )).wc_str() );
+      Xml.AddAttrib(L"ScrollY", wxString(itoa( m_OpenFiles[i].Offset.y, temp, 10 )).wc_str() );
       if ( m_ActiveOpenFile == i )
-         Xml.AddAttrib( "Active", "true" );
+         Xml.AddAttrib(L"Active", L"true" );
    }
 
    m_OpenFiles.Clear();
    Xml.OutOfElem();
 
-   std::string Buffer( Xml.GetDoc() );
+   std::wstring Buffer( Xml.GetDoc() );
 	File.Write( Buffer.c_str(), Buffer.length() );
 }
 

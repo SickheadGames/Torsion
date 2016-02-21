@@ -229,7 +229,7 @@ class MainFrame : public wxDocMDIParentFrame
       wxComboBox*          m_ConfigComboBox;
 
       wxFindReplaceData    m_FindData;
-      FindReplaceDlg*      m_FindReplaceDialog;
+	  FindReplaceDlg*      m_FindReplaceDialog;
       FindThread*          m_FindThread;
 
       wxSashLayoutWindow*  m_ProjectSash;

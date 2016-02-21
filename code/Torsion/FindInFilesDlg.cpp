@@ -119,7 +119,7 @@ void FindInFilesDlg::CreateControls()
     itemBoxSizer3->Add(itemBoxSizer4, 0, wxALIGN_LEFT|wxTOP|wxBOTTOM, 2);
 
     wxStaticText* itemStaticText5 = new wxStaticText( itemDialog1, wxID_STATIC, _("Fi&nd what:"), wxDefaultPosition, itemDialog1->ConvertDialogToPixels(wxSize(40, -1)), wxALIGN_LEFT );
-    itemBoxSizer4->Add(itemStaticText5, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxADJUST_MINSIZE, 7);
+    itemBoxSizer4->Add(itemStaticText5, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 7);
 
     wxString* m_WhatCtrlStrings = NULL;
     m_WhatCtrl = new wxComboBox( itemDialog1, wxID_ANY, _T(""), wxDefaultPosition, itemDialog1->ConvertDialogToPixels(wxSize(160, -1)), 0, m_WhatCtrlStrings, wxCB_DROPDOWN );
@@ -129,7 +129,7 @@ void FindInFilesDlg::CreateControls()
     itemBoxSizer3->Add(itemBoxSizer7, 0, wxALIGN_LEFT|wxTOP|wxBOTTOM, 2);
 
     wxStaticText* itemStaticText8 = new wxStaticText( itemDialog1, wxID_STATIC, _("&Look in:"), wxDefaultPosition, itemDialog1->ConvertDialogToPixels(wxSize(40, -1)), wxALIGN_LEFT );
-    itemBoxSizer7->Add(itemStaticText8, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxADJUST_MINSIZE, 7);
+    itemBoxSizer7->Add(itemStaticText8, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 7);
 
     wxString* m_LookInCtrlStrings = NULL;
     m_LookInCtrl = new wxComboBox( itemDialog1, wxID_ANY, _T(""), wxDefaultPosition, itemDialog1->ConvertDialogToPixels(wxSize(160, -1)), 0, m_LookInCtrlStrings, wxCB_DROPDOWN );
@@ -142,7 +142,7 @@ void FindInFilesDlg::CreateControls()
     itemBoxSizer3->Add(itemBoxSizer11, 0, wxALIGN_LEFT|wxTOP|wxBOTTOM, 2);
 
     wxStaticText* itemStaticText12 = new wxStaticText( itemDialog1, wxID_STATIC, _("File &types:"), wxDefaultPosition, itemDialog1->ConvertDialogToPixels(wxSize(40, -1)), wxALIGN_LEFT );
-    itemBoxSizer11->Add(itemStaticText12, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxADJUST_MINSIZE, 7);
+    itemBoxSizer11->Add(itemStaticText12, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 7);
 
     wxString* m_TypeCtrlStrings = NULL;
     m_TypeCtrl = new wxComboBox( itemDialog1, wxID_ANY, _T(""), wxDefaultPosition, itemDialog1->ConvertDialogToPixels(wxSize(160, -1)), 0, m_TypeCtrlStrings, wxCB_DROPDOWN );

@@ -16,19 +16,19 @@ wxChar XmlFile::s_Temp[MAX_PATH];
 
 
 XmlFile::XmlFile() :
-   CMarkupSTL()
+	CMarkup()
 {
 }
 
 XmlFile::XmlFile( const wxChar* buffer ) :
-   CMarkupSTL( buffer )
+	CMarkup( buffer )
 {
 }
 
 wxString XmlFile::GetStringElem( const wxString& name, const wxString& value )
 {
    wxString result = value;
-   if ( FindElem( name.c_str() ) ) {
+   if ( FindElem( name.wc_str() ) ) {
       result = GetData().c_str();
    }
 	ResetMainPos();
@@ -42,7 +42,7 @@ wxPoint XmlFile::GetPointElem( const wxString& name, const wxPoint& value )
 
 void XmlFile::AddPointElem( const wxString& name, const wxPoint& value )
 {
-   AddElem( name.c_str(), PointToString( value ).c_str() );
+   AddElem( name.wc_str(), PointToString( value ).wc_str() );
 }
 
 bool XmlFile::GetBoolElem( const wxString& name, bool value )
@@ -52,7 +52,7 @@ bool XmlFile::GetBoolElem( const wxString& name, bool value )
 
 void XmlFile::AddBoolElem( const wxString& name, bool value )
 {
-   AddElem( name.c_str(), BoolToString( value ).c_str() );
+   AddElem( name.wc_str(), BoolToString( value ).wc_str() );
 }
 
 int XmlFile::GetIntElem( const wxString& name, int value )
@@ -62,14 +62,14 @@ int XmlFile::GetIntElem( const wxString& name, int value )
 
 void XmlFile::AddIntElem( const wxString& name, int value )
 {
-   AddElem( name.c_str(), IntToString( value ).c_str() );
+   AddElem( name.wc_str(), IntToString( value ).wc_str() );
 }
 
 int XmlFile::GetIntAttrib( const wxString& element, const wxString& attrib, int value )
 {
    int result = value;
-   if ( FindElem( element.c_str() ) ) {
-      wxString value( GetAttrib( attrib.c_str() ).c_str() );
+   if ( FindElem( element.wc_str() ) ) {
+      wxString value( GetAttrib( attrib.wc_str() ).c_str() );
       if ( !value.IsEmpty() ) {
          result = StringToInt( value );
       }
@@ -85,14 +85,14 @@ wxColour XmlFile::GetColorElem( const wxString& name, const wxColour& value )
 
 void XmlFile::AddColorElem( const wxString& name, const wxColour& value )
 {
-   AddElem( name.c_str(), ColorToString( value ).c_str() );
+   AddElem( name.wc_str(), ColorToString( value ).wc_str() );
 }
 
 wxColour XmlFile::GetColorAttrib( const wxString& element, const wxString& attrib, const wxColour& color )
 {
    wxColour result( color );
-   if ( FindElem( element.c_str() ) ) {
-      wxString value( GetAttrib( attrib.c_str() ).c_str() );
+   if ( FindElem( element.wc_str() ) ) {
+      wxString value( GetAttrib( attrib.wc_str() ).c_str() );
       if ( !value.IsEmpty() ) {
          result = StringToColor( value );
       }
@@ -165,10 +165,10 @@ wxString XmlFile::PointToString( const wxPoint& value )
 int XmlFile::GetArrayStringElems( wxArrayString& output, const wxString& name, const wxString& elemName )
 {
    int count = -1;
-   if ( FindElem( name ) && IntoElem() ) {
+   if ( FindElem( name.wc_str() ) && IntoElem() ) {
 
       count = 0;
-      while ( FindElem( elemName ) ) {
+      while ( FindElem( elemName.wc_str() ) ) {
          output.Add( GetData().c_str() );
          ++count;
       }
@@ -183,10 +183,10 @@ int XmlFile::GetArrayStringElems( wxArrayString& output, const wxString& name, c
 
 void XmlFile::AddArrayStringElems( const wxString& name, const wxString& elemName, const wxArrayString& strings )
 {
-	AddElem( name );
+	AddElem( name.wc_str() );
 	IntoElem();
    for ( size_t i=0; i < strings.GetCount(); i++ ) {
-      AddElem( elemName, strings[i] );
+      AddElem( elemName.wc_str(), strings[i].wc_str() );
    }
    OutOfElem();
 }

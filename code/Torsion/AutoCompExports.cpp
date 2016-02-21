@@ -6,7 +6,7 @@
 #include "AutoCompExports.h"
 
 #include "AutoCompUtil.h"
-#include "MarkupSTL.h"
+#include "Markup.h"
 
 #include <wx/regex.h>
 #include <wx/wfstream.h>
@@ -505,9 +505,9 @@ bool AutoCompExports::SaveXml( const wxString& path ) const
 	if ( !File.Open( path, wxFile::write ) )
 		return false;
 
-   CMarkupSTL xml;
+   CMarkup xml;
 
-   xml.AddElem( "exports" );
+   xml.AddElem( L"exports" );
    xml.IntoElem();
 
    _SaveClasses( xml, m_Classes );
@@ -515,30 +515,30 @@ bool AutoCompExports::SaveXml( const wxString& path ) const
 
    xml.OutOfElem();
 
-   const std::string& buffer = xml.GetDoc();
+   const std::wstring& buffer = xml.GetDoc();
 	bool noerror = File.Write( buffer.c_str(), buffer.length() ) == buffer.length();
 
    File.Close();
    return noerror;
 }
 
-void AutoCompExports::_SaveClasses( CMarkupSTL& xml, const AutoCompClassArray& classes )
+void AutoCompExports::_SaveClasses( CMarkup& xml, const AutoCompClassArray& classes )
 {
    for ( int i=0; i < classes.GetCount(); i++ ) {
 
       AutoCompClass* class_ = classes[i];
       wxASSERT( class_ );
 
-      xml.AddElem( "class" );
+      xml.AddElem(L"class" );
       xml.IntoElem();
 
       wxASSERT( !class_->GetName().IsEmpty() );
 
-      xml.AddElem( "name", class_->GetName() );
+      xml.AddElem(L"name", class_->GetName().wc_str() );
       if ( !class_->GetBase().IsEmpty() )
-         xml.AddElem( "base", class_->GetBase() );
+         xml.AddElem(L"base", class_->GetBase().wc_str() );
       if ( !class_->GetDesc().IsEmpty() )
-         xml.AddElem( "desc", class_->GetDesc() );
+         xml.AddElem(L"desc", class_->GetDesc().wc_str() );
 
       _SaveFunctions( xml, "method", class_->GetFunctions() );
       _SaveVars( xml, "field", class_->GetVars() );
@@ -547,47 +547,47 @@ void AutoCompExports::_SaveClasses( CMarkupSTL& xml, const AutoCompClassArray& c
    }
 }
 
-void AutoCompExports::_SaveFunctions( CMarkupSTL& xml, const wxString& elem, const AutoCompFunctionArray& functions )
+void AutoCompExports::_SaveFunctions( CMarkup& xml, const wxString& elem, const AutoCompFunctionArray& functions )
 {
    for ( int i=0; i < functions.GetCount(); i++ ) {
 
       AutoCompFunction* func = functions[i];
       wxASSERT( func );
 
-      xml.AddElem( elem );
+      xml.AddElem( elem.wc_str() );
       xml.IntoElem();
 
       wxASSERT( !func->GetName().IsEmpty() );
 
-      xml.AddElem( "name", func->GetName() );
+      xml.AddElem(L"name", func->GetName().wc_str() );
 
       //if ( !func->GetReturn().IsEmpty() )
       //   xml.AddElem( "return", func->GetReturn() );
       if ( !func->GetArgs().IsEmpty() )
-         xml.AddElem( "args", func->GetArgs() );
+         xml.AddElem(L"args", func->GetArgs().wc_str() );
       if ( !func->GetDesc().IsEmpty() )
-         xml.AddElem( "desc", func->GetDesc() );
+         xml.AddElem(L"desc", func->GetDesc().wc_str() );
 
       xml.OutOfElem();
    }
 }
 
 
-void AutoCompExports::_SaveVars( CMarkupSTL& xml, const wxString& elem, const AutoCompVarArray& vars )
+void AutoCompExports::_SaveVars( CMarkup& xml, const wxString& elem, const AutoCompVarArray& vars )
 {
    for ( int i=0; i < vars.GetCount(); i++ ) {
 
       AutoCompVar* var = vars[i];
       wxASSERT( var );
 
-      xml.AddElem( elem );
+      xml.AddElem( elem.wc_str() );
       xml.IntoElem();
 
       wxASSERT( !var->m_Name.IsEmpty() );
-      xml.AddElem( "name", var->m_Name );
+      xml.AddElem(L"name", var->m_Name.wc_str() );
 
       if ( !var->m_Desc.IsEmpty() )
-         xml.AddElem( "desc", var->m_Desc );
+         xml.AddElem(L"desc", var->m_Desc.wc_str() );
 
       xml.OutOfElem();
    }
@@ -601,10 +601,10 @@ bool AutoCompExports::LoadXml( const wxString& path )
 	}
 
    size_t Length = File.Length();
-   char* Buffer = new char[ Length+1 ];
+   wchar_t* Buffer = new wchar_t[ Length+1 ];
 	File.Read( Buffer, Length );
 	Buffer[ Length ] = 0;
-   CMarkupSTL xml;
+   CMarkup xml;
    bool error = xml.SetDoc( Buffer );
 	delete [] Buffer;   
 
@@ -613,7 +613,7 @@ bool AutoCompExports::LoadXml( const wxString& path )
       return false;
    }
 
-   if ( !xml.FindElem( "exports" ) )
+   if ( !xml.FindElem(L"exports" ) )
       return false;
 
    xml.IntoElem();
@@ -628,15 +628,15 @@ bool AutoCompExports::LoadXml( const wxString& path )
    return true;
 }
 
-void AutoCompExports::_LoadClasses( CMarkupSTL& xml, AutoCompClassArray& objects )
+void AutoCompExports::_LoadClasses( CMarkup& xml, AutoCompClassArray& objects )
 {
    // Now grab the classes.
-   while ( xml.FindElem( "class" ) ) 
+   while ( xml.FindElem(L"class" ) )
    {
       xml.IntoElem();
 
       // Get the class name... else there is nothing to add.
-      if ( !xml.FindElem( "name" ) ) 
+      if ( !xml.FindElem(L"name" ) )
       {
          xml.OutOfElem();
          continue;
@@ -651,7 +651,7 @@ void AutoCompExports::_LoadClasses( CMarkupSTL& xml, AutoCompClassArray& objects
 
       wxString base;
       xml.ResetMainPos();
-      if ( xml.FindElem( "base" ) )
+      if ( xml.FindElem(L"base" ) )
          base = xml.GetData().c_str();
 
       // Do we already have this one?
@@ -668,7 +668,7 @@ void AutoCompExports::_LoadClasses( CMarkupSTL& xml, AutoCompClassArray& objects
 
       // Look for a description.
       xml.ResetMainPos();
-      if ( xml.FindElem( "desc" ) )
+      if ( xml.FindElem(L"desc" ) )
          object->SetDesc( xml.GetData().c_str() );
 
       // Load the methods.
@@ -690,13 +690,13 @@ void AutoCompExports::_LoadClasses( CMarkupSTL& xml, AutoCompClassArray& objects
    } // while ( xml.FindElem( elem.c_str() ) )
 }
 
-void AutoCompExports::_LoadFunctions( CMarkupSTL& xml, const wxString& elem, AutoCompFunctionArray& functions )
+void AutoCompExports::_LoadFunctions( CMarkup& xml, const wxString& elem, AutoCompFunctionArray& functions )
 {
-   while ( xml.FindElem( elem.c_str() ) )
+   while ( xml.FindElem( elem.wc_str() ) )
    {
       xml.IntoElem();
 
-      if ( !xml.FindElem( "name" ) ) 
+      if ( !xml.FindElem(L"name" ) )
       {
          xml.OutOfElem();
          continue;
@@ -725,11 +725,11 @@ void AutoCompExports::_LoadFunctions( CMarkupSTL& xml, const wxString& elem, Aut
       //   func->SetReturn( xml.GetData().c_str() );
 
       xml.ResetMainPos();
-      if ( xml.FindElem( "args" ) )
+      if ( xml.FindElem(L"args" ) )
          func->SetArgs( xml.GetData().c_str() );
 
       xml.ResetMainPos();
-      if ( xml.FindElem( "desc" ) )
+      if ( xml.FindElem(L"desc" ) )
          func->SetDesc( xml.GetData().c_str() );
 
       xml.OutOfElem();
@@ -737,13 +737,13 @@ void AutoCompExports::_LoadFunctions( CMarkupSTL& xml, const wxString& elem, Aut
    } // while ( xml.FindElem( elem.c_str() ) )
 }
 
-void AutoCompExports::_LoadVars( CMarkupSTL& xml, const wxString& elem, AutoCompVarArray& vars )
+void AutoCompExports::_LoadVars( CMarkup& xml, const wxString& elem, AutoCompVarArray& vars )
 {
-   while ( xml.FindElem( elem.c_str() ) ) {
+   while ( xml.FindElem( elem.wc_str() ) ) {
 
       xml.IntoElem();
 
-      if ( !xml.FindElem( "name" ) ) {
+      if ( !xml.FindElem( L"name" ) ) {
          xml.OutOfElem();
          continue;
       }
@@ -766,7 +766,7 @@ void AutoCompExports::_LoadVars( CMarkupSTL& xml, const wxString& elem, AutoComp
       vars.Add( var );
 
       xml.ResetMainPos();
-      if ( xml.FindElem( "desc" ) )
+      if ( xml.FindElem(L"desc" ) )
          var->m_Desc = xml.GetData().c_str();
 
       xml.OutOfElem();

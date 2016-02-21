@@ -15,6 +15,8 @@
 #include <wx/clipbrd.h>
 #include <wx/regex.h>
 
+#include "LexTCS.h"
+
 
 #ifdef _DEBUG 
    #define new DEBUG_NEW 

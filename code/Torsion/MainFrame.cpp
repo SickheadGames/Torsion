@@ -539,7 +539,7 @@ bool MainFrame::Create( DocManager* manager, wxFrame* frame, const wxString& tit
    m_ProjectSash->SetDefaultBorderSize( 4 );
    m_ProjectSash->SetExtraBorderSize( 0 );
    m_ProjectSash->SetSashVisible( wxSASH_RIGHT, true );
-   m_ProjectSash->SetSashBorder( wxSASH_RIGHT, true ); 
+   //m_ProjectSash->SetSashBorder( wxSASH_RIGHT, true ); 
    m_ProjectSash->Hide();
    m_ProjectNotebook = new shNotebook( m_ProjectSash, wxID_ANY,
       wxDefaultPosition, wxDefaultSize, shNB_NOBUTTONS );
@@ -562,7 +562,7 @@ bool MainFrame::Create( DocManager* manager, wxFrame* frame, const wxString& tit
    m_BottomSash->SetDefaultBorderSize( 4 );
    m_BottomSash->SetExtraBorderSize( 0 );
    m_BottomSash->SetSashVisible( wxSASH_TOP, true );
-   m_BottomSash->SetSashBorder( wxSASH_TOP, true ); 
+   //m_BottomSash->SetSashBorder( wxSASH_TOP, true ); 
    m_BottomNotebook = new shNotebook( m_BottomSash, wxID_ANY, 
 	   wxDefaultPosition, wxDefaultSize, shNB_NOBUTTONS );
    /*
@@ -718,7 +718,7 @@ void MainFrame::OnCloseWindow( wxCloseEvent& event )
    tsGetAutoComp()->SetEnable( false );
 
    // Now let the base clear the rest of the docs.
-   wxDocMDIParentFrame::OnCloseWindow( event );
+   //TODO ? wxDocMDIParentFrame::OnCloseWindow( event );
 }
 
 void MainFrame::OnNewProject( wxCommandEvent& event )
@@ -810,7 +810,7 @@ bool MainFrame::OpenProject( const wxString& path )
    wxASSERT( docMan );
 
    // Is this project already open?
-   wxDocument* currentDoc = docMan->FindDocument( path );
+   wxDocument* currentDoc = docMan->FindDocumentByPath( path );
    if (currentDoc) {
       wxASSERT( m_ProjectDoc == currentDoc );
       return true;
@@ -1153,7 +1153,7 @@ void MainFrame::UpdatePrecompileMenu()
 
    // Now update the accel table.
    GetMenuBar()->RebuildAccelTable();
-   SetAcceleratorTable( GetMenuBar()->GetAccelTable() );
+   SetAcceleratorTable( *GetMenuBar()->GetAcceleratorTable() );
 }
 
 void MainFrame::OnProjectPrecompile( wxCommandEvent& event )
@@ -1873,7 +1873,7 @@ ScriptDoc* MainFrame::GetOpenDoc( const wxString& FullPath )
    // Check to see if we already have it open.
    wxDocManager* docMan = GetDocumentManager();
    wxASSERT( docMan );
-   wxDocument* doc = docMan->FindDocument( absolutePath );
+   wxDocument* doc = docMan->FindDocumentByPath( absolutePath );
    if ( !doc ) 
    {
       // Do a title search!
@@ -2092,14 +2092,16 @@ bool MainFrame::ProcessEvent(wxEvent& event)
    // or output control has focus.
    if ( event.GetId() == wxID_COPY )
    {
-      if (  GetOutputPanel() && 
-            GetOutputPanel()->m_Output == wxWindow::FindFocus() &&
-            GetOutputPanel()->m_Output->ProcessEvent( event ) )
+	   if (GetOutputPanel() &&
+		   GetOutputPanel()->m_Output == wxWindow::FindFocus() &&
+		   //TODO ? GetOutputPanel()->m_Output->ProcessEvent( event ) )
+		   ProcessEvent(event) )
          return true;
 
       if (  GetFindWindow() && 
             GetFindWindow() == wxWindow::FindFocus() &&
-            GetFindWindow()->ProcessEvent( event ) )
+          //TODO ?  GetFindWindow()->ProcessEvent( event ) )
+		  ProcessEvent(event) )
          return true;
    }
 
@@ -2285,7 +2287,7 @@ void MainFrame::UpdateDebugMenu()
 
    // Now update the accel table.
    GetMenuBar()->RebuildAccelTable();
-   SetAcceleratorTable( GetMenuBar()->GetAccelTable() );
+   SetAcceleratorTable( *GetMenuBar()->GetAcceleratorTable() );
 }
 
 void MainFrame::OnDebugStartBreak( wxCommandEvent& event )

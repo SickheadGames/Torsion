@@ -992,7 +992,7 @@ void Debugger::EscapeTorqueML( wxString& text )
    // TorqueML uses the characters 0-31 for special
    // markup hints.  Other than CR, LF, and TAB replace
    // the rest with the correct /cXX string.
-   const wxUChar* chr = (wxUChar*)text.c_str();
+   const wxUChar* chr = text.c_str();
    wxString escape;
    size_t insert;
    for ( ; *chr; )
@@ -1018,9 +1018,9 @@ void Debugger::EscapeTorqueML( wxString& text )
       else
          escape << "/c" << ((int)*chr)-1;
 
-      insert = chr - (wxUChar*)text.c_str();
+      insert = chr - text.c_str();
       text.replace( insert, 1, escape );
-      chr = (wxUChar*)(text.c_str() + insert + escape.Len());
+      chr = (wxUChar*)(text.wc_str() + insert + escape.Len());
    }
 }
 
