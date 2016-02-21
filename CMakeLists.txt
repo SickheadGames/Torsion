@@ -36,4 +36,4 @@ endif(WIN32)
 add_definitions(-DMARKUP_STL)
 
 add_executable(torsion WIN32 ${SRCS})
-target_link_libraries(torision ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES})
+target_link_libraries(torsion ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES})
