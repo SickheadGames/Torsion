@@ -15,10 +15,10 @@ enum
     shNB_HITTEST_ONICON  = 2,   // on icon
     shNB_HITTEST_ONLABEL = 4,   // on label
     shNB_HITTEST_ONBUTTON = 8,   // 0 = close, 1 = right, 2 = left
-    shNB_HITTEST_ONITEM  = wxNB_HITTEST_ONICON | wxNB_HITTEST_ONLABEL
+    shNB_HITTEST_ONITEM  = 2 | 4
 };
 
-class WXDLLEXPORT shNotebookEvent : public wxNotifyEvent
+class shNotebookEvent : public wxNotifyEvent
 {
 public:
 
@@ -56,9 +56,9 @@ private:
 
 };
 
-DECLARE_EVENT_TYPE(EVT_COMMAND_SH_NOTEBOOK_PAGE_CHANGING, -1) 
-DECLARE_EVENT_TYPE(EVT_COMMAND_SH_NOTEBOOK_PAGE_CHANGED, -1) 
-DECLARE_EVENT_TYPE(EVT_COMMAND_SH_NOTEBOOK_PAGE_CLOSE, -1) 
+DECLARE_LOCAL_EVENT_TYPE(EVT_COMMAND_SH_NOTEBOOK_PAGE_CHANGING, -1) 
+DECLARE_LOCAL_EVENT_TYPE(EVT_COMMAND_SH_NOTEBOOK_PAGE_CHANGED, -1)
+DECLARE_LOCAL_EVENT_TYPE(EVT_COMMAND_SH_NOTEBOOK_PAGE_CLOSE, -1)
 
 typedef void (wxEvtHandler::*shNotebookEventFunction)(shNotebookEvent&);
 

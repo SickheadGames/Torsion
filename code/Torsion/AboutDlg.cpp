@@ -98,17 +98,17 @@ void AboutDlg::CreateControls()
    itemBoxSizer2->Add(itemStaticBitmap3, 0, wxALIGN_LEFT|wxALL|wxFIXED_MINSIZE, 7);
 
    wxStaticText* itemStaticText4 = new wxStaticText( itemDialog1, abID_VERSION, _("v0.1.1000 \"1st Alpha\""), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
-   itemBoxSizer2->Add(itemStaticText4, 0, wxALIGN_RIGHT|wxLEFT|wxRIGHT|wxADJUST_MINSIZE, 7);
+   itemBoxSizer2->Add(itemStaticText4, 0, wxALIGN_RIGHT|wxLEFT|wxRIGHT, 7);
 
    m_RegInfo = new wxStaticText( itemDialog1, wxID_ANY, _("Unregistered"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE );
    m_RegInfo->SetFont(wxFont(8, wxSWISS, wxNORMAL, wxBOLD, false, _T("Tahoma")));
-   itemBoxSizer2->Add(m_RegInfo, 0, wxGROW|wxTOP|wxBOTTOM|wxADJUST_MINSIZE, 2);
+   itemBoxSizer2->Add(m_RegInfo, 0, wxGROW|wxTOP|wxBOTTOM, 2);
 
    wxBoxSizer* itemBoxSizer6 = new wxBoxSizer(wxHORIZONTAL);
    itemBoxSizer2->Add(itemBoxSizer6, 0, wxGROW, 0);
 
    wxStaticText* itemStaticText7 = new wxStaticText( itemDialog1, wxID_ANY, _("(c) 2008 Sickhead Games, LLC"), wxDefaultPosition, wxDefaultSize, 0 );
-   itemBoxSizer6->Add(itemStaticText7, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxADJUST_MINSIZE, 7);
+   itemBoxSizer6->Add(itemStaticText7, 0, wxALIGN_CENTER_VERTICAL|wxALL, 7);
 
    itemBoxSizer6->Add(19, 19, 1, wxGROW|wxFIXED_MINSIZE, 0);
 
@@ -118,7 +118,7 @@ void AboutDlg::CreateControls()
 
 ////@end AboutDlg content construction
 
-   FindWindow( abID_VERSION )->SetTitle( tsGetFullBuildString() );
+   FindWindow(abID_VERSION)->SetLabel( tsGetFullBuildString() );
 
    /*
    wxString info;

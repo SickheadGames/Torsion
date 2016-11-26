@@ -19,7 +19,7 @@ WX_DEFINE_LIST(EvtHandlerList);
 
 IMPLEMENT_CLASS(tsAutoCompStateHint, wxObject)
 
-DEFINE_EVENT_TYPE(tsEVT_AUTOCOMPDATA_UPDATED)
+DEFINE_LOCAL_EVENT_TYPE(tsEVT_AUTOCOMPDATA_UPDATED)
 
 AutoCompManager::AutoCompManager()
    :  m_Data( new AutoCompData() ),

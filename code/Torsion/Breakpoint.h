@@ -71,10 +71,11 @@ protected:
 
 WX_DEFINE_ARRAY( Breakpoint*, BreakpointArray );
 
+class BreakpointEvent;
+wxDECLARE_EVENT(EVT_COMMAND_BREAKPOINT, BreakpointEvent);
 
-DECLARE_EVENT_TYPE(EVT_COMMAND_BREAKPOINT, -1) 
 
-class WXDLLEXPORT BreakpointEvent : public wxEvent
+class BreakpointEvent : public wxEvent
 {
 public:
 
@@ -87,7 +88,7 @@ public:
    };
 
    BreakpointEvent()
-       : wxEvent( wxID_ANY, EVT_COMMAND_BREAKPOINT ),
+       : wxEvent ( wxID_ANY, EVT_COMMAND_BREAKPOINT ),
          m_Breakpoint( NULL ),
          m_Type( TYPE_NONE ),
          m_OldLine( -1 )
@@ -125,7 +126,6 @@ private:
    Breakpoint* m_Breakpoint;
 
 };
-
 
 typedef void (wxEvtHandler::*BreakpointEventFunction)(BreakpointEvent&);
 

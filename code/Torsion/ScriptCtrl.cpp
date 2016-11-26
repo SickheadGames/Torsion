@@ -26,6 +26,8 @@
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 
+#include "LexTCS.h"
+
 #ifdef _DEBUG 
    #define new DEBUG_NEW 
 #endif 
@@ -176,7 +178,7 @@ bool ScriptCtrl::LoadFile( const wxString& filename )
    if ( TextBuffer )
    {
       TextBuffer->Lock();
-      GetTextRangeRaw( TextBuffer->GetWriteBuf( GetTextLength() ), 0, -1 );
+      GetTextRangeRaw( wxAtoi(TextBuffer->GetWriteBuf( GetTextLength() )), 0 );
       TextBuffer->Unlock();
    }
 
@@ -278,7 +280,7 @@ bool ScriptCtrl::SaveFile( const wxString& filename )
    if ( TextBuffer )
    {
       TextBuffer->Lock();
-      GetTextRangeRaw( TextBuffer->GetWriteBuf( GetTextLength() ), 0, -1 );
+      GetTextRangeRaw( wxAtoi(TextBuffer->GetWriteBuf( GetTextLength() )), 0 );
       TextBuffer->Unlock();
    }
 
@@ -481,7 +483,7 @@ void ScriptCtrl::OnUpdateUI( wxStyledTextEvent& event )
       // custom flicker free code in tsStatusBar::OnPaint()
       // will leak it's dc once each time the line is changed.
       // No clue why this occurs... but this solves it.
-      bar->Freeze();
+	  bar->Freeze();
 
       int Pos = GetCurrentPos();
       wxString Text;
@@ -550,7 +552,8 @@ void ScriptCtrl::OnTextChanged( wxStyledTextEvent& event )
                      ( last->GetPosition() + last->GetText().Len() ) == event.GetPosition() ) 
          {
             //last->SetPosition( event.GetPosition() );
-            last->GetTextRef() << event.GetText();
+			//TODO
+			 last->SetText(event.GetText());
             add = false;
          }
       }
@@ -1451,7 +1454,7 @@ void ScriptCtrl::OnHoverStart( wxStyledTextEvent& event )
    // so we need to test for that here.
    wxPoint pt = wxGetMousePosition();
    ScreenToClient( &pt.x, &pt.y );
-   if ( !GetClientRect().Inside( pt ) )
+   if ( !GetClientRect().Contains( pt ) )
       return;
 
    // Cancel the current tip... if any.
@@ -2440,7 +2443,7 @@ void ScriptCtrl::OnContextMenu( wxContextMenuEvent& event )
 
    wxPoint pt = event.GetPosition();
    ScreenToClient( &pt.x, &pt.y );
-   if ( !GetClientRect().Inside( pt ) )
+   if ( !GetClientRect().Contains( pt ) )
    {
       // Gotta skip else the MDIDocChildFrame won't
       // get it's context menu event.

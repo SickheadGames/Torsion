@@ -256,7 +256,7 @@ void OutputPanel::OnSaveFile( wxCommandEvent& event )
    wxString path = wxFileSelector( "Choose a name for this log", 
       wxEmptyString, wxEmptyString, wxEmptyString, 
       "Log files (*.log)|*.log|Text files (*.txt)|*.txt",
-      wxSAVE | wxOVERWRITE_PROMPT, this );
+      wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this );
    
    if ( path.IsEmpty() )
       return;
@@ -271,7 +271,7 @@ void OutputPanel::OnLoadFile( wxCommandEvent& event )
    wxString path = wxFileSelector( "Choose a log file to open", 
       wxEmptyString, wxEmptyString, wxEmptyString, 
       "Log files (*.log)|*.log|Text files (*.txt)|*.txt",
-      wxOPEN | wxFILE_MUST_EXIST, this );
+      wxFD_OPEN | wxFD_FILE_MUST_EXIST, this );
    
    if ( path.IsEmpty() )
       return;

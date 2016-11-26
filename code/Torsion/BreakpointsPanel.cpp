@@ -312,7 +312,7 @@ void BreakpointsPanel::OnDelete( wxCommandEvent& event )
    wxASSERT( m_BreakList );
    long first = m_BreakList->FindItem( -1, (long)selected[0] );
 
-   for ( int i=0; i < selected.GetCount(); i++ )
+   for ( unsigned int i=0; i < selected.GetCount(); i++ )
       project->DeleteBreakpoint( selected[i] );
 
    if ( m_BreakList->GetItemCount() <= 0 )

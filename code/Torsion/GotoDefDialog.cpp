@@ -104,7 +104,7 @@ void GotoDefDialog::CreateControls()
     itemBoxSizer2->Add(itemBoxSizer3, 1, wxGROW|wxALL, 7);
 
     wxStaticText* itemStaticText4 = new wxStaticText( itemDialog1, wxID_STATIC, _("The symbol is defined in multiple locations:"), wxDefaultPosition, wxDefaultSize, 0 );
-    itemBoxSizer3->Add(itemStaticText4, 0, wxALIGN_LEFT|wxBOTTOM|wxADJUST_MINSIZE, 2);
+    itemBoxSizer3->Add(itemStaticText4, 0, wxALIGN_LEFT|wxBOTTOM, 2);
 
     m_SymbolList = new wxListView( itemDialog1, ID_SYMBOLSLIST, wxDefaultPosition, wxSize(100, 100), wxLC_REPORT|wxLC_SINGLE_SEL );
     itemBoxSizer3->Add(m_SymbolList, 1, wxGROW, 5);
@@ -238,7 +238,7 @@ wxIcon GotoDefDialog::GetIconResource( const wxString& name )
 void GotoDefDialog::OnSymbolDoubleClicked( wxListEvent& event )
 {
    m_Selected = event.GetIndex();
-   wxDialog::OnOK( wxCommandEvent() );
+   //wxDialog::OnOK( wxCommandEvent() );
 }
 
 
@@ -251,7 +251,7 @@ void GotoDefDialog::OnOkClick( wxCommandEvent& event )
    wxASSERT( m_SymbolList );
    wxASSERT( m_SymbolList->GetSelectedItemCount() == 1 );
    m_Selected = m_SymbolList->GetFirstSelected();
-   wxDialog::OnOK( event );
+   //wxDialog::OnOK( event );
 }
 
 

@@ -69,8 +69,8 @@ OutputCtrl::OutputCtrl( wxWindow* parent, wxWindowID id, const wxString& name,
    StyleSetBackground( wxSTC_STYLE_DEFAULT, tsGetPrefs().GetBgColor() );
    SetCaretForeground( tsGetPrefs().GetDefaultColor() );
 
-	StyleSetForeground( wxSTC_TCS_DEFAULT, tsGetPrefs().GetDefaultColor() );
-	StyleSetBackground( wxSTC_TCS_DEFAULT, tsGetPrefs().GetBgColor() );
+	StyleSetForeground( wxSTC_TCL_DEFAULT, tsGetPrefs().GetDefaultColor() );
+	StyleSetBackground( wxSTC_TCL_DEFAULT, tsGetPrefs().GetBgColor() );
 
    SetSelBackground( 1, tsGetPrefs().GetSelBgColor() );
    SetSelForeground( 1, tsGetPrefs().GetSelColor() );
@@ -124,8 +124,8 @@ void OutputCtrl::UpdatePrefs()
    StyleSetBackground( wxSTC_STYLE_DEFAULT, tsGetPrefs().GetBgColor() );
    SetCaretForeground( tsGetPrefs().GetDefaultColor() );
 
-	StyleSetForeground( wxSTC_TCS_DEFAULT, tsGetPrefs().GetDefaultColor() );
-	StyleSetBackground( wxSTC_TCS_DEFAULT, tsGetPrefs().GetBgColor() );
+	StyleSetForeground( wxSTC_TCL_DEFAULT, tsGetPrefs().GetDefaultColor() );
+	StyleSetBackground( wxSTC_TCL_DEFAULT, tsGetPrefs().GetBgColor() );
 
    SetSelBackground( 1, tsGetPrefs().GetSelBgColor() );
    SetSelForeground( 1, tsGetPrefs().GetSelColor() );
@@ -190,9 +190,9 @@ void OutputCtrl::AppendText( const wxString& text )
          // trick is to disable ECO_AUTOVSCROLL and ECO_AUTOHSCROLL before
          // changing the selection to change the style.  We need to submit this
          // fix back to wxWindows.
-         //::SendMessage( GetHwnd(), EM_SETOPTIONS, ECOOP_XOR, ECO_AUTOVSCROLL | ECO_AUTOHSCROLL );
+         //::SendMessage( GetHWND(), EM_SETOPTIONS, ECOOP_XOR, ECO_AUTOVSCROLL | ECO_AUTOHSCROLL );
          //SetStyle( start, last, errorStyle );
-         //::SendMessage( GetHwnd(), EM_SETOPTIONS, ECOOP_OR, ECO_AUTOVSCROLL | ECO_AUTOHSCROLL );
+         //::SendMessage( GetHWND(), EM_SETOPTIONS, ECOOP_OR, ECO_AUTOVSCROLL | ECO_AUTOHSCROLL );
 
          // Add the error to the debugger state.
          m_ErrorExpr.GetMatch( line, 2 ).ToLong( &lnumb );
@@ -219,9 +219,9 @@ void OutputCtrl::AppendText( const wxString& text )
          // trick is to disable ECO_AUTOVSCROLL and ECO_AUTOHSCROLL before
          // changing the selection to change the style.  We need to submit this
          // fix back to wxWindows.
-         //::SendMessage( GetHwnd(), EM_SETOPTIONS, ECOOP_XOR, ECO_AUTOVSCROLL | ECO_AUTOHSCROLL );
+         //::SendMessage( GetHWND(), EM_SETOPTIONS, ECOOP_XOR, ECO_AUTOVSCROLL | ECO_AUTOHSCROLL );
          //SetStyle( start, last, warnStyle );
-         //::SendMessage( GetHwnd(), EM_SETOPTIONS, ECOOP_OR, ECO_AUTOVSCROLL | ECO_AUTOHSCROLL );
+         //::SendMessage( GetHWND(), EM_SETOPTIONS, ECOOP_OR, ECO_AUTOVSCROLL | ECO_AUTOHSCROLL );
 
          // Add the error to the debugger state.
          m_WarnExpr.GetMatch( line, 2 ).ToLong( &lnumb );

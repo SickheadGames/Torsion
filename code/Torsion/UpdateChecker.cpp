@@ -59,9 +59,9 @@ bool UpdateChecker::CheckAvailable( wxString* version )
    {
       int startLen = data.Len();
       int newLen = startLen + 1024;
-      wxChar* buf = data.GetWriteBuf( newLen ) + startLen;
+      wxChar* buf = new wxChar(data.GetChar( newLen + startLen));
       client.Read( buf, newLen - startLen );
-      data.UngetWriteBuf( startLen + client.LastCount() );
+      //data.UngetWriteBuf( startLen + client.LastCount() );
       if ( client.LastError() != wxSOCKET_NOERROR )
          return false;
 

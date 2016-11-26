@@ -204,7 +204,8 @@ bool ScriptView::ProcessEvent( wxEvent& event )
             event.GetEventType() == EVT_COMMAND_BREAKPOINT ) )
    {
       wxPropagationDisabler disable( event );
-      if ( m_ScriptCtrl->ProcessEvent( event ) )
+      //TODO ? if ( m_ScriptCtrl->ProcessEvent( event ) )
+	  if(ProcessEvent(event))
          return true;
    }
 
@@ -502,7 +503,8 @@ int ScriptView::ReloadFile( int lastResult, bool force )
 wxPrintout* ScriptView::OnCreatePrintout()
 {
    wxString title;
-   GetDocument()->GetPrintableName(title);
+   //TODO ? GetDocument()->GetPrintableName(title);
+   title = GetDocument()->GetTitle();
    ScriptPrintout* printout = new ScriptPrintout( title, m_ScriptCtrl );
    return printout;
 }
@@ -543,7 +545,8 @@ void ScriptView::OnBreakpointEvent( BreakpointEvent& event )
    // TODO: Should we just make BreakpointEvent a wxCommandEvent
    // which would then be forwarded by ScriptView::ProcessEvent?
    wxASSERT( m_ScriptCtrl );
-   m_ScriptCtrl->ProcessEvent( event );
+   //TODO ?   m_ScriptCtrl->ProcessEvent( event );
+   ProcessEvent(event);
 }
 
 bool ScriptView::OnClose( bool deleteWindow )
@@ -605,7 +608,8 @@ void ScriptView::OnChangeFilename()
    if (GetFrame() && doc )
    {
       wxString title;
-      doc->GetPrintableName(title);
+      //doc->GetPrintableName(title);
+	  title = doc->GetTitle();
       if ( GetFrame()->GetView() == this )
          GetFrame()->SetTitle(title);
 

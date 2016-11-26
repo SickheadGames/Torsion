@@ -496,7 +496,7 @@ void ListCtrl::OnChar( wxKeyEvent& Event )
             break;
 
 		case WXK_PAGEUP:
-		case WXK_PRIOR:
+		case WXK_MEDIA_PREV_TRACK:
             if ( m_WatchCtrl->m_Vars.GetCount() > 0 ) {
                 m_Selected = 0;
 				Refresh();
@@ -504,7 +504,7 @@ void ListCtrl::OnChar( wxKeyEvent& Event )
             break;
 
 		case WXK_PAGEDOWN:
-		case WXK_NEXT:
+		case WXK_MEDIA_NEXT_TRACK:
             m_Selected = (int)m_WatchCtrl->m_Vars.GetCount() - 1;
 			Refresh();
             break;
@@ -654,7 +654,7 @@ bool ListCtrl::HitTest( const wxPoint& Point, int& Row, int& Column ) const
       for ( int c=0; c < cols; c++ ) {
 
          wxRect rect = _GetRect( r, c );
-         if ( rect.Inside( Point ) ) {
+         if ( rect.Contains( Point ) ) {
 
             Row = r;
             Column = c;
@@ -779,7 +779,7 @@ bool ListCtrl::HitExpansionBox( const wxPoint& Point, int Row ) const
 	const int Line = m_LineHeight * Row;
 
 	wxRect ExpandBox( Pad, Line + (( m_LineHeight - Box ) / 2 ) + 1, Box, Box );
-	return ExpandBox.Inside( CalcUnscrolledPosition( Point ) );
+	return ExpandBox.Contains( CalcUnscrolledPosition( Point ) );
 }
 
 void ListCtrl::OnPaint( wxPaintEvent& Event )
@@ -931,8 +931,9 @@ bool ListCtrlEdit::MSWShouldPreProcessMessage( WXMSG* pMsg )
       return false;
 
    // Cut, copy, paste...
-   if ( wxIsCtrlDown() && ( vkey == 'C' || vkey == 'X' || vkey == 'V' ) )
-      return false;
+   //TODO wxIsCtrlDown()
+   //if ( wxIsCtrlDown() && ( vkey == 'C' || vkey == 'X' || vkey == 'V' ) )
+   //   return false;
 
    return true;
 }

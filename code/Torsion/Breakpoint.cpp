@@ -7,10 +7,9 @@
 
 #ifdef _DEBUG 
    #define new DEBUG_NEW 
-#endif 
+#endif
 
-DEFINE_EVENT_TYPE(EVT_COMMAND_BREAKPOINT)
-
+wxDEFINE_EVENT(EVT_COMMAND_BREAKPOINT, BreakpointEvent);
 
 bool Breakpoint::IsFile( const wxString& File ) const
 {

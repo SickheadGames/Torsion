@@ -116,7 +116,7 @@ wxThread::ExitCode BuildExportsThread::Entry()
       memset(&se, 0, sizeof(se)); 
       se.cbSize = sizeof(se); 
       se.fMask = SEE_MASK_DOENVSUBST | SEE_MASK_NOCLOSEPROCESS | SEE_MASK_FLAG_NO_UI; 
-      se.lpVerb = "open";
+      se.lpVerb = L"open";
       se.lpFile = exe.c_str();
       se.lpDirectory = m_WorkingDir.c_str();
       se.lpParameters = args.c_str(); 
