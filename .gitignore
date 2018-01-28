@@ -3,3 +3,10 @@
 *.lo
 *.o
 *.obj
+/code/Torsion/.vs/Torsion/v14/.suo
+/code/Torsion/Debug/
+/code/Torsion/Debug-Dll/
+/code/Torsion/temp
+/code/wxWidgets/contrib/build/stc/vc_mswd/
+/code/wxWidgets/lib/vc_lib/*.lib
+/code/wxWidgets/lib/vc_lib/*.pdb
