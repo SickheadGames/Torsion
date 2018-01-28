@@ -19,10 +19,10 @@
 #define tsBUILDVER_START   1170288000   // time() for February 1st, 2007 00:00
 #define tsBUILDVER_MAJOR   1
 #define tsBUILDVER_MINOR   1
-#define tsBUILDVER_BUILD	392
+#define tsBUILDVER_BUILD	4013
 #define tsBUILDVER_NAME    "Final"
 #define tsBUILDVER_RES     tsBUILDVER_MAJOR, tsBUILDVER_MINOR, 0, tsBUILDVER_BUILD
-#define tsBUILDVER_RESSTR	"1.1.0.392"
+#define tsBUILDVER_RESSTR	"1.1.0.4013"
 
 
 inline wxString tsGetFullBuildString()

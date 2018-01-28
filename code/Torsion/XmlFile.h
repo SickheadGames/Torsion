@@ -6,10 +6,10 @@
 #define TORSION_XMLFILE_H
 #pragma once
 
-#include "MarkupSTL.h"
 
+#include "tinyxml2.h"
 
-class XmlFile : public CMarkupSTL
+class XmlFile : public tinyxml2::XMLDocument
 {
 public:
    XmlFile();
