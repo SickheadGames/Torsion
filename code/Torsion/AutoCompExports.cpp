@@ -17,6 +17,31 @@
    #define new DEBUG_NEW 
 #endif 
 
+enum XMLError {
+	XML_SUCCESS = 0,
+	XML_NO_ATTRIBUTE,
+	XML_WRONG_ATTRIBUTE_TYPE,
+	XML_ERROR_FILE_NOT_FOUND,
+	XML_ERROR_FILE_COULD_NOT_BE_OPENED,
+	XML_ERROR_FILE_READ_ERROR,
+	UNUSED_XML_ERROR_ELEMENT_MISMATCH,	// remove at next major version
+	XML_ERROR_PARSING_ELEMENT,
+	XML_ERROR_PARSING_ATTRIBUTE,
+	UNUSED_XML_ERROR_IDENTIFYING_TAG,	// remove at next major version
+	XML_ERROR_PARSING_TEXT,
+	XML_ERROR_PARSING_CDATA,
+	XML_ERROR_PARSING_COMMENT,
+	XML_ERROR_PARSING_DECLARATION,
+	XML_ERROR_PARSING_UNKNOWN,
+	XML_ERROR_EMPTY_DOCUMENT,
+	XML_ERROR_MISMATCHED_ELEMENT,
+	XML_ERROR_PARSING,
+	XML_CAN_NOT_CONVERT_TEXT,
+	XML_NO_TEXT_NODE,
+
+	XML_ERROR_COUNT
+};
+
 
 AutoCompExports::AutoCompExports( const wxString& name )
    :  m_Name( name ),
@@ -614,16 +639,28 @@ void AutoCompExports::_SaveVars( tinyxml2::XMLDocument& xml, const wxString& ele
       AutoCompVar* var = vars[i];
       wxASSERT( var );
 
-      xml.AddElem( elem );
-      xml.IntoElem();
+	  tinyxml2::XMLNode* node = xml.NewElement(elem);
+	  xml.InsertEndChild(node);
+//      xml.AddElem( elem );
+//      xml.IntoElem();
 
       wxASSERT( !var->m_Name.IsEmpty() );
-      xml.AddElem( "name", var->m_Name );
 
-      if ( !var->m_Desc.IsEmpty() )
-         xml.AddElem( "desc", var->m_Desc );
+	  tinyxml2::XMLNode* node2 = xml.NewElement("name");
+	  node2->SetValue(var->m_Name);
+	  node->InsertEndChild(node2);
 
-      xml.OutOfElem();
+     // xml.AddElem( "name", var->m_Name );
+
+	  if (!var->m_Desc.IsEmpty()) {
+		  tinyxml2::XMLNode* node3 = xml.NewElement("desc");
+		  node3->SetValue(var->m_Desc);
+		  node->InsertEndChild(node3);
+		  //xml.AddElem("desc", var->m_Desc);
+	  }
+      
+
+ //     xml.OutOfElem();
    }
 }
 
@@ -638,36 +675,39 @@ bool AutoCompExports::LoadXml( const wxString& path )
    char* Buffer = new char[ Length+1 ];
 	File.Read( Buffer, Length );
 	Buffer[ Length ] = 0;
-   tinyxml2::XMLDocument xml;
-   bool error = xml.SetDoc( Buffer );
+    tinyxml2::XMLDocument *xml = new tinyxml2::XMLDocument();
+
+       
+   tinyxml2::XMLError error = xml->Parse( Buffer );
 	delete [] Buffer;   
 
-   if ( !error ) {
-      wxASSERT_MSG( error, xml.GetError().c_str() );
+   if (error != XML_SUCCESS ) {
+      wxASSERT_MSG( true, "Error parsing XML text !! Error code:"+error );
       return false;
    }
 
-   if ( !xml.FindElem( "exports" ) )
+   if ( !xml->FirstChildElement( "exports" ) )
       return false;
 
-   xml.IntoElem();
+   //xml.IntoElem();
 
-   xml.ResetMainPos();
+  // xml.ResetMainPos();
    _LoadClasses( xml, m_Classes );
    AutoCompClass::SetDatablocks( &m_Classes );
 
-   xml.ResetMainPos();
+  // xml.ResetMainPos();
    _LoadFunctions( xml, "function", m_Functions );
 
    return true;
 }
 
-void AutoCompExports::_LoadClasses( tinyxml2::XMLDocument& xml, AutoCompClassArray& objects )
+void AutoCompExports::_LoadClasses( tinyxml2::XMLDocument *xml, AutoCompClassArray& objects )
 {
    // Now grab the classes.
-   while ( xml.FindElem( "class" ) ) 
+	
+   while ( xml->NextSiblingElement( "class" ) )
    {
-      xml.IntoElem();
+      //xml.IntoElem();
 
       // Get the class name... else there is nothing to add.
       if ( !xml.FindElem( "name" ) ) 
@@ -724,7 +764,7 @@ void AutoCompExports::_LoadClasses( tinyxml2::XMLDocument& xml, AutoCompClassArr
    } // while ( xml.FindElem( elem.c_str() ) )
 }
 
-void AutoCompExports::_LoadFunctions( tinyxml2::XMLDocument& xml, const wxString& elem, AutoCompFunctionArray& functions )
+void AutoCompExports::_LoadFunctions( tinyxml2::XMLDocument *xml, const wxString& elem, AutoCompFunctionArray& functions )
 {
    while ( xml.FindElem( elem.c_str() ) )
    {

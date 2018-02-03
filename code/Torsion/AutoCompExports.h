@@ -52,8 +52,8 @@ class AutoCompExports
       void _ReadDoxygenClass( const wxString& name, const wxString& base );
       bool _ReadDoxygenComment( const wxString& line, wxString& comment );
 
-      static void _LoadClasses(tinyxml2::XMLDocument& xml, AutoCompClassArray& classes );
-      static void _LoadFunctions(tinyxml2::XMLDocument& xml, const wxString& elem, AutoCompFunctionArray& functions );
+      static void _LoadClasses(tinyxml2::XMLDocument *xml, AutoCompClassArray& classes );
+      static void _LoadFunctions(tinyxml2::XMLDocument *xml, const wxString& elem, AutoCompFunctionArray& functions );
       static void _LoadVars(tinyxml2::XMLDocument& xml, const wxString& elem, AutoCompVarArray& vars );
       static void _SaveClasses(tinyxml2::XMLDocument& xml, const AutoCompClassArray& classes );
       static void _SaveFunctions(tinyxml2::XMLDocument& xml, const wxString& elem, const AutoCompFunctionArray& functions );

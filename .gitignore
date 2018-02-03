@@ -10,3 +10,5 @@
 /code/wxWidgets/contrib/build/stc/vc_mswd/
 /code/wxWidgets/lib/vc_lib/*.lib
 /code/wxWidgets/lib/vc_lib/*.pdb
+/code/Torsion/Torsion.VC.VC.opendb
+/code/Torsion/Torsion.VC.db
