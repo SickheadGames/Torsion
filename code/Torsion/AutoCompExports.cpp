@@ -705,34 +705,41 @@ void AutoCompExports::_LoadClasses( tinyxml2::XMLDocument *xml, AutoCompClassArr
 {
    // Now grab the classes.
 	
-   while ( xml->NextSiblingElement( "class" ) )
+	tinyxml2::XMLElement *element = xml->NextSiblingElement("class");
+
+   while (element)
    {
       //xml.IntoElem();
 
       // Get the class name... else there is nothing to add.
-      if ( !xml.FindElem( "name" ) ) 
+	   tinyxml2::XMLElement *nm = element->NextSiblingElement("name");
+
+      if (nm)
       {
-         xml.OutOfElem();
+        // xml.OutOfElem();
          continue;
       }
 
-      wxString name = xml.GetData().c_str();
+      wxString name = element->Value;
+
       if ( name.IsEmpty() ) 
       {
-         xml.OutOfElem();
+       //  xml.OutOfElem();
          continue;
       }
 
       wxString base;
-      xml.ResetMainPos();
-      if ( xml.FindElem( "base" ) )
-         base = xml.GetData().c_str();
+    //  xml.ResetMainPos();
+	  tinyxml2::XMLElement *bz = element->NextSiblingElement("base");
+
+      if (bz)
+         base = bz->Value;
 
       // Do we already have this one?
       if ( AutoCompClass::Find( name, objects ) )
       {
          // TODO: What can be do but skip it?
-         xml.OutOfElem();
+       //  xml.OutOfElem();
          continue;
       }
 
@@ -741,45 +748,56 @@ void AutoCompExports::_LoadClasses( tinyxml2::XMLDocument *xml, AutoCompClassArr
       objects.Add( object );
 
       // Look for a description.
-      xml.ResetMainPos();
-      if ( xml.FindElem( "desc" ) )
-         object->SetDesc( xml.GetData().c_str() );
+  //    xml.ResetMainPos();
+
+	  tinyxml2::XMLElement *dez = element->NextSiblingElement("desc");
+
+      if (dez)
+         object->SetDesc( xml->Value);
 
       // Load the methods.
-      xml.ResetMainPos();
+   //   xml.ResetMainPos();
       AutoCompFunctionArray functions( CmpNameNoCase );
       _LoadFunctions( xml, "method", functions );
       object->AddFunctions( &functions );
       wxASSERT( functions.IsEmpty() );
 
       // Load member vars.
-      xml.ResetMainPos();
+    //  xml.ResetMainPos();
       AutoCompVarArray vars( CmpNameNoCase );
       _LoadVars( xml, "field", vars );
       object->AddVars( &vars );
       wxASSERT( vars.IsEmpty() );
 
-      xml.OutOfElem();
+      //xml.OutOfElem();
+
+	  element = xml->NextSiblingElement("class");
 
    } // while ( xml.FindElem( elem.c_str() ) )
 }
 
 void AutoCompExports::_LoadFunctions( tinyxml2::XMLDocument *xml, const wxString& elem, AutoCompFunctionArray& functions )
 {
-   while ( xml.FindElem( elem.c_str() ) )
-   {
-      xml.IntoElem();
 
-      if ( !xml.FindElem( "name" ) ) 
+	tinyxml2::XMLElement *element = xml->NextSiblingElement(elem.c_str());
+
+	
+
+   while (element)
+   {
+     // xml.IntoElem();
+	   tinyxml2::XMLElement *nm = element->NextSiblingElement("name");
+
+      if ( !nm ) 
       {
-         xml.OutOfElem();
+       //  xml.OutOfElem();
          continue;
       }
 
-      wxString name = xml.GetData().c_str();
+      wxString name = nm->Value;
       if ( name.IsEmpty() ) 
       {
-         xml.OutOfElem();
+      //   xml.OutOfElem();
          continue;
       }
 
@@ -787,7 +805,7 @@ void AutoCompExports::_LoadFunctions( tinyxml2::XMLDocument *xml, const wxString
       if ( AutoCompFunction::Find( name, functions ) )
       {
          // TODO: What can be do but skip it?
-         xml.OutOfElem();
+       //  xml.OutOfElem();
          continue;
       }
 
@@ -798,33 +816,44 @@ void AutoCompExports::_LoadFunctions( tinyxml2::XMLDocument *xml, const wxString
       //if ( xml.FindElem( "return" ) )
       //   func->SetReturn( xml.GetData().c_str() );
 
-      xml.ResetMainPos();
-      if ( xml.FindElem( "args" ) )
-         func->SetArgs( xml.GetData().c_str() );
+     // xml.ResetMainPos();
 
-      xml.ResetMainPos();
-      if ( xml.FindElem( "desc" ) )
-         func->SetDesc( xml.GetData().c_str() );
+	  tinyxml2::XMLElement *argz = element->NextSiblingElement("args");
 
-      xml.OutOfElem();
+      if (argz)
+         func->SetArgs(argz->Value);
 
+    //  xml.ResetMainPos();
+
+	  tinyxml2::XMLElement *dez = element->NextSiblingElement("desc");
+      if (dez)
+         func->SetDesc(dez->Value);
+
+   //   xml.OutOfElem();
+
+
+	  element = xml->NextSiblingElement(elem.c_str());
    } // while ( xml.FindElem( elem.c_str() ) )
 }
 
-void AutoCompExports::_LoadVars( tinyxml2::XMLDocument& xml, const wxString& elem, AutoCompVarArray& vars )
+void AutoCompExports::_LoadVars( tinyxml2::XMLDocument  *xml, const wxString& elem, AutoCompVarArray& vars )
 {
-   while ( xml.FindElem( elem.c_str() ) ) {
+	tinyxml2::XMLElement *element = xml->NextSiblingElement(elem.c_str());
 
-      xml.IntoElem();
+   while (element) {
 
-      if ( !xml.FindElem( "name" ) ) {
-         xml.OutOfElem();
+     // xml.IntoElem();
+	   tinyxml2::XMLElement *nm = element->NextSiblingElement("name");
+
+
+      if ( !nm) {
+       //  xml.OutOfElem();
          continue;
       }
 
-      wxString name = xml.GetData().c_str();
+      wxString name = nm->Value;
       if ( name.IsEmpty() ) {
-         xml.OutOfElem();
+       //  xml.OutOfElem();
          continue;
       }
 
@@ -832,19 +861,22 @@ void AutoCompExports::_LoadVars( tinyxml2::XMLDocument& xml, const wxString& ele
       if ( AutoCompVar::Find( name, vars ) )
       {
          // TODO: What can be do but skip it?
-         xml.OutOfElem();
+        // xml.OutOfElem();
          continue;
       }
 
       AutoCompVar* var = new AutoCompVar( name );
       vars.Add( var );
 
-      xml.ResetMainPos();
-      if ( xml.FindElem( "desc" ) )
-         var->m_Desc = xml.GetData().c_str();
+     // xml.ResetMainPos();
+	  tinyxml2::XMLElement *dez = element->NextSiblingElement("desc");
 
-      xml.OutOfElem();
+      if (dez)
+         var->m_Desc = dez->Value;
 
+      //xml.OutOfElem();
+
+	  element = xml->NextSiblingElement(elem.c_str());
    } // while ( xml.FindElem( elem.c_str() ) )
 }
 
