@@ -720,7 +720,7 @@ void AutoCompExports::_LoadClasses( tinyxml2::XMLDocument *xml, AutoCompClassArr
          continue;
       }
 
-      wxString name = element->Value;
+      wxString name = element->GetText();
 
       if ( name.IsEmpty() ) 
       {
@@ -733,7 +733,7 @@ void AutoCompExports::_LoadClasses( tinyxml2::XMLDocument *xml, AutoCompClassArr
 	  tinyxml2::XMLElement *bz = element->NextSiblingElement("base");
 
       if (bz)
-         base = bz->Value;
+         base = bz->GetText();
 
       // Do we already have this one?
       if ( AutoCompClass::Find( name, objects ) )
@@ -753,7 +753,7 @@ void AutoCompExports::_LoadClasses( tinyxml2::XMLDocument *xml, AutoCompClassArr
 	  tinyxml2::XMLElement *dez = element->NextSiblingElement("desc");
 
       if (dez)
-         object->SetDesc( xml->Value);
+         object->SetDesc(dez->GetText());
 
       // Load the methods.
    //   xml.ResetMainPos();
@@ -794,7 +794,7 @@ void AutoCompExports::_LoadFunctions( tinyxml2::XMLDocument *xml, const wxString
          continue;
       }
 
-      wxString name = nm->Value;
+      wxString name = nm->GetText();
       if ( name.IsEmpty() ) 
       {
       //   xml.OutOfElem();
@@ -821,13 +821,13 @@ void AutoCompExports::_LoadFunctions( tinyxml2::XMLDocument *xml, const wxString
 	  tinyxml2::XMLElement *argz = element->NextSiblingElement("args");
 
       if (argz)
-         func->SetArgs(argz->Value);
+         func->SetArgs(argz->GetText());
 
     //  xml.ResetMainPos();
 
 	  tinyxml2::XMLElement *dez = element->NextSiblingElement("desc");
       if (dez)
-         func->SetDesc(dez->Value);
+         func->SetDesc(dez->GetText());
 
    //   xml.OutOfElem();
 
@@ -851,7 +851,7 @@ void AutoCompExports::_LoadVars( tinyxml2::XMLDocument  *xml, const wxString& el
          continue;
       }
 
-      wxString name = nm->Value;
+      wxString name = nm->GetText();
       if ( name.IsEmpty() ) {
        //  xml.OutOfElem();
          continue;
@@ -872,7 +872,7 @@ void AutoCompExports::_LoadVars( tinyxml2::XMLDocument  *xml, const wxString& el
 	  tinyxml2::XMLElement *dez = element->NextSiblingElement("desc");
 
       if (dez)
-         var->m_Desc = dez->Value;
+         var->m_Desc = dez->GetText();
 
       //xml.OutOfElem();
 

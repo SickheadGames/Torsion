@@ -8,6 +8,7 @@
 #include <wx/file.h>
 #include <wx/tokenzr.h>
 #include <wx/docview.h>
+#include <string>
 
 #include "XmlFile.h"
 
@@ -70,8 +71,8 @@ void AppPrefs::LoadFromString( const wxChar* Buffer )
 {
    XmlFile Xml( Buffer );
 
-	Xml.FindElem( "TorsionPrefs" );
-	Xml.IntoElem();
+	//Xml.FindElem( "TorsionPrefs" );
+	//Xml.IntoElem();
 
    wxString fontInfo = Xml.GetStringElem( "DefaultFont", m_DefaultFont.GetNativeFontInfoDesc() );
    m_DefaultFont.SetNativeFontInfo( fontInfo );
@@ -115,8 +116,8 @@ void AppPrefs::LoadFromString( const wxChar* Buffer )
 
    wxRect desktop( wxScreenDC().GetSize() );
 
-   Xml.FindElem( "Position" );
-	m_Position = StringToRect( Xml.GetData().c_str() );
+   tinyxml2::XMLElement *pPosition =  Xml.FirstChildElement( "Position" );
+	m_Position = StringToRect(pPosition->GetText());
    {
       if ( !desktop.Inside( m_Position.GetTopLeft() ) )
          m_Position.SetTopLeft( wxPoint( 0, 0 ) );
@@ -125,7 +126,7 @@ void AppPrefs::LoadFromString( const wxChar* Buffer )
       if ( m_Position.GetHeight() > desktop.GetHeight() )
          m_Position.SetHeight( desktop.GetHeight() );
    }
-	Xml.ResetMainPos();
+//	Xml.ResetMainPos();
    m_Maximized = Xml.GetBoolElem( "Maximized", false );
 
    m_ProjectSashWidth = Xml.GetIntElem( "ProjectSashWidth", -1 );
@@ -230,22 +231,27 @@ void AppPrefs::LoadFromString( const wxChar* Buffer )
    m_CheckForUpdates = Xml.GetBoolElem( "CheckForUpdates", true );
 
    m_ToolCommands.Clear();
-   if ( Xml.FindElem( "ExternalTools" ) )
-   {
-      Xml.IntoElem();
+   tinyxml2::XMLElement *pExternalTools = Xml.FirstChildElement("ExternalTools");
 
-      while ( Xml.FindElem( "Tool" ) && Xml.IntoElem() )
+   if (pExternalTools)
+   {
+     // Xml.IntoElem();
+
+	   tinyxml2::XMLElement *pTool = pExternalTools->FirstChildElement("Tool");
+
+      while (pTool)
       {
          ToolCommand cmd;
+		// pTool->FirstChildElement()
          cmd.SetTitle( Xml.GetStringElem( "Title", "(Empty)" ) );
          cmd.SetCmd( Xml.GetStringElem( "Command", wxEmptyString ) );
          cmd.SetArgs( Xml.GetStringElem( "Arguments", wxEmptyString ) );
          cmd.SetDir( Xml.GetStringElem( "Directory", wxEmptyString ) );
          m_ToolCommands.Add( cmd );
-         Xml.OutOfElem();
+       //  Xml.OutOfElem();
       }
 
-      Xml.OutOfElem();
+     // Xml.OutOfElem();
    }
    else
    {
@@ -268,15 +274,16 @@ bool AppPrefs::Save( const wxString& Path )
 	}
 
 	XmlFile Xml;
-	Xml.AddElem( "TorsionPrefs" );
-	Xml.IntoElem();
+	tinyxml2::XMLElement * pTorsionPrefs =   Xml.AddElem( "TorsionPrefs" );
+	//Xml.IntoElem();
 
-   Xml.AddElem( "DefaultFont", m_DefaultFont.GetNativeFontInfoDesc() );
+   Xml.AddElem( "DefaultFont", m_DefaultFont.GetNativeFontInfoDesc(), pTorsionPrefs);
 
-   Xml.AddElem( "ReservedWords", m_Reserved );
-	Xml.AddAttrib( "color", Xml.ColorToString( m_ReservedColor ) );
+   tinyxml2::XMLElement * pReservedWords  = Xml.AddElem( "ReservedWords", m_Reserved , pTorsionPrefs);
+   pReservedWords->Attribute("color", Xml.ColorToString(m_ReservedColor));
+	//Xml.AddAttrib( "color", Xml.ColorToString( m_ReservedColor ) );
 
-	Xml.AddElem( "ExportsColor", Xml.ColorToString( m_ExportsColor ) );
+	Xml.AddElem( "ExportsColor", Xml.ColorToString( m_ExportsColor ), pTorsionPrefs);
 
    Xml.AddColorElem( "BgColor", m_BgColor );
 
@@ -309,7 +316,7 @@ bool AppPrefs::Save( const wxString& Path )
 
    Xml.AddBoolElem( "EnhancedCompletion", m_EnhancedCompletion );
    
-   Xml.AddElem( "Position", RectToString( m_Position ) );
+   Xml.AddElem( "Position", RectToString( m_Position ), pTorsionPrefs);
    Xml.AddBoolElem( "Maximized", m_Maximized );
 
    Xml.AddIntElem( "ProjectSashWidth", m_ProjectSashWidth );
@@ -343,10 +350,10 @@ bool AppPrefs::Save( const wxString& Path )
    Xml.AddArrayStringElems( "FindSymbols", "String", m_FindSymbols );
 
    Xml.AddBoolElem( "LoadLastProject", m_LoadLastProject );
-   Xml.AddElem( "LastProject", m_LastProject );
+   Xml.AddElem( "LastProject", m_LastProject, pTorsionPrefs);
 
-   Xml.AddElem( "ScriptExtensions", GetScriptExtsString() );
-   Xml.AddElem( "DSOExts", GetDSOExtsString() );
+   Xml.AddElem( "ScriptExtensions", GetScriptExtsString(), pTorsionPrefs);
+   Xml.AddElem( "DSOExts", GetDSOExtsString(), pTorsionPrefs);
    Xml.AddArrayStringElems( "ExcludedFileNames", "Name", m_ExcludedFiles );
    Xml.AddArrayStringElems( "ExcludedFolderNames", "Name", m_ExcludedFolders );
    Xml.AddArrayStringElems( "TextExts", "Ext", m_TextExts );
@@ -357,25 +364,27 @@ bool AppPrefs::Save( const wxString& Path )
 
    Xml.AddBoolElem( "CheckForUpdates", m_CheckForUpdates );
 
-   Xml.AddElem( "ExternalTools" );
-	Xml.IntoElem();
+   tinyxml2::XMLElement * pExternalTools =  Xml.AddElem( "ExternalTools","",  pTorsionPrefs);
+	//Xml.IntoElem();
    for ( size_t i=0; i < m_ToolCommands.GetCount(); i++ ) 
    {
       const ToolCommand& cmd = m_ToolCommands[i];
 
-      Xml.AddElem( "Tool" );
-	   Xml.IntoElem();
+	  tinyxml2::XMLElement * pTool = Xml.AddElem( "Tool" ,"", pExternalTools);
+	   //Xml.IntoElem();
 
-         Xml.AddElem( "Title", cmd.GetTitle() );
-         Xml.AddElem( "Command", cmd.GetCmd() );
-         Xml.AddElem( "Arguments", cmd.GetArgs() );
-         Xml.AddElem( "Directory", cmd.GetDir() );
+         Xml.AddElem( "Title", cmd.GetTitle(),pTool );
+         Xml.AddElem( "Command", cmd.GetCmd(), pTool);
+         Xml.AddElem( "Arguments", cmd.GetArgs(), pTool);
+         Xml.AddElem( "Directory", cmd.GetDir(), pTool);
 
-      Xml.OutOfElem();
+      //Xml.OutOfElem();
    }
-   Xml.OutOfElem();
+   //Xml.OutOfElem();
+   tinyxml2::XMLPrinter printer;
+   Xml.Accept(&printer);
 
-   std::string Buffer( Xml.GetDoc() );
+   std::string Buffer(printer.CStr() );
 	File.Write( Buffer.c_str(), Buffer.length() );
 
    return true;

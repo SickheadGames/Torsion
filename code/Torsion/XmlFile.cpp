@@ -27,9 +27,10 @@ XmlFile::XmlFile(const wxChar* buffer)
 wxString XmlFile::GetStringElem(const wxString& name, const wxString& value)
 {
 	wxString result = value;
+	const char* uuu =name.c_str();
 
-	if (this->FirstChildElement(name.c_str)) {
-		result = this->FirstChildElement(name.c_str)->GetText();
+	if (this->FirstChildElement(uuu)) {
+		result = this->FirstChildElement(uuu)->GetText();
 	}
 	//ResetMainPos();
 	//FindElem
@@ -194,7 +195,8 @@ int XmlFile::GetArrayStringElems(wxArrayString& output, const wxString& name, co
 		count = 0;
 
 		for (tinyxml2::XMLElement* child = elem->FirstChildElement(); child != NULL; child = child->NextSiblingElement(elemName)) {
-			output.Add(child->Value);
+
+			output.Add(child->GetText());
 			++count;
 		}
 	}
@@ -211,10 +213,32 @@ void XmlFile::AddArrayStringElems(const wxString& name, const wxString& elemName
 	for (size_t i = 0; i < strings.GetCount(); i++) {
 		tinyxml2::XMLElement* elem2 =  this->NewElement(elemName);
 	
-		elem2->Value = strings[i];
+		elem2->SetText(strings[i]);
 
 		elem->InsertEndChild(elem2);
 	}
 	
 }
+
+tinyxml2::XMLElement * XmlFile::AddElem(const wxString & name)
+{
+
+	tinyxml2::XMLElement*  elem = this->NewElement(name);
+
+	this->InsertEndChild(elem);
+
+	return elem;
+}
+
+tinyxml2::XMLElement * XmlFile::AddElem(const wxString & name, const wxString & value, tinyxml2::XMLElement * element)
+{
+
+	tinyxml2::XMLElement*  elem = this->NewElement(name);
+	elem->SetText(value),
+	element->InsertEndChild(elem);
+
+	return elem;
+}
+
+
 
