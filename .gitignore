@@ -3,3 +3,16 @@
 *.lo
 *.o
 *.obj
+/code/Torsion/.vs/Torsion/v14/.suo
+/code/Torsion/Debug/
+/code/Torsion/Debug-Dll/
+/code/Torsion/temp
+/code/wxWidgets/contrib/build/stc/vc_mswd/
+/code/wxWidgets/lib/vc_lib/*.lib
+/code/wxWidgets/lib/vc_lib/*.pdb
+/code/Torsion/Torsion.VC.VC.opendb
+/code/Torsion/Torsion.VC.db
+/code/tinyxml2/vc_mswd/stc/tinyxml2.tlog
+/code/tinyxml2/vc_mswd/stc/tinyxml2.pdb
+/code/tinyxml2/vc_mswd/stc/tinyxml2.log
+/code/tinyxml2/vc_mswd/stc/tinyxml2.idb

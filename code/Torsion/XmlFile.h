@@ -6,10 +6,10 @@
 #define TORSION_XMLFILE_H
 #pragma once
 
-#include "MarkupSTL.h"
 
+#include "tinyxml2.h"
 
-class XmlFile : public CMarkupSTL
+class XmlFile : public tinyxml2::XMLDocument
 {
 public:
    XmlFile();
@@ -43,6 +43,11 @@ public:
 
    int GetArrayStringElems( wxArrayString& output, const wxString& name, const wxString& elemName );
    void AddArrayStringElems( const wxString& name, const wxString& elemName, const wxArrayString& strings );
+
+   tinyxml2::XMLElement*  AddElem(const wxString& name);
+   tinyxml2::XMLElement*  AddElem(const wxString& name, const wxString& value, tinyxml2::XMLElement* element);
+
+   
 
 protected:
 
