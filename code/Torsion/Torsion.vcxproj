@@ -52,7 +52,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\wxWidgets\include;..\wxWidgets\lib\mswd;..\wxWidgets\contrib\include;..\tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\wxWidgets\include\msvc;..\wxWidgets\include;..\tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -290,12 +290,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\docs\ChangeLog.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\wxWidgets\contrib\build\stc\stc.vcxproj">
-      <Project>{92fb9898-f36d-47a6-8bfe-6770c5fa4682}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
