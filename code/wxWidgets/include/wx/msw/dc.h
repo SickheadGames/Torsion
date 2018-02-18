@@ -4,19 +4,15 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: dc.h,v 1.51 2005/09/16 12:55:04 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_DC_H_
-#define _WX_DC_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "dc.h"
-#endif
+#ifndef _WX_MSW_DC_H_
+#define _WX_MSW_DC_H_
 
 #include "wx/defs.h"
+#include "wx/dc.h"
 
 // ---------------------------------------------------------------------------
 // macros
@@ -34,7 +30,7 @@ class wxDCCacheEntry: public wxObject
 public:
     wxDCCacheEntry(WXHBITMAP hBitmap, int w, int h, int depth);
     wxDCCacheEntry(WXHDC hDC, int depth);
-    ~wxDCCacheEntry();
+    virtual ~wxDCCacheEntry();
 
     WXHBITMAP   m_bitmap;
     WXHDC       m_dc;
@@ -44,11 +40,13 @@ public:
 };
 #endif
 
-class WXDLLEXPORT wxDC : public wxDCBase
+// this is an ABC: use one of the derived classes to create a DC associated
+// with a window, screen, printer and so on
+class WXDLLIMPEXP_CORE wxMSWDCImpl: public wxDCImpl
 {
 public:
-    wxDC();
-    ~wxDC();
+    wxMSWDCImpl(wxDC *owner, WXHDC hDC);
+    virtual ~wxMSWDCImpl();
 
     // implement base class pure virtuals
     // ----------------------------------
@@ -74,26 +72,28 @@ public:
 
     virtual wxCoord GetCharHeight() const;
     virtual wxCoord GetCharWidth() const;
-    virtual void DoGetTextExtent(const wxString& string,
-                                 wxCoord *x, wxCoord *y,
-                                 wxCoord *descent = NULL,
-                                 wxCoord *externalLeading = NULL,
-                                 wxFont *theFont = NULL) const;
-    virtual bool DoGetPartialTextExtents(const wxString& text, wxArrayInt& widths) const;
 
     virtual bool CanDrawBitmap() const;
     virtual bool CanGetTextExtent() const;
     virtual int GetDepth() const;
     virtual wxSize GetPPI() const;
 
-    virtual void SetMapMode(int mode);
+
+    virtual void SetMapMode(wxMappingMode mode);
     virtual void SetUserScale(double x, double y);
-    virtual void SetSystemScale(double x, double y);
     virtual void SetLogicalScale(double x, double y);
     virtual void SetLogicalOrigin(wxCoord x, wxCoord y);
     virtual void SetDeviceOrigin(wxCoord x, wxCoord y);
     virtual void SetAxisOrientation(bool xLeftRight, bool yBottomUp);
-    virtual void SetLogicalFunction(int function);
+
+#if wxUSE_DC_TRANSFORM_MATRIX
+    virtual bool CanUseTransformMatrix() const;
+    virtual bool SetTransformMatrix(const wxAffineMatrix2D& matrix);
+    virtual wxAffineMatrix2D GetTransformMatrix() const;
+    virtual void ResetTransformMatrix();
+#endif // wxUSE_DC_TRANSFORM_MATRIX
+
+    virtual void SetLogicalFunction(wxRasterOperationMode function);
 
     // implementation from now on
     // --------------------------
@@ -101,10 +101,9 @@ public:
     virtual void SetRop(WXHDC cdc);
     virtual void SelectOldObjects(WXHDC dc);
 
-    wxWindow *GetWindow() const { return m_canvas; }
     void SetWindow(wxWindow *win)
     {
-        m_canvas = win;
+        m_window = win;
 
 #if wxUSE_PALETTE
         // if we have palettes use the correct one for this window
@@ -126,6 +125,8 @@ public:
         m_clipX2 = 0;
     }
 
+    void* GetHandle() const { return (void*)GetHDC(); }
+    
     const wxBitmap& GetSelectedBitmap() const { return m_selectedBitmap; }
     wxBitmap& GetSelectedBitmap() { return m_selectedBitmap; }
 
@@ -141,9 +142,57 @@ public:
     static void ClearCache();
 #endif
 
+    // RTL related functions
+    // ---------------------
+
+    // get or change the layout direction (LTR or RTL) for this dc,
+    // wxLayout_Default is returned if layout direction is not supported
+    virtual wxLayoutDirection GetLayoutDirection() const;
+    virtual void SetLayoutDirection(wxLayoutDirection dir);
+
 protected:
+    void Init()
+    {
+        m_bOwnsDC = false;
+        m_hDC = NULL;
+
+        m_oldBitmap = NULL;
+        m_oldPen = NULL;
+        m_oldBrush = NULL;
+        m_oldFont = NULL;
+
+#if wxUSE_PALETTE
+        m_oldPalette = NULL;
+#endif // wxUSE_PALETTE
+    }
+
+    // create an uninitialized DC: this should be only used by the derived
+    // classes
+    wxMSWDCImpl( wxDC *owner ) : wxDCImpl( owner ) { Init(); }
+
+    void RealizeScaleAndOrigin();
+
+public:
+    virtual void DoGetFontMetrics(int *height,
+                                  int *ascent,
+                                  int *descent,
+                                  int *internalLeading,
+                                  int *externalLeading,
+                                  int *averageWidth) const;
+    virtual void DoGetTextExtent(const wxString& string,
+                                 wxCoord *x, wxCoord *y,
+                                 wxCoord *descent = NULL,
+                                 wxCoord *externalLeading = NULL,
+                                 const wxFont *theFont = NULL) const;
+    virtual bool DoGetPartialTextExtents(const wxString& text, wxArrayInt& widths) const;
+
     virtual bool DoFloodFill(wxCoord x, wxCoord y, const wxColour& col,
-                             int style = wxFLOOD_SURFACE);
+                             wxFloodFillStyle style = wxFLOOD_SURFACE);
+
+    virtual void DoGradientFillLinear(const wxRect& rect,
+                                      const wxColour& initialColour,
+                                      const wxColour& destColour,
+                                      wxDirection nDirection = wxEAST);
 
     virtual bool DoGetPixel(wxCoord x, wxCoord y, wxColour *col) const;
 
@@ -164,8 +213,8 @@ protected:
                                         double radius);
     virtual void DoDrawEllipse(wxCoord x, wxCoord y, wxCoord width, wxCoord height);
 
-#if wxUSE_SPLINES
-    virtual void DoDrawSpline(wxList *points);
+#if wxUSE_SPLINES && !defined(__WXWINCE__)
+    virtual void DoDrawSpline(const wxPointList *points);
 #endif
 
     virtual void DoCrossHair(wxCoord x, wxCoord y);
@@ -180,27 +229,38 @@ protected:
 
     virtual bool DoBlit(wxCoord xdest, wxCoord ydest, wxCoord width, wxCoord height,
                         wxDC *source, wxCoord xsrc, wxCoord ysrc,
-                        int rop = wxCOPY, bool useMask = false, wxCoord xsrcMask = wxDefaultCoord, wxCoord ysrcMask = wxDefaultCoord);
+                        wxRasterOperationMode rop = wxCOPY, bool useMask = false,
+                        wxCoord xsrcMask = wxDefaultCoord, wxCoord ysrcMask = wxDefaultCoord);
 
-    // this is gnarly - we can't even call this function DoSetClippingRegion()
-    // because of virtual function hiding
-    virtual void DoSetClippingRegionAsRegion(const wxRegion& region);
+    virtual bool DoStretchBlit(wxCoord xdest, wxCoord ydest,
+                               wxCoord dstWidth, wxCoord dstHeight,
+                               wxDC *source,
+                               wxCoord xsrc, wxCoord ysrc,
+                               wxCoord srcWidth, wxCoord srcHeight,
+                               wxRasterOperationMode rop = wxCOPY, bool useMask = false,
+                               wxCoord xsrcMask = wxDefaultCoord, wxCoord ysrcMask = wxDefaultCoord);
+
     virtual void DoSetClippingRegion(wxCoord x, wxCoord y,
                                      wxCoord width, wxCoord height);
+    virtual void DoSetDeviceClippingRegion(const wxRegion& region);
     virtual void DoGetClippingBox(wxCoord *x, wxCoord *y,
                                   wxCoord *w, wxCoord *h) const;
 
-    virtual void DoGetSize(int *width, int *height) const;
     virtual void DoGetSizeMM(int* width, int* height) const;
 
-    virtual void DoDrawLines(int n, wxPoint points[],
+    virtual void DoDrawLines(int n, const wxPoint points[],
                              wxCoord xoffset, wxCoord yoffset);
-    virtual void DoDrawPolygon(int n, wxPoint points[],
+    virtual void DoDrawPolygon(int n, const wxPoint points[],
                                wxCoord xoffset, wxCoord yoffset,
-                               int fillStyle = wxODDEVEN_RULE);
-    virtual void DoDrawPolyPolygon(int n, int count[], wxPoint points[],
+                               wxPolygonFillMode fillStyle = wxODDEVEN_RULE);
+    virtual void DoDrawPolyPolygon(int n, const int count[], const wxPoint points[],
                                    wxCoord xoffset, wxCoord yoffset,
-                                   int fillStyle = wxODDEVEN_RULE);
+                                   wxPolygonFillMode fillStyle = wxODDEVEN_RULE);
+    virtual wxBitmap DoGetAsBitmap(const wxRect *subrect) const
+    {
+        return subrect == NULL ? GetSelectedBitmap()
+                               : GetSelectedBitmap().GetSubBitmap(*subrect);
+    }
 
 
 #if wxUSE_PALETTE
@@ -214,11 +274,23 @@ protected:
     void InitializePalette();
 #endif // wxUSE_PALETTE
 
+protected:
     // common part of DoDrawText() and DoDrawRotatedText()
     void DrawAnyText(const wxString& text, wxCoord x, wxCoord y);
 
-    // common part of DoSetClippingRegion() and DoSetClippingRegionAsRegion()
+    // common part of DoSetClippingRegion() and DoSetDeviceClippingRegion()
     void SetClippingHrgn(WXHRGN hrgn);
+
+    // implementation of DoGetSize() for wxScreen/PrinterDC: this simply
+    // returns the size of the entire device this DC is associated with
+    //
+    // notice that we intentionally put it in a separate function instead of
+    // DoGetSize() itself because we want it to remain pure virtual both
+    // because each derived class should take care to define it as needed (this
+    // implementation is not at all always appropriate) and because we want
+    // wxDC to be an ABC to prevent it from being created directly
+    void GetDeviceSize(int *width, int *height) const;
+
 
     // MSW-specific member variables
     // -----------------------------
@@ -247,12 +319,12 @@ protected:
 #endif // wxUSE_PALETTE
 
 #if wxUSE_DC_CACHEING
-    static wxList     sm_bitmapCache;
-    static wxList     sm_dcCache;
+    static wxObjectList     sm_bitmapCache;
+    static wxObjectList     sm_dcCache;
 #endif
 
-    DECLARE_DYNAMIC_CLASS(wxDC)
-    DECLARE_NO_COPY_CLASS(wxDC)
+    DECLARE_CLASS(wxMSWDCImpl)
+    wxDECLARE_NO_COPY_CLASS(wxMSWDCImpl);
 };
 
 // ----------------------------------------------------------------------------
@@ -260,15 +332,50 @@ protected:
 // only/mainly)
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxDCTemp : public wxDC
+class WXDLLIMPEXP_CORE wxDCTempImpl : public wxMSWDCImpl
 {
 public:
-    wxDCTemp(WXHDC hdc) { SetHDC(hdc); }
-    virtual ~wxDCTemp() { SetHDC((WXHDC)NULL); }
+    // construct a temporary DC with the specified HDC and size (it should be
+    // specified whenever we know it for this HDC)
+    wxDCTempImpl(wxDC *owner, WXHDC hdc, const wxSize& size )
+        : wxMSWDCImpl( owner, hdc ),
+          m_size(size)
+    {
+    }
+
+    virtual ~wxDCTempImpl()
+    {
+        // prevent base class dtor from freeing it
+        SetHDC((WXHDC)NULL);
+    }
+
+    virtual void DoGetSize(int *w, int *h) const
+    {
+        wxASSERT_MSG( m_size.IsFullySpecified(),
+                      wxT("size of this DC hadn't been set and is unknown") );
+
+        if ( w )
+            *w = m_size.x;
+        if ( h )
+            *h = m_size.y;
+    }
 
 private:
-    DECLARE_NO_COPY_CLASS(wxDCTemp)
+    // size of this DC must be explicitly set by SetSize() as we have no way to
+    // find it ourselves
+    const wxSize m_size;
+
+    wxDECLARE_NO_COPY_CLASS(wxDCTempImpl);
 };
 
-#endif
-    // _WX_DC_H_
+class WXDLLIMPEXP_CORE wxDCTemp : public wxDC
+{
+public:
+    wxDCTemp(WXHDC hdc, const wxSize& size = wxDefaultSize)
+        : wxDC(new wxDCTempImpl(this, hdc, size))
+    {
+    }
+};
+
+#endif // _WX_MSW_DC_H_
+

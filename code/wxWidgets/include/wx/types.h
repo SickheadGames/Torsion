@@ -1,20 +1,15 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        types.h
+// Name:        wx/types.h
 // Purpose:     Type identifiers, used by resource system
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: types.h,v 1.8 2004/09/23 18:20:42 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_TYPESH__
 #define _WX_TYPESH__
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-// #pragma interface "types.h"
-#endif
 
 // Types of objects
 #define wxTYPE_ANY             0

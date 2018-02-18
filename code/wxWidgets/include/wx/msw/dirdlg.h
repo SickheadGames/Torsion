@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: dirdlg.h,v 1.15 2004/08/24 10:31:34 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,11 +11,7 @@
 #ifndef _WX_DIRDLG_H_
 #define _WX_DIRDLG_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "dirdlg.h"
-#endif
-
-class WXDLLEXPORT wxDirDialog : public wxDialog
+class WXDLLIMPEXP_CORE wxDirDialog : public wxDirDialogBase
 {
 public:
     wxDirDialog(wxWindow *parent,
@@ -27,21 +22,16 @@ public:
                 const wxSize& size = wxDefaultSize,
                 const wxString& name = wxDirDialogNameStr);
 
-    void SetMessage(const wxString& message) { m_message = message; }
     void SetPath(const wxString& path);
-    void SetStyle(long style) { SetWindowStyle(style); }
-
-    wxString GetMessage() const { return m_message; }
-    wxString GetPath() const { return m_path; }
-    long GetStyle() const { return GetWindowStyle(); }
 
     virtual int ShowModal();
 
-protected:
-    wxString    m_message;
-    wxString    m_path;
-
 private:
+    // The real implementations of ShowModal(), used for Windows versions
+    // before and since Vista.
+    int ShowSHBrowseForFolder(WXHWND owner);
+    int ShowIFileDialog(WXHWND owner);
+
     DECLARE_DYNAMIC_CLASS_NO_COPY(wxDirDialog)
 };
 

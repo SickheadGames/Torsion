@@ -4,7 +4,6 @@
 // Author:      Jan van Dijk <jan@etpmod.phys.tue.nl>
 // Modified by:
 // Created:     18.12.2002
-// RCS-ID:      $Id: iosfwrap.h,v 1.7 2005/04/12 21:06:03 ABX Exp $
 // Copyright:   wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,7 +17,7 @@
 #   include <iosfwd>
 #endif
 
-#ifdef __WXMSW__
+#ifdef __WINDOWS__
 #   include "wx/msw/winundef.h"
 #endif
 

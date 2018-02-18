@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        wx/cocoa/clipboard.h
+// Name:        wx/cocoa/clipbrd.h
 // Purpose:     wxClipboard
 // Author:      David Elliott <dfe@cox.net>
 // Modified by:
 // Created:     2003/07/23
-// RCS-ID:      $Id: clipbrd.h,v 1.3 2004/05/23 20:50:42 JS Exp $
 // Copyright:   (c) 2003 David Elliott
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -22,7 +21,7 @@ class wxClipboard : public wxClipboardBase
     DECLARE_DYNAMIC_CLASS(wxClipboard)
 public:
     wxClipboard();
-    ~wxClipboard();
+    virtual ~wxClipboard();
 
     // open the clipboard before SetData() and GetData()
     virtual bool Open();

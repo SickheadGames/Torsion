@@ -4,20 +4,19 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/03/16
-// RCS-ID:      $Id:
 // Copyright:   (c) 2003 David Elliott
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WX_COCOA_STATBMP_H__
 #define __WX_COCOA_STATBMP_H__
 
-// #include "wx/cocoa/NSxxx.h"
+DECLARE_WXCOCOA_OBJC_CLASS(NSImageView);
 
 // ========================================================================
 // wxStaticBitmap
 // ========================================================================
-class WXDLLEXPORT wxStaticBitmap : public wxStaticBitmapBase //, protected wxCocoaNSxxx
+class WXDLLIMPEXP_CORE wxStaticBitmap : public wxStaticBitmapBase //, protected wxCocoaNSxxx
 {
     DECLARE_DYNAMIC_CLASS(wxStaticBitmap)
     DECLARE_EVENT_TABLE()
@@ -46,6 +45,9 @@ public:
 // ------------------------------------------------------------------------
 // Cocoa specifics
 // ------------------------------------------------------------------------
+    WX_NSImageView GetNSImageView() { return (WX_NSImageView)m_cocoaNSView; }
+    wxBitmap m_bitmap;
+
 // ------------------------------------------------------------------------
 // Implementation
 // ------------------------------------------------------------------------

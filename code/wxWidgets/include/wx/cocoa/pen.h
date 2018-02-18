@@ -4,9 +4,8 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/08/02 (stubs from 22.03.2003)
-// RCS-ID:      $Id: pen.h,v 1.6 2004/05/23 20:50:42 JS Exp $
 // Copyright:   (c) 2003 David Elliott
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WX_COCOA_PEN_H__
@@ -15,57 +14,59 @@
 #include "wx/gdiobj.h"
 #include "wx/gdicmn.h"
 
-class WXDLLEXPORT wxColour;
-class WXDLLEXPORT wxBitmap;
+class WXDLLIMPEXP_FWD_CORE wxColour;
+class WXDLLIMPEXP_FWD_CORE wxBitmap;
 
 // ========================================================================
 // wxPen
 // ========================================================================
-class WXDLLEXPORT wxPen: public wxGDIObject
+class WXDLLIMPEXP_CORE wxPen: public wxGDIObject
 {
-    DECLARE_DYNAMIC_CLASS(wxPen)
 public:
     wxPen();
-    wxPen(const wxColour& col, int width = 1, int style = wxSOLID);
+    wxPen(const wxColour& col, int width = 1, wxPenStyle style = wxPENSTYLE_SOLID);
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
+    wxDEPRECATED_FUTURE( wxPen(const wxColour& col, int width, int style) );
+#endif
     wxPen(const wxBitmap& stipple, int width);
-    wxPen(const wxPen& pen)
-        : wxGDIObject()
-        { Ref(pen); }
-    ~wxPen();
+    virtual ~wxPen();
 
-    // wxObjectRefData
-    wxObjectRefData *CreateRefData() const;
-    wxObjectRefData *CloneRefData(const wxObjectRefData *data) const;
-
-    inline wxPen& operator = (const wxPen& pen)
-    {   if (*this == pen) return (*this); Ref(pen); return *this; }
-    inline bool operator == (const wxPen& pen)
-    {   return m_refData == pen.m_refData; }
-    inline bool operator != (const wxPen& pen)
-    {   return m_refData != pen.m_refData; }
-
-    virtual bool Ok() const { return (m_refData != NULL) ; }
+    // FIXME: operator==() is wrong
+    bool operator==(const wxPen& pen) const { return m_refData == pen.m_refData; }
+    bool operator!=(const wxPen& pen) const { return !(*this == pen); }
 
     void SetColour(const wxColour& col) ;
     void SetColour(unsigned char r, unsigned char g, unsigned char b)  ;
 
     void SetWidth(int width);
-    void SetStyle(int style);
+    void SetStyle(wxPenStyle style);
     void SetStipple(const wxBitmap& stipple);
     void SetDashes(int nb_dashes, const wxDash *dash);
-    void SetJoin(int join);
-    void SetCap(int cap);
+    void SetJoin(wxPenJoin join);
+    void SetCap(wxPenCap cap);
 
-    wxColour& GetColour() const;
+    wxColour GetColour() const;
     int GetWidth() const;
-    int GetStyle() const;
-    int GetJoin() const;
-    int GetCap() const;
+    wxPenStyle GetStyle() const;
+    wxPenJoin GetJoin() const;
+    wxPenCap GetCap() const;
     int GetDashes(wxDash **ptr) const;
     wxBitmap *GetStipple() const;
 
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
+    wxDEPRECATED_FUTURE( void SetStyle(int style) )
+        { SetStyle((wxPenStyle)style); }
+#endif
+
+    // Cocoa-specific
     WX_NSColor GetNSColor();
-    int GetCocoaLineDash(const float **pattern);
+    int GetCocoaLineDash(const CGFloat **pattern);
+
+protected:
+    wxGDIRefData *CreateGDIRefData() const;
+    wxGDIRefData *CloneGDIRefData(const wxGDIRefData *data) const;
+
+    DECLARE_DYNAMIC_CLASS(wxPen)
 };
 
 #endif // __WX_COCOA_PEN_H__

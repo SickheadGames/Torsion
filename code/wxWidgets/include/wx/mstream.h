@@ -4,7 +4,6 @@
 // Author:      Guilhem Lavaux
 // Modified by:
 // Created:     11/07/98
-// RCS-ID:      $Id: mstream.h,v 1.32 2005/04/02 22:36:52 VZ Exp $
 // Copyright:   (c) Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,24 +17,37 @@
 
 #include "wx/stream.h"
 
-class WXDLLIMPEXP_BASE wxMemoryOutputStream;
+class WXDLLIMPEXP_FWD_BASE wxMemoryOutputStream;
 
 class WXDLLIMPEXP_BASE wxMemoryInputStream : public wxInputStream
 {
 public:
     wxMemoryInputStream(const void *data, size_t length);
     wxMemoryInputStream(const wxMemoryOutputStream& stream);
+    wxMemoryInputStream(wxInputStream& stream,
+                        wxFileOffset lenFile = wxInvalidOffset)
+    {
+        InitFromStream(stream, lenFile);
+    }
+    wxMemoryInputStream(wxMemoryInputStream& stream)
+        : wxInputStream()
+    {
+        InitFromStream(stream, wxInvalidOffset);
+    }
+
     virtual ~wxMemoryInputStream();
     virtual wxFileOffset GetLength() const { return m_length; }
-    virtual bool Eof() const;
     virtual bool IsSeekable() const { return true; }
 
-    char Peek();
+    virtual char Peek();
+    virtual bool CanRead() const;
 
     wxStreamBuffer *GetInputStreamBuffer() const { return m_i_streambuf; }
 
+#if WXWIN_COMPATIBILITY_2_6
     // deprecated, compatibility only
-    wxStreamBuffer *InputStreamBuffer() const { return m_i_streambuf; }
+    wxDEPRECATED( wxStreamBuffer *InputStreamBuffer() const );
+#endif // WXWIN_COMPATIBILITY_2_6
 
 protected:
     wxStreamBuffer *m_i_streambuf;
@@ -45,9 +57,14 @@ protected:
     wxFileOffset OnSysTell() const;
 
 private:
+    // common part of ctors taking wxInputStream
+    void InitFromStream(wxInputStream& stream, wxFileOffset lenFile);
+
     size_t m_length;
 
-    DECLARE_NO_COPY_CLASS(wxMemoryInputStream)
+    // copy ctor is implemented above: it copies the other stream in this one
+    DECLARE_ABSTRACT_CLASS(wxMemoryInputStream)
+    wxDECLARE_NO_ASSIGN_CLASS(wxMemoryInputStream);
 };
 
 class WXDLLIMPEXP_BASE wxMemoryOutputStream : public wxOutputStream
@@ -63,8 +80,10 @@ public:
 
     wxStreamBuffer *GetOutputStreamBuffer() const { return m_o_streambuf; }
 
+#if WXWIN_COMPATIBILITY_2_6
     // deprecated, compatibility only
-    wxStreamBuffer *OutputStreamBuffer() const { return m_o_streambuf; }
+    wxDEPRECATED( wxStreamBuffer *OutputStreamBuffer() const );
+#endif // WXWIN_COMPATIBILITY_2_6
 
 protected:
     wxStreamBuffer *m_o_streambuf;
@@ -74,12 +93,17 @@ protected:
     wxFileOffset OnSysSeek(wxFileOffset pos, wxSeekMode mode);
     wxFileOffset OnSysTell() const;
 
-    DECLARE_NO_COPY_CLASS(wxMemoryOutputStream)
+    DECLARE_DYNAMIC_CLASS(wxMemoryOutputStream)
+    wxDECLARE_NO_COPY_CLASS(wxMemoryOutputStream);
 };
+
+#if WXWIN_COMPATIBILITY_2_6
+    inline wxStreamBuffer *wxMemoryInputStream::InputStreamBuffer() const { return m_i_streambuf; }
+    inline wxStreamBuffer *wxMemoryOutputStream::OutputStreamBuffer() const { return m_o_streambuf; }
+#endif // WXWIN_COMPATIBILITY_2_6
 
 #endif
   // wxUSE_STREAMS
 
 #endif
   // _WX_WXMMSTREAM_H__
-

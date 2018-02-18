@@ -5,10 +5,6 @@
 #ifndef _DUMMY_XLIBH_
 #define _DUMMY_XLIBH_
 
-#ifdef __GNUG__
-    #pragma interface "Xlib.h"
-#endif
-
 /* Move away the typedef in XtoNX.h */
 #define XFontStruct XFontStruct1
 #include <XtoNX.h>
@@ -48,7 +44,7 @@ typedef struct {
 #define   CWStackMode                 (1<<6)
 
 /* Values */
- 
+
 typedef struct {
         int x, y;
         int width, height;
@@ -118,8 +114,8 @@ typedef struct {
 #define XFreeCursor(d, c) GrDestroyCursor(c)
 #define XFreeGC(d, gc) GrDestroyGC(gc)
 #define XSetBackground(d, gc, c) GrSetGCBackground(gc, c)
-#define DefaultVisual(d, s) ((Visual*) NULL)
-#define DefaultColormap(d, s) DefaultColormapOfScreen((Screen*) NULL)
+#define DefaultVisual(d, s) (NULL)
+#define DefaultColormap(d, s) DefaultColormapOfScreen(NULL)
 #define DefaultScreenOfDisplay(d) 0
 #define XSetFillStyle(d, gc, s) wxNoop()
 #define XSetLineAttributes(d, gc, a, b, c, e) wxNoop()

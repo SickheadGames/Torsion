@@ -1,30 +1,30 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        choice.h
+// Name:        wx/gtk/choice.h
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id: choice.h,v 1.41 2005/08/17 14:22:37 VZ Exp $
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef __GTKCHOICEH__
-#define __GTKCHOICEH__
+#ifndef _WX_GTK_CHOICE_H_
+#define _WX_GTK_CHOICE_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "choice.h"
-#endif
-
-class WXDLLIMPEXP_BASE wxSortedArrayString;
-class WXDLLIMPEXP_BASE wxArrayString;
+class WXDLLIMPEXP_FWD_BASE wxSortedArrayString;
+class WXDLLIMPEXP_FWD_BASE wxArrayString;
 
 //-----------------------------------------------------------------------------
 // wxChoice
 //-----------------------------------------------------------------------------
 
+class wxGtkCollatedArrayString;
+
 class WXDLLIMPEXP_CORE wxChoice : public wxChoiceBase
 {
 public:
-    wxChoice();
+    wxChoice()
+    {
+        Init();
+    }
     wxChoice( wxWindow *parent, wxWindowID id,
             const wxPoint& pos = wxDefaultPosition,
             const wxSize& size = wxDefaultSize,
@@ -33,8 +33,7 @@ public:
             const wxValidator& validator = wxDefaultValidator,
             const wxString& name = wxChoiceNameStr )
     {
-        m_strings = (wxSortedArrayString *)NULL;
-
+        Init();
         Create(parent, id, pos, size, n, choices, style, validator, name);
     }
     wxChoice( wxWindow *parent, wxWindowID id,
@@ -45,15 +44,14 @@ public:
             const wxValidator& validator = wxDefaultValidator,
             const wxString& name = wxChoiceNameStr )
     {
-        m_strings = (wxSortedArrayString *)NULL;
-
+        Init();
         Create(parent, id, pos, size, choices, style, validator, name);
     }
-    ~wxChoice();
+    virtual ~wxChoice();
     bool Create( wxWindow *parent, wxWindowID id,
             const wxPoint& pos = wxDefaultPosition,
             const wxSize& size = wxDefaultSize,
-            int n = 0, const wxString choices[] = (wxString *) NULL,
+            int n = 0, const wxString choices[] = NULL,
             long style = 0,
             const wxValidator& validator = wxDefaultValidator,
             const wxString& name = wxChoiceNameStr );
@@ -65,56 +63,56 @@ public:
             const wxValidator& validator = wxDefaultValidator,
             const wxString& name = wxChoiceNameStr );
 
-    // implement base class pure virtuals
-    void Delete(int n);
-    void Clear();
-
     int GetSelection() const;
-#if wxABI_VERSION >= 20602
-    int GetCurrentSelection() const { return GetSelection(); }
-#endif
-    void SetSelection( int n );
+    void SetSelection(int n);
 
-    virtual int GetCount() const;
-    int FindString( const wxString& string ) const;
-    wxString GetString( int n ) const;
-    void SetString( int n, const wxString& string );
+    virtual unsigned int GetCount() const;
+    virtual int FindString(const wxString& s, bool bCase = false) const;
+    virtual wxString GetString(unsigned int n) const;
+    virtual void SetString(unsigned int n, const wxString& string);
+
+    virtual void SetColumns(int n=1);
+    virtual int GetColumns() const;
+
+    virtual void GTKDisableEvents();
+    virtual void GTKEnableEvents();
 
     static wxVisualAttributes
     GetClassDefaultAttributes(wxWindowVariant variant = wxWINDOW_VARIANT_NORMAL);
 
 protected:
-    wxList m_clientList;    // contains the client data for the items
-
-    void DoApplyWidgetStyle(GtkRcStyle *style);
-    virtual int DoAppend(const wxString& item);
-    virtual int DoInsert(const wxString& item, int pos);
-
-    virtual void DoSetItemClientData( int n, void* clientData );
-    virtual void* DoGetItemClientData( int n ) const;
-    virtual void DoSetItemClientObject( int n, wxClientData* clientData );
-    virtual wxClientData* DoGetItemClientObject( int n ) const;
-
-    virtual wxSize DoGetBestSize() const;
-
-    virtual bool IsOwnGtkWindow( GdkWindow *window );
-
-private:
-    // common part of Create() and DoAppend()
-    int GtkAddHelper(GtkWidget *menu, int pos, const wxString& item);
-
     // this array is only used for controls with wxCB_SORT style, so only
     // allocate it if it's needed (hence using pointer)
-    wxSortedArrayString *m_strings;
+    wxGtkCollatedArrayString *m_strings;
 
-public:
-    // this circumvents a GTK+ 2.0 bug so that the selection is 
-    // invalidated properly 
-    int m_selection_hack;
+    // contains the client data for the items
+    wxArrayPtrVoid m_clientData;
+
+    // index to GtkListStore cell which displays the item text
+    int m_stringCellIndex;
+
+    virtual wxSize DoGetBestSize() const;
+    virtual wxSize DoGetSizeFromTextSize(int xlen, int ylen = -1) const;
+    virtual int DoInsertItems(const wxArrayStringsAdapter& items,
+                              unsigned int pos,
+                              void **clientData, wxClientDataType type);
+    virtual void DoSetItemClientData(unsigned int n, void* clientData);
+    virtual void* DoGetItemClientData(unsigned int n) const;
+    virtual void DoClear();
+    virtual void DoDeleteOneItem(unsigned int n);
+
+    virtual GdkWindow *GTKGetWindow(wxArrayGdkWindows& windows) const;
+    virtual void DoApplyWidgetStyle(GtkRcStyle *style);
+
+    // in derived classes, implement this to insert list store entry
+    // with all items default except text
+    virtual void GTKInsertComboBoxTextItem( unsigned int n, const wxString& text );
 
 private:
+    void Init();
+
     DECLARE_DYNAMIC_CLASS(wxChoice)
 };
 
 
-#endif // __GTKCHOICEH__
+#endif // _WX_GTK_CHOICE_H_

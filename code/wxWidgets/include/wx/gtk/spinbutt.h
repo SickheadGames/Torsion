@@ -3,17 +3,12 @@
 // Purpose:     wxSpinButton class
 // Author:      Robert Roebling
 // Modified by:
-// RCS-ID:      $Id: spinbutt.h,v 1.15 2005/08/02 22:57:57 MW Exp $
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_GTK_SPINBUTT_H_
 #define _WX_GTK_SPINBUTT_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface
-#endif
 
 //-----------------------------------------------------------------------------
 // wxSpinButton
@@ -22,7 +17,7 @@
 class WXDLLIMPEXP_CORE wxSpinButton : public wxSpinButtonBase
 {
 public:
-    wxSpinButton() { }
+    wxSpinButton();
     wxSpinButton(wxWindow *parent,
                  wxWindowID id = -1,
                  const wxPoint& pos = wxDefaultPosition,
@@ -48,22 +43,23 @@ public:
 
     static wxVisualAttributes
     GetClassDefaultAttributes(wxWindowVariant variant = wxWINDOW_VARIANT_NORMAL);
-    
+
+    virtual bool Enable( bool enable = true );
+
     // implementation
-    void OnSize( wxSizeEvent &event );
-
-    bool IsOwnGtkWindow( GdkWindow *window );
-
-    GtkAdjustment  *m_adjust;
-    float           m_oldPos;
+    int m_pos;
 
 protected:
+    void GtkDisableEvents() const;
+    void GtkEnableEvents() const;
+
     virtual wxSize DoGetBestSize() const;
+    virtual GdkWindow *GTKGetWindow(wxArrayGdkWindows& windows) const;
 
 private:
-    DECLARE_EVENT_TABLE()
+    typedef wxSpinButtonBase base_type;
+
     DECLARE_DYNAMIC_CLASS(wxSpinButton)
 };
 
-#endif
-    // _WX_GTK_SPINBUTT_H_
+#endif // _WX_GTK_SPINBUTT_H_

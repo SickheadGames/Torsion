@@ -1,23 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        popupwin.h
+// Name:        wx/gtk/popupwin.h
 // Purpose:
 // Author:      Robert Roebling
 // Created:
-// Id:          $Id: popupwin.h,v 1.10 2005/08/02 22:57:56 MW Exp $
 // Copyright:   (c) 2001 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef __GTKPOPUPWINH__
-#define __GTKPOPUPWINH__
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "popupwin.h"
-#endif
-
-#include "wx/defs.h"
-#include "wx/panel.h"
-#include "wx/icon.h"
+#ifndef _WX_GTK_POPUPWIN_H_
+#define _WX_GTK_POPUPWIN_H_
 
 //-----------------------------------------------------------------------------
 // wxPopUpWindow
@@ -33,26 +24,27 @@ public:
         { (void)Create(parent, flags); }
     bool Create(wxWindow *parent, int flags = wxBORDER_NONE);
 
-    virtual bool Show( bool show = TRUE );
+    virtual bool Show(bool show = true);
+
+    virtual void SetFocus();
 
     // implementation
     // --------------
 
-    virtual void DoMoveWindow(int x, int y, int width, int height);
-
-    virtual void OnInternalIdle();
-
+    // GTK time when connecting to button_press signal
+    wxUint32  m_time;
 
 protected:
-    void GtkOnSize( int x, int y, int width, int height );
-
     virtual void DoSetSize(int x, int y,
                            int width, int height,
                            int sizeFlags = wxSIZE_AUTO);
 
-private:
+    virtual void DoMoveWindow(int x, int y, int width, int height);
+
+#ifdef __WXUNIVERSAL__
     DECLARE_EVENT_TABLE()
+#endif
     DECLARE_DYNAMIC_CLASS(wxPopupWindow)
 };
 
-#endif // __GTKPOPUPWINDOWH__
+#endif // _WX_GTK_POPUPWIN_H_

@@ -5,32 +5,40 @@
 // Modified by:
 // Created:
 // Copyright:   (c) Julian Smart
-// RCS-ID:      $Id: dcmemory.h,v 1.13 2005/05/04 18:51:56 JS Exp $
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_DCMEMORY_H_BASE_
 #define _WX_DCMEMORY_H_BASE_
 
-#if defined(__WXPALMOS__)
-#include "wx/palmos/dcmemory.h"
-#elif defined(__WXMSW__)
-#include "wx/msw/dcmemory.h"
-#elif defined(__WXMOTIF__)
-#include "wx/motif/dcmemory.h"
-#elif defined(__WXGTK__)
-#include "wx/gtk/dcmemory.h"
-#elif defined(__WXX11__)
-#include "wx/x11/dcmemory.h"
-#elif defined(__WXMGL__)
-#include "wx/mgl/dcmemory.h"
-#elif defined(__WXMAC__)
-#include "wx/mac/dcmemory.h"
-#elif defined(__WXCOCOA__)
-#include "wx/cocoa/dcmemory.h"
-#elif defined(__WXPM__)
-#include "wx/os2/dcmemory.h"
-#endif
+#include "wx/dc.h"
+#include "wx/bitmap.h"
+
+//-----------------------------------------------------------------------------
+// wxMemoryDC
+//-----------------------------------------------------------------------------
+
+class WXDLLIMPEXP_CORE wxMemoryDC: public wxDC
+{
+public:
+    wxMemoryDC();
+    wxMemoryDC( wxBitmap& bitmap );
+    wxMemoryDC( wxDC *dc );
+
+    // select the given bitmap to draw on it
+    void SelectObject(wxBitmap& bmp);
+
+    // select the given bitmap for read-only
+    void SelectObjectAsSource(const wxBitmap& bmp);
+
+    // get selected bitmap
+    const wxBitmap& GetSelectedBitmap() const;
+    wxBitmap& GetSelectedBitmap();
+
+private:
+    DECLARE_DYNAMIC_CLASS(wxMemoryDC)
+};
+
 
 #endif
     // _WX_DCMEMORY_H_BASE_

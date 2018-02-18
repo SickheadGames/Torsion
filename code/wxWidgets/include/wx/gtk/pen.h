@@ -2,82 +2,63 @@
 // Name:        wx/gtk/pen.h
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id: pen.h,v 1.20 2005/08/02 22:57:56 MW Exp $
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef _WX_GTK_PEN_H_
+#define _WX_GTK_PEN_H_
 
-#ifndef __GTKPENH__
-#define __GTKPENH__
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface
-#endif
-
-#include "wx/defs.h"
-#include "wx/object.h"
-#include "wx/string.h"
-#include "wx/gdiobj.h"
-#include "wx/gdicmn.h"
-
-//-----------------------------------------------------------------------------
-// classes
-//-----------------------------------------------------------------------------
-
-class WXDLLIMPEXP_CORE wxPen;
-
-#if defined(__WXGTK127__) || defined(__WXGTK20__)
-typedef    gint8 wxGTKDash;
-#else
-typedef    gchar wxGTKDash;
-#endif
+typedef signed char wxGTKDash;
 
 //-----------------------------------------------------------------------------
 // wxPen
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxPen: public wxGDIObject
+class WXDLLIMPEXP_CORE wxPen: public wxPenBase
 {
 public:
     wxPen() { }
-    
-    wxPen( const wxColour &colour, int width = 1, int style = wxSOLID );
-    ~wxPen();
-    
-    wxPen( const wxPen& pen )
-        : wxGDIObject()
-        { Ref(pen); }
-    wxPen& operator = ( const wxPen& pen ) { Ref(pen); return *this; }
-    
-    bool Ok() const { return m_refData != NULL; }
-    
-    bool operator == ( const wxPen& pen ) const;
-    bool operator != (const wxPen& pen) const { return !(*this == pen); }
+
+    wxPen( const wxColour &colour, int width = 1, wxPenStyle style = wxPENSTYLE_SOLID );
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
+    wxDEPRECATED_FUTURE( wxPen(const wxColour& col, int width, int style) );
+#endif
+
+    virtual ~wxPen();
+
+    bool operator==(const wxPen& pen) const;
+    bool operator!=(const wxPen& pen) const { return !(*this == pen); }
 
     void SetColour( const wxColour &colour );
-    void SetColour( int red, int green, int blue );
-    void SetCap( int capStyle );
-    void SetJoin( int joinStyle );
-    void SetStyle( int style );
+    void SetColour( unsigned char red, unsigned char green, unsigned char blue );
+    void SetCap( wxPenCap capStyle );
+    void SetJoin( wxPenJoin joinStyle );
+    void SetStyle( wxPenStyle style );
     void SetWidth( int width );
     void SetDashes( int number_of_dashes, const wxDash *dash );
-    
-    wxColour &GetColour() const;
-    int GetCap() const;
-    int GetJoin() const;
-    int GetStyle() const;
+    void SetStipple(const wxBitmap& stipple);
+
+    wxColour GetColour() const;
+    wxPenCap GetCap() const;
+    wxPenJoin GetJoin() const;
+    wxPenStyle GetStyle() const;
     int GetWidth() const;
     int GetDashes(wxDash **ptr) const;
     int GetDashCount() const;
     wxDash* GetDash() const;
+    wxBitmap *GetStipple() const;
 
-private:    
-    // ref counting code
-    virtual wxObjectRefData *CreateRefData() const;
-    virtual wxObjectRefData *CloneRefData(const wxObjectRefData *data) const;
-    
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
+    wxDEPRECATED_FUTURE( void SetStyle(int style) )
+        { SetStyle((wxPenStyle)style); }
+#endif
+
+protected:
+    virtual wxGDIRefData *CreateGDIRefData() const;
+    virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *data) const;
+
     DECLARE_DYNAMIC_CLASS(wxPen)
 };
 
-#endif // __GTKPENH__
+#endif // _WX_GTK_PEN_H_

@@ -4,9 +4,8 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/07/14
-// RCS-ID:      $Id: spinbutt.h,v 1.5 2005/04/19 03:41:43 RN Exp $
 // Copyright:   (c) 2003 David Elliott
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WX_COCOA_SPINBUTT_H__
@@ -17,7 +16,7 @@
 // ========================================================================
 // wxSpinButton
 // ========================================================================
-class WXDLLEXPORT wxSpinButton: public wxSpinButtonBase// , protected wxCocoaNSStepper
+class WXDLLIMPEXP_CORE wxSpinButton: public wxSpinButtonBase// , protected wxCocoaNSStepper
 {
     DECLARE_DYNAMIC_CLASS(wxSpinButton)
     DECLARE_EVENT_TABLE()
@@ -27,7 +26,7 @@ class WXDLLEXPORT wxSpinButton: public wxSpinButtonBase// , protected wxCocoaNSS
 // ------------------------------------------------------------------------
 public:
     wxSpinButton() { }
-    wxSpinButton(wxWindow *parent, wxWindowID winid = -1,
+    wxSpinButton(wxWindow *parent, wxWindowID winid = wxID_ANY,
             const wxPoint& pos = wxDefaultPosition,
             const wxSize& size = wxDefaultSize,
             long style = wxSP_VERTICAL | wxSP_ARROW_KEYS,
@@ -36,7 +35,7 @@ public:
         Create(parent, winid, pos, size, style, name);
     }
 
-    bool Create(wxWindow *parent, wxWindowID winid = -1,
+    bool Create(wxWindow *parent, wxWindowID winid = wxID_ANY,
             const wxPoint& pos = wxDefaultPosition,
             const wxSize& size = wxDefaultSize,
             long style = wxSP_HORIZONTAL,
@@ -60,4 +59,5 @@ public:
     virtual void SetRange(int minValue, int maxValue);
 };
 
-#endif // __WX_COCOA_SPINBUTT_H__
+#endif
+    // __WX_COCOA_SPINBUTT_H__

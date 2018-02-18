@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     06.01.01
-// RCS-ID:      $Id: popupwin.h,v 1.6 2004/05/23 20:51:39 JS Exp $
 // Copyright:   (c) 2001 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,7 +15,7 @@
 // wxPopupWindow
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxPopupWindow : public wxPopupWindowBase
+class WXDLLIMPEXP_CORE wxPopupWindow : public wxPopupWindowBase
 {
 public:
     wxPopupWindow() { }

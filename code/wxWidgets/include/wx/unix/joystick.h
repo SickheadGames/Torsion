@@ -1,27 +1,21 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        joystick.h
+// Name:        wx/unix/joystick.h
 // Purpose:     wxJoystick class
 // Author:      Guilhem Lavaux
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: joystick.h,v 1.6 2005/05/04 18:53:05 JS Exp $
 // Copyright:   (c) Guilhem Lavaux
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef __JOYSTICKH__
-#define __JOYSTICKH__
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "joystick.h"
-#endif
+#ifndef _WX_UNIX_JOYSTICK_H_
+#define _WX_UNIX_JOYSTICK_H_
 
 #include "wx/event.h"
-#include "wx/thread.h"
 
-class WXDLLEXPORT wxJoystickThread;
+class WXDLLIMPEXP_FWD_CORE wxJoystickThread;
 
-class WXDLLEXPORT wxJoystick: public wxObject
+class WXDLLIMPEXP_ADV wxJoystick: public wxObject
 {
     DECLARE_DYNAMIC_CLASS(wxJoystick)
         public:
@@ -30,12 +24,14 @@ class WXDLLEXPORT wxJoystick: public wxObject
      */
 
     wxJoystick(int joystick = wxJOYSTICK1);
-    ~wxJoystick();
+    virtual ~wxJoystick();
 
     // Attributes
     ////////////////////////////////////////////////////////////////////////////
 
     wxPoint GetPosition() const;
+    int GetPosition(unsigned axis) const;
+    bool GetButtonState(unsigned button) const;
     int GetZPosition() const;
     int GetButtonState() const;
     int GetPOVPosition() const;
@@ -50,7 +46,7 @@ class WXDLLEXPORT wxJoystick: public wxObject
     ////////////////////////////////////////////////////////////////////////////
 
     bool IsOk() const; // Checks that the joystick is functioning
-    int GetNumberJoysticks() const ;
+    static int GetNumberJoysticks() ;
     int GetManufacturerId() const ;
     int GetProductId() const ;
     wxString GetProductName() const ;
@@ -95,6 +91,4 @@ protected:
     wxJoystickThread*   m_thread;
 };
 
-#endif
-// __JOYSTICKH__
-
+#endif // _WX_UNIX_JOYSTICK_H_

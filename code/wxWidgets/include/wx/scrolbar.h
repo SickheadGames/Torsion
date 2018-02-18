@@ -1,11 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        scrolbar.h
+// Name:        wx/scrolbar.h
 // Purpose:     wxScrollBar base header
 // Author:      Julian Smart
 // Modified by:
 // Created:
 // Copyright:   (c) Julian Smart
-// RCS-ID:      $Id: scrolbar.h,v 1.14 2005/05/04 18:52:02 JS Exp $
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,18 +17,21 @@
 
 #include "wx/control.h"
 
-extern WXDLLEXPORT_DATA(const wxChar*) wxScrollBarNameStr;
+extern WXDLLIMPEXP_DATA_CORE(const char) wxScrollBarNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxScrollBar: a scroll bar control
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxScrollBarBase : public wxControl
+class WXDLLIMPEXP_CORE wxScrollBarBase : public wxControl
 {
 public:
     wxScrollBarBase() { }
 
-    // scrollbar construction
+    /*
+        Derived classes should provide the following method and ctor with the
+        same parameters:
+
     bool Create(wxWindow *parent,
                 wxWindowID id,
                 const wxPoint& pos = wxDefaultPosition,
@@ -37,6 +39,7 @@ public:
                 long style = wxSB_HORIZONTAL,
                 const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = wxScrollBarNameStr);
+    */
 
     // accessors
     virtual int GetThumbPosition() const = 0;
@@ -52,8 +55,11 @@ public:
                               int range, int pageSize,
                               bool refresh = true) = 0;
 
+    // implementation-only
+    bool IsNeeded() const { return GetRange() > GetThumbSize(); }
+
 private:
-    DECLARE_NO_COPY_CLASS(wxScrollBarBase)
+    wxDECLARE_NO_COPY_CLASS(wxScrollBarBase);
 };
 
 #if defined(__WXUNIVERSAL__)
@@ -62,10 +68,12 @@ private:
     #include "wx/msw/scrolbar.h"
 #elif defined(__WXMOTIF__)
     #include "wx/motif/scrolbar.h"
-#elif defined(__WXGTK__)
+#elif defined(__WXGTK20__)
     #include "wx/gtk/scrolbar.h"
+#elif defined(__WXGTK__)
+    #include "wx/gtk1/scrolbar.h"
 #elif defined(__WXMAC__)
-    #include "wx/mac/scrolbar.h"
+    #include "wx/osx/scrolbar.h"
 #elif defined(__WXCOCOA__)
     #include "wx/cocoa/scrolbar.h"
 #elif defined(__WXPM__)

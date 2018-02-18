@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        brush.h
+// Name:        wx/os2/brush.h
 // Purpose:     wxBrush class
 // Author:      David Webster
 // Modified by:
 // Created:     10/13/99
-// RCS-ID:      $Id: brush.h,v 1.11 2004/12/03 15:29:28 ABX Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,63 +11,38 @@
 #ifndef _WX_BRUSH_H_
 #define _WX_BRUSH_H_
 
-#include "wx/gdicmn.h"
-#include "wx/gdiobj.h"
 #include "wx/bitmap.h"
 
-class WXDLLEXPORT wxBrush;
-
-class WXDLLEXPORT wxBrushRefData: public wxGDIRefData
-{
-    friend class WXDLLEXPORT wxBrush;
-public:
-    wxBrushRefData();
-    wxBrushRefData(const wxBrushRefData& rData);
-    ~wxBrushRefData();
-
-protected:
-    int                             m_nStyle;
-    wxBitmap                        m_vStipple ;
-    wxColour                        m_vColour;
-    WXHBRUSH                        m_hBrush; // in OS/2 GPI this will be the PS the pen is associated with
-    AREABUNDLE                      m_vBundle;
-};
-
-#define M_BRUSHDATA ((wxBrushRefData *)m_refData)
-
 // Brush
-class WXDLLEXPORT wxBrush: public wxBrushBase
+class WXDLLIMPEXP_CORE wxBrush: public wxBrushBase
 {
-    DECLARE_DYNAMIC_CLASS(wxBrush)
-
 public:
     wxBrush();
-    wxBrush( const wxColour& rCol
-            ,int             nStyle = wxSOLID
-           );
+    wxBrush(const wxColour& rCol, wxBrushStyle nStyle = wxBRUSHSTYLE_SOLID);
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
+    wxDEPRECATED_FUTURE( wxBrush(const wxColour& col, int style) );
+#endif
     wxBrush(const wxBitmap& rStipple);
-    inline wxBrush(const wxBrush& rBrush) { Ref(rBrush); }
-    ~wxBrush();
+    virtual ~wxBrush();
 
-    inline wxBrush& operator = (const wxBrush& rBrush) { if (*this == rBrush) return (*this); Ref(rBrush); return *this; }
-    inline bool operator == (const wxBrush& rBrush) const { return m_refData == rBrush.m_refData; }
-    inline bool operator != (const wxBrush& rBrush) const { return m_refData != rBrush.m_refData; }
+    bool operator == (const wxBrush& rBrush) const;
+    inline bool operator != (const wxBrush& rBrush) const { return !(*this == rBrush); }
 
     virtual void SetColour(const wxColour& rColour);
-    virtual void SetColour( unsigned char cRed
-                           ,unsigned char cGreen
-                           ,unsigned char cBrush
-                          );
+    virtual void SetColour(unsigned char cRed, unsigned char cGreen, unsigned char cBrush);
     virtual void SetPS(HPS hPS);
-    virtual void SetStyle(int nStyle)  ;
+    virtual void SetStyle(wxBrushStyle nStyle);
     virtual void SetStipple(const wxBitmap& rStipple);
 
-    inline wxColour& GetColour(void) const { return (M_BRUSHDATA ? M_BRUSHDATA->m_vColour : wxNullColour); };
-    virtual int      GetStyle(void) const { return (M_BRUSHDATA ? M_BRUSHDATA->m_nStyle : 0); };
-    inline wxBitmap* GetStipple(void) const { return (M_BRUSHDATA ? & M_BRUSHDATA->m_vStipple : 0); };
-    inline int       GetPS(void) const { return (M_BRUSHDATA ? M_BRUSHDATA->m_hBrush : 0); };
+    wxColour GetColour(void) const;
+    wxBrushStyle GetStyle(void) const;
+    wxBitmap* GetStipple(void) const;
+    int       GetPS(void) const;
 
-    inline virtual bool Ok(void) const { return (m_refData != NULL) ; }
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
+    wxDEPRECATED_FUTURE( void SetStyle(int style) )
+        { SetStyle((wxBrushStyle)style); }
+#endif
 
     //
     // Implementation
@@ -78,10 +52,16 @@ public:
     // Useful helper: create the brush resource
     //
     bool     RealizeResource(void);
-    WXHANDLE GetResourceHandle(void) ;
+    virtual WXHANDLE GetResourceHandle(void) const;
     bool     FreeResource(bool bForce = false);
     bool     IsFree(void) const;
-    void     Unshare(void);
+
+protected:
+    virtual wxGDIRefData *CreateGDIRefData() const;
+    virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *data) const;
+
+private:
+    DECLARE_DYNAMIC_CLASS(wxBrush)
 }; // end of CLASS wxBrush
 
 #endif

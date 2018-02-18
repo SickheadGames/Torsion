@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: frame.h,v 1.75 2005/03/18 14:26:48 JS Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,22 +11,18 @@
 #ifndef _WX_FRAME_H_
 #define _WX_FRAME_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "frame.h"
-#endif
-
-class WXDLLEXPORT wxFrame : public wxFrameBase
+class WXDLLIMPEXP_CORE wxFrame : public wxFrameBase
 {
 public:
     // construction
     wxFrame() { Init(); }
     wxFrame(wxWindow *parent,
-               wxWindowID id,
-               const wxString& title,
-               const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize,
-               long style = wxDEFAULT_FRAME_STYLE,
-               const wxString& name = wxFrameNameStr)
+            wxWindowID id,
+            const wxString& title,
+            const wxPoint& pos = wxDefaultPosition,
+            const wxSize& size = wxDefaultSize,
+            long style = wxDEFAULT_FRAME_STYLE,
+            const wxString& name = wxFrameNameStr)
     {
         Init();
 
@@ -46,7 +41,6 @@ public:
 
     // implement base class pure virtuals
     virtual bool ShowFullScreen(bool show, long style = wxFULLSCREEN_ALL);
-    virtual void Raise();
 
     // implementation only from now on
     // -------------------------------
@@ -59,18 +53,14 @@ public:
     virtual wxToolBar* CreateToolBar(long style = -1,
                                      wxWindowID id = wxID_ANY,
                                      const wxString& name = wxToolBarNameStr);
-
-    virtual void PositionToolBar();
 #endif // wxUSE_TOOLBAR
 
     // Status bar
 #if wxUSE_STATUSBAR
     virtual wxStatusBar* OnCreateStatusBar(int number = 1,
-                                           long style = wxST_SIZEGRIP,
+                                           long style = wxSTB_DEFAULT_STYLE,
                                            wxWindowID id = 0,
                                            const wxString& name = wxStatusLineNameStr);
-
-    virtual void PositionStatusBar();
 
     // Hint to tell framework which status bar to use: the default is to use
     // native one for the platforms which support it (Win32), the generic one
@@ -78,21 +68,14 @@ public:
 
     // TODO: should this go into a wxFrameworkSettings class perhaps?
     static void UseNativeStatusBar(bool useNative)
-        { m_useNativeStatusBar = useNative; };
+        { m_useNativeStatusBar = useNative; }
     static bool UsesNativeStatusBar()
-        { return m_useNativeStatusBar; };
+        { return m_useNativeStatusBar; }
 #endif // wxUSE_STATUSBAR
 
-#if wxUSE_MENUS
-    WXHMENU GetWinMenu() const { return m_hMenu; }
-#endif // wxUSE_MENUS
-
     // event handlers
-    bool HandlePaint();
     bool HandleSize(int x, int y, WXUINT flag);
     bool HandleCommand(WXWORD id, WXWORD cmd, WXHWND control);
-    bool HandleMenuSelect(WXWORD nItem, WXWORD nFlags, WXHMENU hMenu);
-    bool HandleMenuLoop(const wxEventType& evtType, WXWORD isPopup);
 
     // tooltip management
 #if wxUSE_TOOLTIPS
@@ -100,11 +83,30 @@ public:
     void SetToolTipCtrl(WXHWND hwndTT) { m_hwndToolTip = hwndTT; }
 #endif // tooltips
 
-    // a MSW only function which sends a size event to the window using its
-    // current size - this has an effect of refreshing the window layout
-    virtual void SendSizeEvent();
+    // override the base class function to handle iconized/maximized frames
+    virtual void SendSizeEvent(int flags = 0);
 
     virtual wxPoint GetClientAreaOrigin() const;
+
+    // override base class version to add menu bar accel processing
+    virtual bool MSWTranslateMessage(WXMSG *msg)
+    {
+        return MSWDoTranslateMessage(this, msg);
+    }
+
+    // window proc for the frames
+    virtual WXLRESULT MSWWindowProc(WXUINT message,
+                                    WXWPARAM wParam,
+                                    WXLPARAM lParam);
+
+#if wxUSE_MENUS
+    // get the currently active menu: this is the same as the frame menu for
+    // normal frames but is overridden by wxMDIParentFrame
+    virtual WXHMENU MSWGetActiveMenu() const { return m_hMenu; }
+
+    // Look up the menu in the menu bar.
+    virtual wxMenu* MSWFindMenuFromHMENU(WXHMENU hMenu);
+#endif // wxUSE_MENUS
 
 protected:
     // common part of all ctors
@@ -126,21 +128,22 @@ protected:
     // propagate our state change to all child frames
     void IconizeChildFrames(bool bIconize);
 
-    // we add menu bar accel processing
-    bool MSWTranslateMessage(WXMSG* pMsg);
-
-    // window proc for the frames
-    WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
-
-    // handle WM_INITMENUPOPUP message
-    bool HandleInitMenuPopup(WXHMENU hMenu);
+    // the real implementation of MSWTranslateMessage(), also used by
+    // wxMDIChildFrame
+    bool MSWDoTranslateMessage(wxFrame *frame, WXMSG *msg);
 
     virtual bool IsMDIChild() const { return false; }
 
     // get default (wxWidgets) icon for the frame
     virtual WXHICON GetDefaultIcon() const;
 
+#if wxUSE_TOOLBAR
+    virtual void PositionToolBar();
+#endif // wxUSE_TOOLBAR
+
 #if wxUSE_STATUSBAR
+    virtual void PositionStatusBar();
+
     static bool           m_useNativeStatusBar;
 #endif // wxUSE_STATUSBAR
 
@@ -153,9 +156,6 @@ private:
 #if wxUSE_TOOLTIPS
     WXHWND                m_hwndToolTip;
 #endif // tooltips
-#if defined(__SMARTPHONE__) || defined(__POCKETPC__)
-    void* m_activateInfo;
-#endif
 
     // used by IconizeChildFrames(), see comments there
     bool m_wasMinimized;

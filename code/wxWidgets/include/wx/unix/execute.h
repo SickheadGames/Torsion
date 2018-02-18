@@ -1,47 +1,58 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        unix/execute.h
+// Name:        wx/unix/execute.h
 // Purpose:     private details of wxExecute() implementation
 // Author:      Vadim Zeitlin
-// Id:          $Id: execute.h,v 1.9 2005/08/02 22:58:05 MW Exp $
 // Copyright:   (c) 1998 Robert Roebling, Julian Smart, Vadim Zeitlin
+//              (c) 2013 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_UNIX_EXECUTE_H
 #define _WX_UNIX_EXECUTE_H
 
-#include "wx/unix/pipe.h"
+#include "wx/app.h"
+#include "wx/hashmap.h"
+#include "wx/process.h"
 
-class WXDLLIMPEXP_BASE wxProcess;
-class wxStreamTempInputBuffer;
+#if wxUSE_STREAMS
+    #include "wx/unix/pipe.h"
+    #include "wx/private/streamtempinput.h"
+#endif
 
-// if pid > 0, the execution is async and the data is freed in the callback
-// executed when the process terminates, if pid < 0, the execution is
-// synchronous and the caller (wxExecute) frees the data
-struct wxEndProcessData
+class wxEventLoopBase;
+
+// Information associated with a running child process.
+class wxExecuteData
 {
-    int pid,                // pid of the process
-        tag;                // port dependent value
-    wxProcess *process;     // if !NULL: notified on process termination
-    int  exitcode;          // the exit code
-};
-
-// struct in which information is passed from wxExecute() to wxAppTraits
-// methods
-struct wxExecuteData
-{
+public:
     wxExecuteData()
     {
         flags =
         pid = 0;
+        exitcode = -1;
 
         process = NULL;
 
+        syncEventLoop = NULL;
+
 #if wxUSE_STREAMS
-        bufOut =
-        bufErr = NULL;
+        fdOut =
+        fdErr = wxPipe::INVALID_FD;
 #endif // wxUSE_STREAMS
     }
+
+    // This must be called in the parent process as soon as fork() returns to
+    // update us with the effective child PID. It also ensures that we handle
+    // SIGCHLD to be able to detect when this PID exits, so wxTheApp must be
+    // available.
+    void OnStart(int pid);
+
+    // Called when the child process exits.
+    void OnExit(int exitcode);
+
+    // Return true if we should (or already did) redirect the child IO.
+    bool IsRedirected() const { return process && process->IsRedirected(); }
+
 
     // wxExecute() flags
     int flags;
@@ -49,31 +60,43 @@ struct wxExecuteData
     // the pid of the child process
     int pid;
 
+    // The exit code of the process, set once the child terminates.
+    int exitcode;
+
     // the associated process object or NULL
     wxProcess *process;
 
-    // pipe used for end process detection
-    wxPipe pipeEndProcDetect;
+    // Local event loop used to wait for the child process termination in
+    // synchronous execution case. We can't create it ourselves as its exact
+    // type depends on the application kind (console/GUI), so we rely on
+    // wxAppTraits setting up this pointer to point to the appropriate object.
+    wxEventLoopBase *syncEventLoop;
 
 #if wxUSE_STREAMS
     // the input buffer bufOut is connected to stdout, this is why it is
     // called bufOut and not bufIn
-    wxStreamTempInputBuffer *bufOut,
-                            *bufErr;
+    wxStreamTempInputBuffer bufOut,
+                            bufErr;
+
+    // the corresponding FDs, -1 if not redirected
+    int fdOut,
+        fdErr;
 #endif // wxUSE_STREAMS
+
+
+private:
+    // SIGCHLD signal handler that checks whether any of the currently running
+    // children have exited.
+    static void OnSomeChildExited(int sig);
+
+    // All currently running child processes indexed by their PID.
+    //
+    // Notice that the container doesn't own its elements.
+    WX_DECLARE_HASH_MAP(int, wxExecuteData*, wxIntegerHash, wxIntegerEqual,
+                        ChildProcessesData);
+    static ChildProcessesData ms_childProcesses;
+
+    wxDECLARE_NO_COPY_CLASS(wxExecuteData);
 };
-
-// this function is called when the process terminates from port specific
-// callback function and is common to all ports (src/unix/utilsunx.cpp)
-extern WXDLLIMPEXP_BASE void wxHandleProcessTermination(wxEndProcessData *proc_data);
-
-// this function is called to associate the port-specific callback with the
-// child process. The return valus is port-specific.
-extern WXDLLIMPEXP_CORE int wxAddProcessCallback(wxEndProcessData *proc_data, int fd);
-
-#if defined(__DARWIN__) && (defined(__WXMAC__) || defined(__WXCOCOA__))
-// For ports (e.g. DARWIN) which can add callbacks based on the pid
-extern int wxAddProcessCallbackForPid(wxEndProcessData *proc_data, int pid);
-#endif
 
 #endif // _WX_UNIX_EXECUTE_H

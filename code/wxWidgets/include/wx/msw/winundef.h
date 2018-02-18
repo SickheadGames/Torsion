@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     16.05.99
-// RCS-ID:      $Id: winundef.h,v 1.37 2005/09/02 15:54:06 VS Exp $
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -42,6 +41,40 @@
         #endif
     }
 #endif
+
+// CreateFont
+
+#ifdef CreateFont
+    #undef CreateFont
+
+    inline HFONT CreateFont(int height,
+                            int width,
+                            int escapement,
+                            int orientation,
+                            int weight,
+                            DWORD italic,
+                            DWORD underline,
+                            DWORD strikeout,
+                            DWORD charset,
+                            DWORD outprecision,
+                            DWORD clipprecision,
+                            DWORD quality,
+                            DWORD family,
+                            LPCTSTR facename)
+    {
+        #ifdef _UNICODE
+            return CreateFontW(height, width, escapement, orientation,
+                               weight, italic, underline, strikeout, charset,
+                               outprecision, clipprecision, quality,
+                               family, facename);
+        #else
+            return CreateFontA(height, width, escapement, orientation,
+                               weight, italic, underline, strikeout, charset,
+                               outprecision, clipprecision, quality,
+                               family, facename);
+        #endif
+    }
+#endif // CreateFont
 
 // CreateWindow
 
@@ -89,11 +122,11 @@
 
     inline HWND APIENTRY FindText(LPFINDREPLACE lpfindreplace)
     {
-        #ifdef UNICODE
+        #ifdef _UNICODE
             return FindTextW(lpfindreplace);
         #else
             return FindTextA(lpfindreplace);
-        #endif // !UNICODE
+        #endif
     }
 #endif
 
@@ -214,26 +247,20 @@
 #endif
 
 
-/*
-  When this file is included, sometimes the wxCHECK_W32API_VERSION macro
-  is undefined. With for example CodeWarrior this gives problems with
-  the following code:
-  #if 0 && wxCHECK_W32API_VERSION( 0, 5 )
-  Because CodeWarrior does macro expansion before test evaluation.
-  We define wxCHECK_W32API_VERSION here if it's undefined.
-*/
-#if !defined(__GNUG__) && !defined(wxCHECK_W32API_VERSION)
-    #define wxCHECK_W32API_VERSION(maj, min) (0)
-#endif
-
 // StartDoc
 
 #ifdef StartDoc
    #undef StartDoc
-   #if defined( __GNUG__ ) && !wxCHECK_W32API_VERSION( 0, 5 )
-      #define DOCINFOW DOCINFO
-      #define DOCINFOA DOCINFO
+
+   // Work around a bug in very old MinGW headers that didn't define DOCINFOW
+   // and DOCINFOA but only DOCINFO in both ANSI and Unicode.
+   #if defined( __GNUG__ )
+      #if !wxCHECK_W32API_VERSION( 0, 5 )
+        #define DOCINFOW DOCINFO
+        #define DOCINFOA DOCINFO
+      #endif
    #endif
+
    #ifdef _UNICODE
    inline int StartDoc(HDC h, CONST DOCINFOW* info)
    {

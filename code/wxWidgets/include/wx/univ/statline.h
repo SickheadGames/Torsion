@@ -3,7 +3,6 @@
 // Purpose:     wxStaticLine class for wxUniversal
 // Author:      Vadim Zeitlin
 // Created:     28.06.99
-// Version:     $Id: statline.h,v 1.9.2.1 2005/09/25 20:46:45 MW Exp $
 // Copyright:   (c) 1999 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,11 +10,7 @@
 #ifndef _WX_UNIV_STATLINE_H_
 #define _WX_UNIV_STATLINE_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univstatline.h"
-#endif
-
-class WXDLLEXPORT wxStaticLine : public wxStaticLineBase
+class WXDLLIMPEXP_CORE wxStaticLine : public wxStaticLineBase
 {
 public:
     // constructors and pseudo-constructors
@@ -37,7 +32,7 @@ public:
                  const wxPoint &pos = wxDefaultPosition,
                  const wxSize &size = wxDefaultSize,
                  long style = wxLI_HORIZONTAL,
-                 const wxString &name = wxStaticTextNameStr )
+                 const wxString &name = wxStaticLineNameStr )
     {
         Create(parent, id, pos, size, style, name);
     }
@@ -47,7 +42,7 @@ public:
                 const wxPoint &pos = wxDefaultPosition,
                 const wxSize &size = wxDefaultSize,
                 long style = wxLI_HORIZONTAL,
-                const wxString &name = wxStaticTextNameStr );
+                const wxString &name = wxStaticLineNameStr );
 
 protected:
     virtual void DoDraw(wxControlRenderer *renderer);

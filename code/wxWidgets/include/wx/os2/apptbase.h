@@ -4,7 +4,6 @@
 // Author:      Stefan Neis
 // Modified by:
 // Created:     22.09.2003
-// RCS-ID:      $Id: apptbase.h,v 1.4 2004/05/23 20:51:37 JS Exp $
 // Copyright:   (c) 2003 Stefan Neis <Stefan.Neis@t-online.de>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -27,6 +26,10 @@ public:
 
     // Clean up message queue.
     virtual void TerminateGui(unsigned long ulHab);
+
+#if wxUSE_SOCKETS
+    virtual wxFDIOManager *GetFDIOManager();
+#endif
 };
 
 #endif // _WX_OS2_APPTBASE_H_

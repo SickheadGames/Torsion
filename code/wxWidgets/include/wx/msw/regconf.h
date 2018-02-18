@@ -1,27 +1,24 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Name:        msw/regconf.h
+// Name:        wx/msw/regconf.h
 // Purpose:     Registry based implementation of wxConfigBase
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     27.04.98
-// RCS-ID:      $Id: regconf.h,v 1.33 2004/10/13 14:04:19 ABX Exp $
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef   _REGCONF_H
-#define   _REGCONF_H
+#ifndef _WX_MSW_REGCONF_H_
+#define _WX_MSW_REGCONF_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "regconf.h"
-#endif
+#include "wx/defs.h"
 
-#ifndef   _REGISTRY_H
-  #include "wx/msw/registry.h"
-#endif
+#if wxUSE_CONFIG && wxUSE_REGKEY
 
+#include "wx/msw/registry.h"
 #include "wx/object.h"
 #include "wx/confbase.h"
+#include "wx/buffer.h"
 
 // ----------------------------------------------------------------------------
 // wxRegConfig
@@ -94,21 +91,24 @@ protected:
   // implement read/write methods
   virtual bool DoReadString(const wxString& key, wxString *pStr) const;
   virtual bool DoReadLong(const wxString& key, long *plResult) const;
+  virtual bool DoReadBinary(const wxString& key, wxMemoryBuffer* buf) const;
 
   virtual bool DoWriteString(const wxString& key, const wxString& szValue);
   virtual bool DoWriteLong(const wxString& key, long lValue);
+  virtual bool DoWriteBinary(const wxString& key, const wxMemoryBuffer& buf);
 
 private:
-  // no copy ctor/assignment operator
-  wxRegConfig(const wxRegConfig&);
-  wxRegConfig& operator=(const wxRegConfig&);
-
   // these keys are opened during all lifetime of wxRegConfig object
   wxRegKey  m_keyLocalRoot,  m_keyLocal,
             m_keyGlobalRoot, m_keyGlobal;
 
   // current path (not '/' terminated)
   wxString  m_strPath;
+
+  wxDECLARE_NO_COPY_CLASS(wxRegConfig);
+  DECLARE_ABSTRACT_CLASS(wxRegConfig)
 };
 
-#endif  //_REGCONF_H
+#endif // wxUSE_CONFIG && wxUSE_REGKEY
+
+#endif // _WX_MSW_REGCONF_H_

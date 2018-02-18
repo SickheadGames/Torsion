@@ -4,7 +4,6 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2002/12/09
-// RCS-ID:      $Id: NSMenu.h,v 1.9 2004/10/15 02:55:09 DE Exp $
 // Copyright:   (c) 2002 David Elliott
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -35,11 +34,13 @@ public:
     ,   OBSERVE_WillSendAction      = 0x10
     };
     virtual void Cocoa_dealloc() {}
-    virtual void CocoaNotification_menuDidAddItem(WX_NSNotification notification) {}
-    virtual void CocoaNotification_menuDidChangeItem(WX_NSNotification notification) {}
-    virtual void CocoaNotification_menuDidRemoveItem(WX_NSNotification notification) {}
-    virtual void CocoaNotification_menuDidSendAction(WX_NSNotification notification) {}
-    virtual void CocoaNotification_menuWillSendAction(WX_NSNotification notification) {}
+    virtual void CocoaNotification_menuDidAddItem(WX_NSNotification WXUNUSED(notification)) {}
+    virtual void CocoaNotification_menuDidChangeItem(WX_NSNotification WXUNUSED(notification)) {}
+    virtual void CocoaNotification_menuDidRemoveItem(WX_NSNotification WXUNUSED(notification)) {}
+    virtual void CocoaNotification_menuDidSendAction(WX_NSNotification WXUNUSED(notification)) {}
+    virtual void CocoaNotification_menuWillSendAction(WX_NSNotification WXUNUSED(notification)) {}
+    virtual ~wxCocoaNSMenu() { }
+
 protected:
     static struct objc_object *sm_cocoaObserver;
 };

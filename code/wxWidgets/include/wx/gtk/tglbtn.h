@@ -5,9 +5,8 @@
 // Author:      John Norris, minor changes by Axel Schlueter
 // Modified by:
 // Created:     08.02.01
-// RCS-ID:      $Id: tglbtn.h,v 1.8 2005/08/02 22:57:58 MW Exp $
 // Copyright:   (c) 2000 Johnny C. Norris II
-// License:     wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_GTK_TOGGLEBUTTON_H_
@@ -16,79 +15,10 @@
 #include "wx/bitmap.h"
 
 //-----------------------------------------------------------------------------
-// classes
-//-----------------------------------------------------------------------------
-
-class WXDLLIMPEXP_CORE wxToggleButton;
-class WXDLLIMPEXP_CORE wxToggleBitmapButton;
-
-//-----------------------------------------------------------------------------
-// global data
-//-----------------------------------------------------------------------------
-
-extern WXDLLIMPEXP_CORE const wxChar *wxCheckBoxNameStr;
-
-//-----------------------------------------------------------------------------
-// wxToggleBitmapButton
-//-----------------------------------------------------------------------------
-
-class WXDLLIMPEXP_CORE wxToggleBitmapButton: public wxControl
-{
-public:
-    // construction/destruction
-    wxToggleBitmapButton() {}
-    wxToggleBitmapButton(wxWindow *parent,
-                   wxWindowID id,
-                   const wxBitmap& label,
-                   const wxPoint& pos = wxDefaultPosition,
-                   const wxSize& size = wxDefaultSize,
-                   long style = 0,
-                   const wxValidator& validator = wxDefaultValidator,
-                   const wxString& name = wxCheckBoxNameStr)
-    {
-        Create(parent, id, label, pos, size, style, validator, name);
-    }
-
-    // Create the control
-    bool Create(wxWindow *parent,
-                wxWindowID id,
-                const wxBitmap& label,
-                const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize, long style = 0,
-                const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxCheckBoxNameStr);
-
-    // Get/set the value
-    void SetValue(bool state);
-    bool GetValue() const;
-
-    // Set the label
-    void SetLabel(const wxBitmap& label);
-    bool Enable(bool enable = TRUE);
-
-    static wxVisualAttributes
-    GetClassDefaultAttributes(wxWindowVariant variant = wxWINDOW_VARIANT_NORMAL);
-
-    // implementation
-    bool      m_blockEvent;
-    wxBitmap  m_bitmap;
-
-    void OnSetBitmap();
-    void DoApplyWidgetStyle(GtkRcStyle *style);
-    bool IsOwnGtkWindow(GdkWindow *window);
-
-    virtual void OnInternalIdle();
-    virtual wxSize DoGetBestSize() const;
-
-private:
-    DECLARE_DYNAMIC_CLASS(wxToggleBitmapButton)
-};
-
-//-----------------------------------------------------------------------------
 // wxToggleButton
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxToggleButton: public wxControl
+class WXDLLIMPEXP_CORE wxToggleButton: public wxToggleButtonBase
 {
 public:
     // construction/destruction
@@ -120,22 +50,70 @@ public:
 
     // Set the label
     void SetLabel(const wxString& label);
-    bool Enable(bool enable = TRUE);
 
     static wxVisualAttributes
     GetClassDefaultAttributes(wxWindowVariant variant = wxWINDOW_VARIANT_NORMAL);
- 
-    // implementation
-    bool m_blockEvent;
 
-    void DoApplyWidgetStyle(GtkRcStyle *style);
-    bool IsOwnGtkWindow(GdkWindow *window);
+protected:
+    void GTKDisableEvents();
+    void GTKEnableEvents();
 
-    virtual void OnInternalIdle();
     virtual wxSize DoGetBestSize() const;
+    virtual void DoApplyWidgetStyle(GtkRcStyle *style);
+
+#if wxUSE_MARKUP
+    virtual bool DoSetLabelMarkup(const wxString& markup);
+#endif // wxUSE_MARKUP
 
 private:
+    typedef wxToggleButtonBase base_type;
+
+    // Return the GtkLabel used by this toggle button.
+    GtkLabel *GTKGetLabel() const;
+
     DECLARE_DYNAMIC_CLASS(wxToggleButton)
+};
+
+//-----------------------------------------------------------------------------
+// wxBitmapToggleButton
+//-----------------------------------------------------------------------------
+
+class WXDLLIMPEXP_CORE wxBitmapToggleButton: public wxToggleButton
+{
+public:
+    // construction/destruction
+    wxBitmapToggleButton() {}
+    wxBitmapToggleButton(wxWindow *parent,
+                   wxWindowID id,
+                   const wxBitmap& label,
+                   const wxPoint& pos = wxDefaultPosition,
+                   const wxSize& size = wxDefaultSize,
+                   long style = 0,
+                   const wxValidator& validator = wxDefaultValidator,
+                   const wxString& name = wxCheckBoxNameStr)
+    {
+        Create(parent, id, label, pos, size, style, validator, name);
+    }
+
+    // Create the control
+    bool Create(wxWindow *parent,
+                wxWindowID id,
+                const wxBitmap& label,
+                const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize, long style = 0,
+                const wxValidator& validator = wxDefaultValidator,
+                const wxString& name = wxCheckBoxNameStr);
+
+    // deprecated synonym for SetBitmapLabel()
+    wxDEPRECATED_INLINE( void SetLabel(const wxBitmap& bitmap),
+       SetBitmapLabel(bitmap); )
+    // prevent virtual function hiding
+    virtual void SetLabel(const wxString& label) { wxToggleButton::SetLabel(label); }
+
+private:
+    typedef wxToggleButtonBase base_type;
+
+    DECLARE_DYNAMIC_CLASS(wxBitmapToggleButton)
 };
 
 #endif // _WX_GTK_TOGGLEBUTTON_H_

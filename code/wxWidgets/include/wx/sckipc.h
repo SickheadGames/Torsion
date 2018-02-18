@@ -1,12 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        sckipc.h
+// Name:        wx/sckipc.h
 // Purpose:     Interprocess communication implementation (wxSocket version)
 // Author:      Julian Smart
 // Modified by: Guilhem Lavaux (big rewrite) May 1997, 1998
 //              Guillermo Rodriguez (updated for wxSocket v2) Jan 2000
 //                                  (callbacks deprecated)    Mar 2000
 // Created:     1993
-// RCS-ID:      $Id: sckipc.h,v 1.29 2005/08/02 18:16:32 MW Exp $
 // Copyright:   (c) Julian Smart 1993
 //              (c) Guilhem Lavaux 1997, 1998
 //              (c) 2000 Guillermo Rodriguez <guille@iies.es>
@@ -15,10 +14,6 @@
 
 #ifndef _WX_SCKIPC_H
 #define _WX_SCKIPC_H
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "sckipc.h"
-#endif
 
 #include "wx/defs.h"
 
@@ -53,103 +48,110 @@
  *
  */
 
-class WXDLLIMPEXP_NET wxTCPServer;
-class WXDLLIMPEXP_NET wxTCPClient;
+class WXDLLIMPEXP_FWD_NET wxTCPServer;
+class WXDLLIMPEXP_FWD_NET wxTCPClient;
 
-class WXDLLIMPEXP_NET wxTCPConnection: public wxConnectionBase
+class wxIPCSocketStreams;
+
+class WXDLLIMPEXP_NET wxTCPConnection : public wxConnectionBase
 {
-  DECLARE_DYNAMIC_CLASS(wxTCPConnection)
-
 public:
-  wxTCPConnection(wxChar *buffer, int size);
-  wxTCPConnection();
-  virtual ~wxTCPConnection();
+    wxTCPConnection() { Init(); }
+    wxTCPConnection(void *buffer, size_t size)
+        : wxConnectionBase(buffer, size)
+    {
+        Init();
+    }
 
-  // Calls that CLIENT can make
-  virtual bool Execute(const wxChar *data, int size = -1, wxIPCFormat format = wxIPC_TEXT);
-  virtual wxChar *Request(const wxString& item, int *size = NULL, wxIPCFormat format = wxIPC_TEXT);
-  virtual bool Poke(const wxString& item, wxChar *data, int size = -1, wxIPCFormat format = wxIPC_TEXT);
-  virtual bool StartAdvise(const wxString& item);
-  virtual bool StopAdvise(const wxString& item);
+    virtual ~wxTCPConnection();
 
-  // Calls that SERVER can make
-  virtual bool Advise(const wxString& item, wxChar *data, int size = -1, wxIPCFormat format = wxIPC_TEXT);
+    // implement base class pure virtual methods
+    virtual const void *Request(const wxString& item,
+                                size_t *size = NULL,
+                                wxIPCFormat format = wxIPC_TEXT);
+    virtual bool StartAdvise(const wxString& item);
+    virtual bool StopAdvise(const wxString& item);
+    virtual bool Disconnect(void);
 
-  // Calls that both can make
-  virtual bool Disconnect(void);
+    // Will be used in the future to enable the compression but does nothing
+    // for now.
+    void Compress(bool on);
 
-  // Callbacks to BOTH - override at will
-  // Default behaviour is to delete connection and return true
-  virtual bool OnDisconnect(void) { delete this; return true; }
-
-  // To enable the compressor (NOTE: not implemented!)
-  void Compress(bool on);
 
 protected:
-  wxSocketBase       *m_sock;
-  wxSocketStream     *m_sockstrm;
-  wxDataInputStream  *m_codeci;
-  wxDataOutputStream *m_codeco;
-  wxString            m_topic;
+    virtual bool DoExecute(const void *data, size_t size, wxIPCFormat format);
+    virtual bool DoPoke(const wxString& item, const void *data, size_t size,
+                        wxIPCFormat format);
+    virtual bool DoAdvise(const wxString& item, const void *data, size_t size,
+                          wxIPCFormat format);
 
-  friend class wxTCPServer;
-  friend class wxTCPClient;
-  friend class wxTCPEventHandler;
+
+    // notice that all the members below are only initialized once the
+    // connection is made, i.e. in MakeConnection() for the client objects and
+    // after OnAcceptConnection() in the server ones
+
+    // the underlying socket (wxSocketClient for IPC client and wxSocketServer
+    // for IPC server)
+    wxSocketBase *m_sock;
+
+    // various streams that we use
+    wxIPCSocketStreams *m_streams;
+
+    // the topic of this connection
+    wxString m_topic;
 
 private:
-  //
-  // We're hiding an Execute method in ConnectionBase
-  //
-  virtual bool Execute(const wxString& str)
-    { return Execute(str, -1, wxIPC_TEXT); }
+    // common part of both ctors
+    void Init();
 
-    DECLARE_NO_COPY_CLASS(wxTCPConnection)
+    friend class wxTCPServer;
+    friend class wxTCPClient;
+    friend class wxTCPEventHandler;
+
+    wxDECLARE_NO_COPY_CLASS(wxTCPConnection);
+    DECLARE_DYNAMIC_CLASS(wxTCPConnection)
 };
 
-class WXDLLIMPEXP_NET wxTCPServer: public wxServerBase
+class WXDLLIMPEXP_NET wxTCPServer : public wxServerBase
 {
-  DECLARE_DYNAMIC_CLASS(wxTCPServer)
-
 public:
-  wxTCPConnection *topLevelConnection;
+    wxTCPServer();
+    virtual ~wxTCPServer();
 
-  wxTCPServer();
-  virtual ~wxTCPServer();
+    // Returns false on error (e.g. port number is already in use)
+    virtual bool Create(const wxString& serverName);
 
-  // Returns false on error (e.g. port number is already in use)
-  virtual bool Create(const wxString& serverName);
-
-  // Callbacks to SERVER - override at will
-  virtual wxConnectionBase *OnAcceptConnection(const wxString& topic);
+    virtual wxConnectionBase *OnAcceptConnection(const wxString& topic);
 
 protected:
-  wxSocketServer *m_server;
+    wxSocketServer *m_server;
 
 #ifdef __UNIX_LIKE__
-  // the name of the file associated to the Unix domain socket, may be empty
-  wxString m_filename;
+    // the name of the file associated to the Unix domain socket, may be empty
+    wxString m_filename;
 #endif // __UNIX_LIKE__
 
-    DECLARE_NO_COPY_CLASS(wxTCPServer)
+    wxDECLARE_NO_COPY_CLASS(wxTCPServer);
+    DECLARE_DYNAMIC_CLASS(wxTCPServer)
 };
 
-class WXDLLIMPEXP_NET wxTCPClient: public wxClientBase
+class WXDLLIMPEXP_NET wxTCPClient : public wxClientBase
 {
-  DECLARE_DYNAMIC_CLASS(wxTCPClient)
-
 public:
-  wxTCPClient();
-  virtual ~wxTCPClient();
+    wxTCPClient();
 
-  virtual bool ValidHost(const wxString& host);
+    virtual bool ValidHost(const wxString& host);
 
-  // Call this to make a connection. Returns NULL if cannot.
-  virtual wxConnectionBase *MakeConnection(const wxString& host,
-                                           const wxString& server,
-                                           const wxString& topic);
+    // Call this to make a connection. Returns NULL if cannot.
+    virtual wxConnectionBase *MakeConnection(const wxString& host,
+                                             const wxString& server,
+                                             const wxString& topic);
 
-  // Callbacks to CLIENT - override at will
-  virtual wxConnectionBase *OnMakeConnection();
+    // Callbacks to CLIENT - override at will
+    virtual wxConnectionBase *OnMakeConnection();
+
+private:
+    DECLARE_DYNAMIC_CLASS(wxTCPClient)
 };
 
 #endif // wxUSE_SOCKETS && wxUSE_IPC

@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        txtstrm.h
+// Name:        wx/txtstrm.h
 // Purpose:     Text stream classes
 // Author:      Guilhem Lavaux
 // Modified by:
 // Created:     28/06/1998
-// RCS-ID:      $Id: txtstrm.h,v 1.27 2004/11/21 18:26:36 RN Exp $
 // Copyright:   (c) Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,16 +11,13 @@
 #ifndef _WX_TXTSTREAM_H_
 #define _WX_TXTSTREAM_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "txtstrm.h"
-#endif
-
 #include "wx/stream.h"
+#include "wx/convauto.h"
 
 #if wxUSE_STREAMS
 
-class WXDLLIMPEXP_BASE wxTextInputStream;
-class WXDLLIMPEXP_BASE wxTextOutputStream;
+class WXDLLIMPEXP_FWD_BASE wxTextInputStream;
+class WXDLLIMPEXP_FWD_BASE wxTextOutputStream;
 
 typedef wxTextInputStream& (*__wxTextInputManip)(wxTextInputStream&);
 typedef wxTextOutputStream& (*__wxTextOutputManip)(wxTextOutputStream&);
@@ -40,11 +36,15 @@ class WXDLLIMPEXP_BASE wxTextInputStream
 {
 public:
 #if wxUSE_UNICODE
-    wxTextInputStream(wxInputStream& s, const wxString &sep=wxT(" \t"), wxMBConv& conv = wxConvUTF8 );
+    wxTextInputStream(wxInputStream& s,
+                      const wxString &sep=wxT(" \t"),
+                      const wxMBConv& conv = wxConvAuto());
 #else
-    wxTextInputStream(wxInputStream& s, const wxString &sep=wxT(" \t") );
+    wxTextInputStream(wxInputStream& s, const wxString &sep=wxT(" \t"));
 #endif
     ~wxTextInputStream();
+
+    const wxInputStream& GetInputStream() const { return m_input; }
 
     wxUint32 Read32(int base = 10); // base may be between 2 and 36, inclusive, or the special 0 (= C format)
     wxUint16 Read16(int base = 10);
@@ -53,7 +53,6 @@ public:
     wxInt16  Read16S(int base = 10);
     wxInt8   Read8S(int base = 10);
     double   ReadDouble();
-    wxString ReadString();  // deprecated: use ReadLine or ReadWord instead
     wxString ReadLine();
     wxString ReadWord();
     wxChar   GetChar() { wxChar c = NextChar(); return (wxChar)(c != wxEOT ? c : 0); }
@@ -76,13 +75,17 @@ public:
 
     wxTextInputStream& operator>>( __wxTextInputManip func) { return func(*this); }
 
+#if WXWIN_COMPATIBILITY_2_6
+    wxDEPRECATED( wxString ReadString() );  // use ReadLine or ReadWord instead
+#endif // WXWIN_COMPATIBILITY_2_6
+
 protected:
     wxInputStream &m_input;
     wxString m_separators;
     char m_lastBytes[10]; // stores the bytes that were read for the last character
 
 #if wxUSE_UNICODE
-    wxMBConv &m_conv;
+    wxMBConv *m_conv;
 #endif
 
     bool   EatEOL(const wxChar &c);
@@ -91,7 +94,7 @@ protected:
     wxChar NextChar();   // this should be used instead of GetC() because of Unicode issues
     wxChar NextNonSeparators();
 
-    DECLARE_NO_COPY_CLASS(wxTextInputStream)
+    wxDECLARE_NO_COPY_CLASS(wxTextInputStream);
 };
 
 typedef enum
@@ -106,11 +109,15 @@ class WXDLLIMPEXP_BASE wxTextOutputStream
 {
 public:
 #if wxUSE_UNICODE
-    wxTextOutputStream( wxOutputStream& s, wxEOL mode = wxEOL_NATIVE, wxMBConv& conv = wxConvUTF8  );
+    wxTextOutputStream(wxOutputStream& s,
+                       wxEOL mode = wxEOL_NATIVE,
+                       const wxMBConv& conv = wxConvAuto());
 #else
-    wxTextOutputStream( wxOutputStream& s, wxEOL mode = wxEOL_NATIVE );
+    wxTextOutputStream(wxOutputStream& s, wxEOL mode = wxEOL_NATIVE);
 #endif
     virtual ~wxTextOutputStream();
+
+    const wxOutputStream& GetOutputStream() const { return m_output; }
 
     void SetMode( wxEOL mode = wxEOL_NATIVE );
     wxEOL GetMode() { return m_mode; }
@@ -123,7 +130,8 @@ public:
 
     wxTextOutputStream& PutChar(wxChar c);
 
-    wxTextOutputStream& operator<<(const wxChar *string);
+    void Flush();
+
     wxTextOutputStream& operator<<(const wxString& string);
     wxTextOutputStream& operator<<(char c);
 #if wxUSE_UNICODE && wxWCHAR_T_IS_REAL_TYPE
@@ -143,10 +151,10 @@ protected:
     wxEOL           m_mode;
 
 #if wxUSE_UNICODE
-    wxMBConv &m_conv;
+    wxMBConv *m_conv;
 #endif
 
-    DECLARE_NO_COPY_CLASS(wxTextOutputStream)
+    wxDECLARE_NO_COPY_CLASS(wxTextOutputStream);
 };
 
 #endif

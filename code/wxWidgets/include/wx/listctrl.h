@@ -4,17 +4,12 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     04.12.99
-// RCS-ID:      $Id: listctrl.h,v 1.61 2005/01/21 18:48:20 ABX Exp $
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_LISTCTRL_H_BASE_
 #define _WX_LISTCTRL_H_BASE_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "listctrlbase.h"
-#endif
 
 #include "wx/defs.h" // headers should include this before first wxUSE_XXX check
 
@@ -26,14 +21,16 @@
 // constants
 // ----------------------------------------------------------------------------
 
-extern WXDLLEXPORT_DATA(const wxChar*) wxListCtrlNameStr;
+extern WXDLLIMPEXP_DATA_CORE(const char) wxListCtrlNameStr[];
 
 // ----------------------------------------------------------------------------
 // include the wxListCtrl class declaration
 // ----------------------------------------------------------------------------
 
-#if defined(__WIN32__) && !defined(__WXUNIVERSAL__)
+#if defined(__WXMSW__) && !defined(__WXUNIVERSAL__)
     #include "wx/msw/listctrl.h"
+#elif defined(__WXMAC__) && !defined(__WXUNIVERSAL__) && wxOSX_USE_CARBON
+    #include "wx/osx/listctrl.h"
 #else
     #include "wx/generic/listctrl.h"
 #endif
@@ -42,7 +39,7 @@ extern WXDLLEXPORT_DATA(const wxChar*) wxListCtrlNameStr;
 // wxListView: a class which provides a better API for list control
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxListView : public wxListCtrl
+class WXDLLIMPEXP_CORE wxListView : public wxListCtrl
 {
 public:
     wxListView() { }
@@ -86,7 +83,7 @@ public:
         { return GetNextSelected(-1); }
 
     // return true if the item is selected
-    bool IsSelected(long index)
+    bool IsSelected(long index) const
         { return GetItemState(index, wxLIST_STATE_SELECTED) != 0; }
 
     // columns

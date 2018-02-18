@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        radiobox.h
+// Name:        wx/os2/radiobox.h
 // Purpose:     wxRadioBox class
 // Author:      David Webster
 // Modified by:
 // Created:     10/12/99
-// RCS-ID:      $Id: radiobox.h,v 1.17.2.1 2006/01/15 20:50:03 SN Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -13,9 +12,9 @@
 #define _WX_RADIOBOX_H_
 
 // List box item
-class WXDLLEXPORT wxBitmap ;
+class WXDLLIMPEXP_FWD_CORE wxBitmap ;
 
-class WXDLLEXPORT wxRadioBox: public wxControl, public wxRadioBoxBase
+class WXDLLIMPEXP_CORE wxRadioBox: public wxControl, public wxRadioBoxBase
 {
 public:
     wxRadioBox();
@@ -28,7 +27,7 @@ public:
                       ,int                nNum = 0
                       ,const wxString     asChoices[] = NULL
                       ,int                nMajorDim = 0
-                      ,long               lStyle = wxRA_HORIZONTAL
+                      ,long               lStyle = wxRA_SPECIFY_COLS
                       ,const wxValidator& rVal = wxDefaultValidator
                       ,const wxString&    rsName = wxRadioBoxNameStr
                      )
@@ -54,7 +53,7 @@ public:
                       ,const wxSize&        rSize
                       ,const wxArrayString& asChoices
                       ,int                  nMajorDim = 0
-                      ,long                 lStyle = wxRA_HORIZONTAL
+                      ,long                 lStyle = wxRA_SPECIFY_COLS
                       ,const wxValidator&   rVal = wxDefaultValidator
                       ,const wxString&      rsName = wxRadioBoxNameStr
                      )
@@ -72,7 +71,7 @@ public:
               );
     }
 
-    ~wxRadioBox();
+    virtual ~wxRadioBox();
 
     bool Create( wxWindow*          pParent
                 ,wxWindowID         vId
@@ -82,7 +81,7 @@ public:
                 ,int                nNum = 0
                 ,const wxString     asChoices[] = NULL
                 ,int                nMajorDim = 0
-                ,long               lStyle = wxRA_HORIZONTAL
+                ,long               lStyle = wxRA_SPECIFY_COLS
                 ,const wxValidator& rVal = wxDefaultValidator
                 ,const wxString&    rsName = wxRadioBoxNameStr
                );
@@ -94,16 +93,31 @@ public:
                 ,const wxSize&        rSize
                 ,const wxArrayString& asChoices
                 ,int                  nMajorDim = 0
-                ,long                 lStyle = wxRA_HORIZONTAL
+                ,long                 lStyle = wxRA_SPECIFY_COLS
                 ,const wxValidator&   rVal = wxDefaultValidator
                 ,const wxString&      rsName = wxRadioBoxNameStr
                );
 
-    void             Command(wxCommandEvent& rEvent);
-    bool             ContainsHWND(WXHWND hWnd) const;
-    virtual bool     Enable(bool bEnable = true);
-    virtual bool     Enable(int  nItem, bool bEnable = true);
-    int              FindString(const wxString& sStr) const;
+    // Enabling
+    virtual bool Enable(bool bEnable = true);
+    virtual bool Enable(unsigned int nItem, bool bEnable = true);
+    virtual bool IsItemEnabled(unsigned int WXUNUSED(n)) const
+    {
+        /* TODO */
+        return true;
+    }
+
+    // Showing
+    virtual bool Show(bool bShow = true);
+    virtual bool Show(unsigned int nItem, bool bShow = true);
+    virtual bool IsItemShown(unsigned int WXUNUSED(n)) const
+    {
+        /* TODO */
+        return true;
+    }
+
+    void Command(wxCommandEvent& rEvent);
+    bool ContainsHWND(WXHWND hWnd) const;
 
     virtual WXHBRUSH OnCtlColor( WXHDC    hDC
                                 ,WXHWND   hWnd
@@ -116,8 +130,6 @@ public:
                                 ,WXWORD wId
                                );
     void             SendNotificationEvent(void);
-    virtual bool     Show(int  nItem, bool bShow = true);
-    virtual bool     Show(bool bShow = true);
     MRESULT          WindowProc( WXUINT   uMsg
                                 ,WXWPARAM wParam
                                 ,WXLPARAM lParam
@@ -126,40 +138,33 @@ public:
 
 
 
-           virtual int      GetColumnCount(void) const;
-           virtual int      GetCount(void) const;
-                   int      GetNumHor(void) const;
-                   int      GetNumVer(void) const;
+           virtual unsigned int GetCount() const;
     inline         WXHWND*  GetRadioButtons(void) const { return m_ahRadioButtons; }
-           virtual int      GetRowCount(void) const;
                    int      GetSelection(void) const;
-                   void     GetSize( int* pnX
-                                    ,int* pnY
-                                   ) const;
+                   void     GetSize(int* pnX, int* pnY) const;
     inline         int      GetSizeFlags(void) const { return m_nSizeFlags; }
-                   wxString GetString(int nIndex) const;
+           virtual wxString GetString(unsigned int nIndex) const;
            virtual wxString GetStringSelection(void) const;
 
     inline         void     SetButtonFont(const wxFont& rFont) { SetFont(rFont); }
                    void     SetFocus(void);
            virtual bool     SetFont(const wxFont& rFont);
-    inline         void     SetLabelFont(const wxFont& WXUNUSED(font)) {};
-                   void     SetSelection(int nIndex);
-           virtual void     SetString( int             nNum
-                                      ,const wxString& rsLabel
-                                     );
-           virtual bool     SetStringSelection(const wxString& rsStr);
+    inline         void     SetLabelFont(const wxFont& WXUNUSED(font)) {}
+           virtual void     SetSelection(int nIndex);
+           virtual void     SetString(unsigned int nNum, const wxString& rsLabel);
+    virtual bool SetStringSelection(const wxString& rsStr);
 
-                   void     SetLabel( int             nItem
-                                     ,const wxString& rsLabel
-                                    );
-                   void     SetLabel( int       item
-                                     ,wxBitmap* pBitmap
-                                    );
-                   wxString GetLabel(int nItem) const;
+    virtual void SetLabel(const wxString& rsLabel)
+        { wxControl::SetLabel(rsLabel); }
+    virtual wxString GetLabel() const
+        { return wxControl::GetLabel(); }
 
+    void SetLabel( int nItem, const wxString& rsLabel );
+    void SetLabel( int item, wxBitmap* pBitmap );
+    wxString GetLabel(int nItem) const;
 
 protected:
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
     virtual wxSize DoGetBestSize(void) const;
     virtual void   DoSetSize( int nX
                              ,int nY
@@ -167,27 +172,22 @@ protected:
                              ,int nHeight
                              ,int nSizeFlags = wxSIZE_AUTO
                             );
-    wxSize         GetMaxButtonSize(void) const;
-    wxSize         GetTotalButtonSize(const wxSize& rSizeBtn) const;
-    void           SubclassRadioButton(WXHWND hWndBtn);
+    wxSize GetMaxButtonSize(void) const;
+    wxSize GetTotalButtonSize(const wxSize& rSizeBtn) const;
+    void   SubclassRadioButton(WXHWND hWndBtn);
 
 
-    WXHWND*                         m_ahRadioButtons;
-    int                             m_nMajorDim ;
-    int*                            m_pnRadioWidth;  // for bitmaps
-    int*                            m_pnRadioHeight;
-    int                             m_nNoItems;
-    int                             m_nSelectedButton;
-    int                             m_nSizeFlags;
+    WXHWND* m_ahRadioButtons;
+    int*    m_pnRadioWidth;  // for bitmaps
+    int*    m_pnRadioHeight;
+    int     m_nSelectedButton;
+    int     m_nSizeFlags;
 
 private:
-    inline wxString GetLabel() const
-    { return wxWindowBase::GetLabel(); }
-    inline void     SetLabel(const wxString& rsLabel)
-    { wxWindowBase::SetLabel(rsLabel); }
+
+    unsigned int m_nNoItems;
 
     DECLARE_DYNAMIC_CLASS(wxRadioBox)
 }; // end of wxRadioBox
 
-#endif
-    // _WX_RADIOBOX_H_
+#endif // _WX_RADIOBOX_H_

@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     29.06.2003
-// RCS-ID:      $Id: init.h,v 1.8 2005/01/17 00:13:39 VZ Exp $
 // Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,7 +11,8 @@
 #ifndef _WX_INIT_H_
 #define _WX_INIT_H_
 
-#include "wx/wxchar.h"
+#include "wx/defs.h"
+#include "wx/chartype.h"
 
 // ----------------------------------------------------------------------------
 // wxEntry helper functions which allow to have more fine grained control
@@ -52,15 +52,25 @@ extern int WXDLLIMPEXP_BASE wxEntry(int& argc, char **argv);
 
 #endif// wxUSE_UNICODE
 
+// Under Windows we define additional wxEntry() overloads with signature
+// compatible with WinMain() and not the traditional main().
+#if wxUSE_GUI && defined(__WINDOWS__)
+    #include "wx/msw/init.h"
+#endif
+
 // ----------------------------------------------------------------------------
 // Using the library without (explicit) application object: you may avoid using
-// DECLARE_APP and IMPLEMENT_APP macros and call the functions below instead at
+// wxDECLARE_APP and wxIMPLEMENT_APP macros and call the functions below instead at
 // the program startup and termination
 // ----------------------------------------------------------------------------
 
 // initialize the library (may be called as many times as needed, but each
 // call to wxInitialize() must be matched by wxUninitialize())
-extern bool WXDLLIMPEXP_BASE wxInitialize(int argc = 0, wxChar **argv = NULL);
+extern bool WXDLLIMPEXP_BASE wxInitialize();
+extern bool WXDLLIMPEXP_BASE wxInitialize(int argc, wxChar **argv);
+#if wxUSE_UNICODE
+extern bool WXDLLIMPEXP_BASE wxInitialize(int argc, char **argv);
+#endif
 
 // clean up -- the library can't be used any more after the last call to
 // wxUninitialize()
@@ -72,10 +82,22 @@ class WXDLLIMPEXP_BASE wxInitializer
 {
 public:
     // initialize the library
-    wxInitializer(int argc = 0, wxChar **argv = NULL)
+    wxInitializer()
+    {
+        m_ok = wxInitialize();
+    }
+
+    wxInitializer(int argc, wxChar **argv)
     {
         m_ok = wxInitialize(argc, argv);
     }
+
+#if wxUSE_UNICODE
+    wxInitializer(int argc, char **argv)
+    {
+        m_ok = wxInitialize(argc, argv);
+    }
+#endif // wxUSE_UNICODE
 
     // has the initialization been successful? (explicit test)
     bool IsOk() const { return m_ok; }

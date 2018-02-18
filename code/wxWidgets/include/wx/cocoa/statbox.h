@@ -4,9 +4,8 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/03/18
-// RCS-ID:      $Id:
 // Copyright:   (c) 2003 David Elliott
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WX_COCOA_STATBOX_H__
@@ -17,7 +16,7 @@
 // ========================================================================
 // wxStaticBox
 // ========================================================================
-class WXDLLEXPORT wxStaticBox: public wxStaticBoxBase, protected wxCocoaNSBox
+class WXDLLIMPEXP_CORE wxStaticBox: public wxStaticBoxBase, protected wxCocoaNSBox
 {
     DECLARE_DYNAMIC_CLASS(wxStaticBox)
     DECLARE_EVENT_TABLE()
@@ -41,12 +40,15 @@ public:
             long style = 0, const wxString& name = wxStaticBoxNameStr);
     virtual ~wxStaticBox();
 
+    virtual void SetLabel(const wxString& label);
+    virtual wxString GetLabel() const;
+
 // ------------------------------------------------------------------------
 // Cocoa callbacks
 // ------------------------------------------------------------------------
 protected:
     // Static boxes cannot be enabled/disabled
-    virtual void CocoaSetEnabled(bool enable) { }
+    virtual void CocoaSetEnabled(bool WXUNUSED(enable)) { }
 // ------------------------------------------------------------------------
 // Implementation
 // ------------------------------------------------------------------------

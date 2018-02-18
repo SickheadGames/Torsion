@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        generic/datectrl.h
+// Name:        wx/generic/datectrl.h
 // Purpose:     generic wxDatePickerCtrl implementation
 // Author:      Andreas Pflug
 // Modified by:
 // Created:     2005-01-19
-// RCS-ID:      $Id: datectrl.h,v 1.11 2005/04/16 11:07:28 JS Exp $
 // Copyright:   (c) 2005 Andreas Pflug <pgadmin@pse-consulting.de>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,21 +11,20 @@
 #ifndef _WX_GENERIC_DATECTRL_H_
 #define _WX_GENERIC_DATECTRL_H_
 
-class WXDLLIMPEXP_ADV wxButton;
-class WXDLLIMPEXP_ADV wxCalendarDateAttr;
-class WXDLLIMPEXP_ADV wxCalendarCtrl;
-class WXDLLIMPEXP_ADV wxCalendarEvent;
-class WXDLLIMPEXP_ADV wxDatePopup;
-class WXDLLIMPEXP_ADV wxTextCtrl;
+#include "wx/compositewin.h"
 
-class WXDLLIMPEXP_ADV wxDatePopupInternal;
+class WXDLLIMPEXP_FWD_CORE wxComboCtrl;
 
-class WXDLLIMPEXP_ADV wxDatePickerCtrlGeneric : public wxDatePickerCtrlBase
+class WXDLLIMPEXP_FWD_ADV wxCalendarCtrl;
+class WXDLLIMPEXP_FWD_ADV wxCalendarComboPopup;
+
+class WXDLLIMPEXP_ADV wxDatePickerCtrlGeneric
+    : public wxCompositeWindow<wxDatePickerCtrlBase>
 {
 public:
     // creating the control
     wxDatePickerCtrlGeneric() { Init(); }
-    ~wxDatePickerCtrlGeneric() ;
+    virtual ~wxDatePickerCtrlGeneric();
     wxDatePickerCtrlGeneric(wxWindow *parent,
                             wxWindowID id,
                             const wxDateTime& date = wxDefaultDateTime,
@@ -61,8 +59,7 @@ public:
                       const wxDateTime& upperdate = wxDefaultDateTime);
 
     // extra methods available only in this (generic) implementation
-    bool SetFormat(const wxChar *fmt);
-    wxCalendarCtrl *GetCalendar() const { return m_cal; }
+    wxCalendarCtrl *GetCalendar() const;
 
 
     // implementation only from now on
@@ -71,41 +68,28 @@ public:
     // overridden base class methods
     virtual bool Destroy();
 
-    virtual bool Enable(bool enable = true);
-    virtual bool Show(bool show = true);
-
 protected:
     virtual wxSize DoGetBestSize() const;
-    virtual void DoMoveWindow(int x, int y, int width, int height);
 
 private:
     void Init();
-    void DropDown(bool down = true);
+
+    // return the list of the windows composing this one
+    virtual wxWindowList GetCompositeWindowParts() const;
 
     void OnText(wxCommandEvent &event);
-    void OnEditKey(wxKeyEvent & event);
-    void OnCalKey(wxKeyEvent & event);
-    void OnClick(wxCommandEvent &event);
-    void OnSelChange(wxCalendarEvent &event);
-    void OnSetFocus(wxFocusEvent &event);
-    void OnKillFocus(wxFocusEvent &event);
-    void OnChildSetFocus(wxChildFocusEvent &event);
     void OnSize(wxSizeEvent& event);
+    void OnFocus(wxFocusEvent& event);
 
+#ifdef __WXOSX_COCOA__
+    virtual void OSXGenerateEvent(const wxDateTime& WXUNUSED(dt)) { }
+#endif
 
-    wxDatePopupInternal *m_popup;
-    wxTextCtrl *m_txt;
-    wxCalendarCtrl *m_cal;
-    wxButton *m_btn;
-    wxString m_format;
-    wxDateTime m_currentDate;
-
-    bool m_dropped,
-         m_ignoreDrop;
-
+    wxComboCtrl* m_combo;
+    wxCalendarComboPopup* m_popup;
 
     DECLARE_EVENT_TABLE()
-    DECLARE_NO_COPY_CLASS(wxDatePickerCtrlGeneric)
+    wxDECLARE_NO_COPY_CLASS(wxDatePickerCtrlGeneric);
 };
 
 #endif // _WX_GENERIC_DATECTRL_H_

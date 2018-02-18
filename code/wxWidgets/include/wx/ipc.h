@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     15.04.02
-// RCS-ID:      $Id: ipc.h,v 1.3.4.1 2005/09/25 20:46:18 MW Exp $
 // Copyright:   (c) 2002 Vadim Zeitlin
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,7 +15,7 @@
 // 0, or if the platform is not Windows, use TCP/IP for IPC implementation
 
 #if !defined(wxUSE_DDE_FOR_IPC)
-    #ifdef __WXMSW__
+    #ifdef __WINDOWS__
         #define wxUSE_DDE_FOR_IPC 1
     #else
         #define wxUSE_DDE_FOR_IPC 0

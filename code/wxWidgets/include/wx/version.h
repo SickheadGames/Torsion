@@ -1,29 +1,35 @@
-/**
-*  Name:        wx/version.h
-*  Purpose:     wxWidgets version numbers
-*  Author:      Julian Smart
-*  Modified by: Ryan Norton (Converted to C)
-*  Created:     29/01/98
-*  RCS-ID:      $Id: version.h,v 1.69.2.2 2006/01/18 10:25:00 JS Exp $
-*  Copyright:   (c) 1998 Julian Smart
-*  Licence:     wxWindows licence
-*/
+/*
+ *  Name:        wx/version.h
+ *  Purpose:     wxWidgets version numbers
+ *  Author:      Julian Smart
+ *  Modified by: Ryan Norton (Converted to C)
+ *  Created:     29/01/98
+ *  Copyright:   (c) 1998 Julian Smart
+ *  Licence:     wxWindows licence
+ */
 
 /* THIS IS A C FILE, DON'T USE C++ FEATURES (IN PARTICULAR COMMENTS) IN IT */
 
 #ifndef _WX_VERSION_H_
 #define _WX_VERSION_H_
 
+#include "wx/cpp.h"    /* for wxSTRINGIZE */
+
 /*  the constants below must be changed with each new version */
 /*  ---------------------------------------------------------------------------- */
 
-/*  NB: this file is parsed by Perl code in tmake templates in distrib/msw/tmake */
-/*      so don't change its format too much or they could break */
-#define wxMAJOR_VERSION      2
-#define wxMINOR_VERSION      6
+/*
+    Don't forget to update WX_CURRENT, WX_REVISION and WX_AGE in
+    build/bakefiles/version.bkl and regenerate the makefiles when you change
+    this!
+ */
+
+/*  NB: this file is parsed by automatic tools so don't change its format! */
+#define wxMAJOR_VERSION      3
+#define wxMINOR_VERSION      0
 #define wxRELEASE_NUMBER     3
 #define wxSUBRELEASE_NUMBER  0
-#define wxVERSION_STRING   _T("wxWidgets 2.6.3")
+#define wxVERSION_STRING   wxT("wxWidgets 3.0.3")
 
 /*  nothing to update below this line when updating the version */
 /*  ---------------------------------------------------------------------------- */
@@ -39,17 +45,27 @@
 #endif
 
 /*  helpers for wxVERSION_NUM_XXX */
-#define wxSTRINGIZE(x)  #x
 #define wxMAKE_VERSION_STRING(x, y, z) \
     wxSTRINGIZE(x) wxSTRINGIZE(y) wxSTRINGIZE(z)
 #define wxMAKE_VERSION_DOT_STRING(x, y, z) \
     wxSTRINGIZE(x) "." wxSTRINGIZE(y) "." wxSTRINGIZE(z)
+
+#define wxMAKE_VERSION_STRING_T(x, y, z) \
+    wxSTRINGIZE_T(x) wxSTRINGIZE_T(y) wxSTRINGIZE_T(z)
+#define wxMAKE_VERSION_DOT_STRING_T(x, y, z) \
+    wxSTRINGIZE_T(x) wxT(".") wxSTRINGIZE_T(y) wxT(".") wxSTRINGIZE_T(z)
 
 /*  these are used by src/msw/version.rc and should always be ASCII, not Unicode */
 #define wxVERSION_NUM_STRING \
   wxMAKE_VERSION_STRING(wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER)
 #define wxVERSION_NUM_DOT_STRING \
   wxMAKE_VERSION_DOT_STRING(wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER)
+
+/* those are Unicode-friendly */
+#define wxVERSION_NUM_STRING_T \
+  wxMAKE_VERSION_STRING_T(wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER)
+#define wxVERSION_NUM_DOT_STRING_T \
+  wxMAKE_VERSION_DOT_STRING_T(wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER)
 
 /*  some more defines, not really sure if they're [still] useful */
 #define wxVERSION_NUMBER ( (wxMAJOR_VERSION * 1000) + (wxMINOR_VERSION * 100) + wxRELEASE_NUMBER )

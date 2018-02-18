@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:
-// RCS-ID:      $Id: print.h,v 1.11 2005/05/04 18:52:01 JS Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,13 +11,17 @@
 #ifndef _WX_PRINT_H_BASE_
 #define _WX_PRINT_H_BASE_
 
+#include "wx/defs.h"
+
+#if wxUSE_PRINTING_ARCHITECTURE
+
 #if defined(__WXMSW__) && !defined(__WXUNIVERSAL__)
 
 #include "wx/msw/printwin.h"
 
 #elif defined(__WXMAC__)
 
-#include "wx/mac/printmac.h"
+#include "wx/osx/printmac.h"
 
 #elif defined(__WXPM__)
 
@@ -30,6 +33,6 @@
 
 #endif
 
-
+#endif // wxUSE_PRINTING_ARCHITECTURE
 #endif
     // _WX_PRINT_H_BASE_

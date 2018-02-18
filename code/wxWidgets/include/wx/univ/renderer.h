@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     06.08.00
-// RCS-ID:      $Id: renderer.h,v 1.29.2.1 2005/09/25 20:46:44 MW Exp $
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -28,31 +27,37 @@
    implementation of the latter or reimplement itself).
  */
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "renderer.h"
-#endif
-
 #include "wx/renderer.h"
 
-class WXDLLEXPORT wxDC;
-class WXDLLEXPORT wxCheckListBox;
-class WXDLLEXPORT wxListBox;
-class WXDLLEXPORT wxMenu;
-class WXDLLEXPORT wxMenuGeometryInfo;
-class WXDLLEXPORT wxScrollBar;
-class WXDLLEXPORT wxTextCtrl;
-class WXDLLEXPORT wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxDC;
+class WXDLLIMPEXP_FWD_CORE wxCheckListBox;
+
+#if wxUSE_LISTBOX
+    class WXDLLIMPEXP_FWD_CORE wxListBox;
+#endif // wxUSE_LISTBOX
+
+#if wxUSE_MENUS
+   class WXDLLIMPEXP_FWD_CORE wxMenu;
+   class WXDLLIMPEXP_FWD_CORE wxMenuGeometryInfo;
+#endif // wxUSE_MENUS
+
+class WXDLLIMPEXP_FWD_CORE wxScrollBar;
+
+#if wxUSE_TEXTCTRL
+    class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
+#endif
+
 #if wxUSE_GAUGE
-class WXDLLEXPORT wxGauge;
+    class WXDLLIMPEXP_FWD_CORE wxGauge;
 #endif // wxUSE_GAUGE
 
 #include "wx/string.h"
 #include "wx/gdicmn.h"
 #include "wx/icon.h"
-#include "wx/scrolbar.h"            // for wxScrollBar::Element
 
 // helper class used by wxMenu-related functions
-class WXDLLEXPORT wxMenuGeometryInfo
+class WXDLLIMPEXP_CORE wxMenuGeometryInfo
 {
 public:
     // get the total size of the menu
@@ -65,7 +70,7 @@ public:
 // wxRenderer: abstract renderers interface
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxRenderer : public wxDelegateRendererNative
+class WXDLLIMPEXP_CORE wxRenderer : public wxDelegateRendererNative
 {
 public:
     // drawing functions
@@ -76,15 +81,13 @@ public:
                                 const wxColour& col,
                                 const wxRect& rect,
                                 int flags,
-                                wxWindow *window = NULL ) = 0;
+                                wxWindow *window = NULL) = 0;
 
     // draw the button surface
     virtual void DrawButtonSurface(wxDC& dc,
-                                const wxColour& col,
-                                const wxRect& rect,
-                                int flags )
-        { DrawBackground( dc, col, rect, flags ); }
-
+                                   const wxColour& col,
+                                   const wxRect& rect,
+                                   int flags) = 0;
 
     // draw the label inside the given rectangle with the specified alignment
     // and optionally emphasize the character with the given index
@@ -106,13 +109,14 @@ public:
                                  int indexAccel = -1,
                                  wxRect *rectBounds = NULL) = 0;
 
+
     // draw the border and optionally return the rectangle containing the
     // region inside the border
     virtual void DrawBorder(wxDC& dc,
                             wxBorder border,
                             const wxRect& rect,
                             int flags = 0,
-                            wxRect *rectIn = (wxRect *)NULL) = 0;
+                            wxRect *rectIn = NULL) = 0;
 
     // draw text control border (I hate to have a separate method for this but
     // it is needed to accommodate GTK+)
@@ -120,13 +124,13 @@ public:
                                 wxBorder border,
                                 const wxRect& rect,
                                 int flags = 0,
-                                wxRect *rectIn = (wxRect *)NULL) = 0;
+                                wxRect *rectIn = NULL) = 0;
 
     // draw push button border and return the rectangle left for the label
     virtual void DrawButtonBorder(wxDC& dc,
                                   const wxRect& rect,
                                   int flags = 0,
-                                  wxRect *rectIn = (wxRect *)NULL) = 0;
+                                  wxRect *rectIn = NULL) = 0;
 
     // draw a horizontal line
     virtual void DrawHorizontalLine(wxDC& dc,
@@ -203,6 +207,7 @@ public:
                                  wxAlignment align = wxALIGN_LEFT,
                                  int indexAccel = -1) = 0;
 
+#if wxUSE_TOOLBAR
     // draw a toolbar button (label may be empty, bitmap may be invalid, if
     // both conditions are true this function draws a separator)
     virtual void DrawToolBarButton(wxDC& dc,
@@ -210,8 +215,11 @@ public:
                                    const wxBitmap& bitmap,
                                    const wxRect& rect,
                                    int flags = 0,
-                                   long style = 0) = 0;
+                                   long style = 0,
+                                   int tbarStyle = 0) = 0;
+#endif // wxUSE_TOOLBAR
 
+#if wxUSE_TEXTCTRL
     // draw a (part of) line in the text control
     virtual void DrawTextLine(wxDC& dc,
                               const wxString& text,
@@ -222,7 +230,9 @@ public:
 
     // draw a line wrap indicator
     virtual void DrawLineWrapMark(wxDC& dc, const wxRect& rect) = 0;
+#endif // wxUSE_TEXTCTRL
 
+#if wxUSE_NOTEBOOK
     // draw a notebook tab
     virtual void DrawTab(wxDC& dc,
                          const wxRect& rect,
@@ -231,6 +241,9 @@ public:
                          const wxBitmap& bitmap = wxNullBitmap,
                          int flags = 0,
                          int indexAccel = -1) = 0;
+#endif // wxUSE_NOTEBOOK
+
+#if wxUSE_SLIDER
 
     // draw the slider shaft
     virtual void DrawSliderShaft(wxDC& dc,
@@ -258,7 +271,9 @@ public:
                                  int step = 1,
                                  int flags = 0,
                                  long style = 0) = 0;
+#endif // wxUSE_SLIDER
 
+#if wxUSE_MENUS
     // draw a menu bar item
     virtual void DrawMenuBarItem(wxDC& dc,
                                  const wxRect& rect,
@@ -282,13 +297,16 @@ public:
     virtual void DrawMenuSeparator(wxDC& dc,
                                    wxCoord y,
                                    const wxMenuGeometryInfo& geomInfo) = 0;
+#endif // wxUSE_MENUS
 
+#if wxUSE_STATUSBAR
     // draw a status bar field: wxCONTROL_ISDEFAULT bit in the flags is
     // interpreted specially and means "draw the status bar grip" here
     virtual void DrawStatusField(wxDC& dc,
                                  const wxRect& rect,
                                  const wxString& label,
                                  int flags = 0, int style = 0) = 0;
+#endif // wxUSE_STATUSBAR
 
     // draw complete frame/dialog titlebar
     virtual void DrawFrameTitleBar(wxDC& dc,
@@ -330,11 +348,13 @@ public:
     // misc functions
     // --------------
 
+#if wxUSE_COMBOBOX
     // return the bitmaps to use for combobox button
     virtual void GetComboBitmaps(wxBitmap *bmpNormal,
                                  wxBitmap *bmpFocus,
                                  wxBitmap *bmpPressed,
                                  wxBitmap *bmpDisabled) = 0;
+#endif // wxUSE_COMBOBOX
 
     // geometry functions
     // ------------------
@@ -353,28 +373,10 @@ public:
     // the control looks "nice" if it uses the adjusted rectangle
     virtual void AdjustSize(wxSize *size, const wxWindow *window) = 0;
 
+#if wxUSE_SCROLLBAR
     // get the size of a scrollbar arrow
     virtual wxSize GetScrollbarArrowSize() const = 0;
-
-    // gets the bounding box for a scrollbar element for the given (by default
-    // - current) thumb position
-    virtual wxRect GetScrollbarRect(const wxScrollBar *scrollbar,
-                                    wxScrollBar::Element elem,
-                                    int thumbPos = -1) const = 0;
-
-    // returns the size of the scrollbar shaft excluding the arrows
-    virtual wxCoord GetScrollbarSize(const wxScrollBar *scrollbar) = 0;
-
-    // returns one of wxHT_SCROLLBAR_XXX constants
-    virtual wxHitTest HitTestScrollbar(const wxScrollBar *scrollbar,
-                                       const wxPoint& pt) const = 0;
-
-    // translate the scrollbar position (in logical units) into physical
-    // coordinate (in pixels) and the other way round
-    virtual wxCoord ScrollbarToPixel(const wxScrollBar *scrollbar,
-                                     int thumbPos = -1) = 0;
-    virtual int PixelToScrollbar(const wxScrollBar *scrollbar,
-                                 wxCoord coord) = 0;
+#endif // wxUSE_SCROLLBAR
 
     // get the height of a listbox item from the base font height
     virtual wxCoord GetListboxItemHeight(wxCoord fontHeight) = 0;
@@ -384,13 +386,16 @@ public:
     virtual wxSize GetRadioBitmapSize() const = 0;
     virtual wxCoord GetCheckItemMargin() const = 0;
 
+#if wxUSE_TOOLBAR
     // get the standard size of a toolbar button and also return the size of
     // a toolbar separator in the provided pointer
     virtual wxSize GetToolBarButtonSize(wxCoord *separator) const = 0;
 
     // get the margins between/around the toolbar buttons
     virtual wxSize GetToolBarMargin() const = 0;
+#endif // wxUSE_TOOLBAR
 
+#if wxUSE_TEXTCTRL
     // convert between text rectangle and client rectangle for text controls:
     // the former is typicall smaller to leave margins around text
     virtual wxRect GetTextTotalArea(const wxTextCtrl *text,
@@ -400,13 +405,17 @@ public:
     virtual wxRect GetTextClientArea(const wxTextCtrl *text,
                                      const wxRect& rectTotal,
                                      wxCoord *extraSpaceBeyond) const = 0;
+#endif // wxUSE_TEXTCTRL
 
+#if wxUSE_NOTEBOOK
     // get the overhang of a selected tab
     virtual wxSize GetTabIndent() const = 0;
 
     // get the padding around the text in a tab
     virtual wxSize GetTabPadding() const = 0;
+#endif // wxUSE_NOTEBOOK
 
+#if wxUSE_SLIDER
     // get the default size of the slider in lesser dimension (i.e. height of a
     // horizontal slider or width of a vertical one)
     virtual wxCoord GetSliderDim() const = 0;
@@ -424,10 +433,12 @@ public:
     virtual wxSize GetSliderThumbSize(const wxRect& rect,
                                       int lenThumb,
                                       wxOrientation orient) const = 0;
+#endif // wxUSE_SLIDER
 
     // get the size of one progress bar step (in horz and vertical directions)
     virtual wxSize GetProgressBarStep() const = 0;
 
+#if wxUSE_MENUS
     // get the size of rectangle to use in the menubar for the given text rect
     virtual wxSize GetMenuBarItemSize(const wxSize& sizeText) const = 0;
 
@@ -438,10 +449,19 @@ public:
     // the returned pointer must be deleted by the caller
     virtual wxMenuGeometryInfo *GetMenuGeometry(wxWindow *win,
                                                 const wxMenu& menu) const = 0;
+#endif // wxUSE_MENUS
 
+#if wxUSE_STATUSBAR
     // get the borders around the status bar fields (x and y fields of the
-    // return value) and also, optionally, the border between the fields
-    virtual wxSize GetStatusBarBorders(wxCoord *borderBetweenFields) const = 0;
+    // return value)
+    virtual wxSize GetStatusBarBorders() const = 0;
+
+    // get the border between the status bar fields
+    virtual wxCoord GetStatusBarBorderBetweenFields() const = 0;
+
+    // get the mergin between a field and its border
+    virtual wxSize GetStatusBarFieldMargins() const = 0;
+#endif // wxUSE_STATUSBAR
 
     // get client area rectangle of top level window (i.e. subtract
     // decorations from given rectangle)
@@ -463,47 +483,6 @@ public:
 
     // virtual dtor for any base class
     virtual ~wxRenderer();
-
-
-protected:
-    // draw a frame around rectFrame rectangle but not touching the rectLabel
-    // one: this is used by DrawFrame()
-    void StandardDrawFrame(wxDC& dc,
-                           const wxRect& rectFrame,
-                           const wxRect& rectLabel);
-
-    // standard text line drawing: just use DrawText() and highlight the
-    // selected part
-    static void StandardDrawTextLine(wxDC& dc,
-                                     const wxString& text,
-                                     const wxRect& rect,
-                                     int selStart, int selEnd,
-                                     int flags);
-
-    // standard scrollbar hit testing: this assumes that it only has 2 arrows
-    // and a thumb, so the themes which have more complicated scrollbars (e.g.
-    // BeOS) can't use this method
-    static wxRect StandardGetScrollbarRect(const wxScrollBar *scrollbar,
-                                           wxScrollBar::Element elem,
-                                           int thumbPos,
-                                           const wxSize& sizeArrow);
-    static wxHitTest StandardHitTestScrollbar(const wxScrollBar *scrollbar,
-                                              const wxPoint& pt,
-                                              const wxSize& sizeArrow);
-    static wxCoord StandardScrollbarToPixel(const wxScrollBar *scrollbar,
-                                            int thumbPos,
-                                            const wxSize& sizeArrow);
-    static int StandardPixelToScrollbar(const wxScrollBar *scrollbar,
-                                        wxCoord coord,
-                                        const wxSize& sizeArrow);
-    static wxCoord StandardScrollBarSize(const wxScrollBar *scrollbar,
-                                         const wxSize& sizeArrow);
-    static void StandardScrollBarThumbSize(wxCoord lenBar,
-                                           int thumbPos,
-                                           int thumbSize,
-                                           int range,
-                                           wxCoord *thumbStart,
-                                           wxCoord *thumbEnd);
 };
 
 // ----------------------------------------------------------------------------
@@ -513,7 +492,7 @@ protected:
 // will be left to the original renderer
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxDelegateRenderer : public wxRenderer
+class WXDLLIMPEXP_CORE wxDelegateRenderer : public wxRenderer
 {
 public:
     wxDelegateRenderer(wxRenderer *renderer) : m_renderer(renderer) { }
@@ -524,6 +503,13 @@ public:
                                 int flags,
                                 wxWindow *window = NULL )
         { m_renderer->DrawBackground(dc, col, rect, flags, window ); }
+    virtual void DrawButtonSurface(wxDC& dc,
+                                   const wxColour& col,
+                                   const wxRect& rect,
+                                   int flags)
+        { m_renderer->DrawButtonSurface(dc, col, rect, flags); }
+    virtual void DrawFocusRect(wxWindow* win, wxDC& dc, const wxRect& rect, int flags = 0)
+        { m_renderer->DrawFocusRect(win, dc, rect, flags); }
     virtual void DrawLabel(wxDC& dc,
                            const wxString& label,
                            const wxRect& rect,
@@ -547,18 +533,18 @@ public:
                             wxBorder border,
                             const wxRect& rect,
                             int flags = 0,
-                            wxRect *rectIn = (wxRect *)NULL)
+                            wxRect *rectIn = NULL)
         { m_renderer->DrawBorder(dc, border, rect, flags, rectIn); }
     virtual void DrawTextBorder(wxDC& dc,
                                 wxBorder border,
                                 const wxRect& rect,
                                 int flags = 0,
-                                wxRect *rectIn = (wxRect *)NULL)
+                                wxRect *rectIn = NULL)
         { m_renderer->DrawTextBorder(dc, border, rect, flags, rectIn); }
     virtual void DrawButtonBorder(wxDC& dc,
                                   const wxRect& rect,
                                   int flags = 0,
-                                  wxRect *rectIn = (wxRect *)NULL)
+                                  wxRect *rectIn = NULL)
         { m_renderer->DrawButtonBorder(dc, rect, flags, rectIn); }
     virtual void DrawFrame(wxDC& dc,
                            const wxString& label,
@@ -625,13 +611,18 @@ public:
                                  int indexAccel = -1)
         { m_renderer->DrawRadioButton(dc, label, bitmap, rect,
                                       flags, align, indexAccel); }
+#if wxUSE_TOOLBAR
     virtual void DrawToolBarButton(wxDC& dc,
                                    const wxString& label,
                                    const wxBitmap& bitmap,
                                    const wxRect& rect,
                                    int flags = 0,
-                                   long style = 0)
-        { m_renderer->DrawToolBarButton(dc, label, bitmap, rect, flags, style); }
+                                   long style = 0,
+                                   int tbarStyle = 0)
+        { m_renderer->DrawToolBarButton(dc, label, bitmap, rect, flags, style, tbarStyle); }
+#endif // wxUSE_TOOLBAR
+
+#if wxUSE_TEXTCTRL
     virtual void DrawTextLine(wxDC& dc,
                               const wxString& text,
                               const wxRect& rect,
@@ -641,7 +632,9 @@ public:
         { m_renderer->DrawTextLine(dc, text, rect, selStart, selEnd, flags); }
     virtual void DrawLineWrapMark(wxDC& dc, const wxRect& rect)
         { m_renderer->DrawLineWrapMark(dc, rect); }
+#endif // wxUSE_TEXTCTRL
 
+#if wxUSE_NOTEBOOK
     virtual void DrawTab(wxDC& dc,
                          const wxRect& rect,
                          wxDirection dir,
@@ -650,6 +643,9 @@ public:
                          int flags = 0,
                          int accel = -1)
         { m_renderer->DrawTab(dc, rect, dir, label, bitmap, flags, accel); }
+#endif // wxUSE_NOTEBOOK
+
+#if wxUSE_SLIDER
 
     virtual void DrawSliderShaft(wxDC& dc,
                                  const wxRect& rect,
@@ -676,7 +672,9 @@ public:
                                  long style = 0)
         { m_renderer->DrawSliderTicks(dc, rect, lenThumb, orient,
                                       start, end, start, flags, style); }
+#endif // wxUSE_SLIDER
 
+#if wxUSE_MENUS
     virtual void DrawMenuBarItem(wxDC& dc,
                                  const wxRect& rect,
                                  const wxString& label,
@@ -697,12 +695,15 @@ public:
                                    wxCoord y,
                                    const wxMenuGeometryInfo& geomInfo)
         { m_renderer->DrawMenuSeparator(dc, y, geomInfo); }
+#endif // wxUSE_MENUS
 
+#if wxUSE_STATUSBAR
     virtual void DrawStatusField(wxDC& dc,
                                  const wxRect& rect,
                                  const wxString& label,
                                  int flags = 0, int style = 0)
         { m_renderer->DrawStatusField(dc, rect, label, flags, style); }
+#endif // wxUSE_STATUSBAR
 
     virtual void DrawFrameTitleBar(wxDC& dc,
                                    const wxRect& rect,
@@ -737,12 +738,14 @@ public:
                                  int flags = 0)
         { m_renderer->DrawFrameButton(dc, x, y, button, flags); }
 
+#if wxUSE_COMBOBOX
     virtual void GetComboBitmaps(wxBitmap *bmpNormal,
                                  wxBitmap *bmpFocus,
                                  wxBitmap *bmpPressed,
                                  wxBitmap *bmpDisabled)
         { m_renderer->GetComboBitmaps(bmpNormal, bmpFocus,
                                       bmpPressed, bmpDisabled); }
+#endif // wxUSE_COMBOBOX
 
     virtual void AdjustSize(wxSize *size, const wxWindow *window)
         { m_renderer->AdjustSize(size, window); }
@@ -751,23 +754,11 @@ public:
     virtual bool AreScrollbarsInsideBorder() const
         { return m_renderer->AreScrollbarsInsideBorder(); }
 
+#if wxUSE_SCROLLBAR
     virtual wxSize GetScrollbarArrowSize() const
         { return m_renderer->GetScrollbarArrowSize(); }
-    virtual wxRect GetScrollbarRect(const wxScrollBar *scrollbar,
-                                    wxScrollBar::Element elem,
-                                    int thumbPos = -1) const
-        { return m_renderer->GetScrollbarRect(scrollbar, elem, thumbPos); }
-    virtual wxCoord GetScrollbarSize(const wxScrollBar *scrollbar)
-        { return m_renderer->GetScrollbarSize(scrollbar); }
-    virtual wxHitTest HitTestScrollbar(const wxScrollBar *scrollbar,
-                                       const wxPoint& pt) const
-        { return m_renderer->HitTestScrollbar(scrollbar, pt); }
-    virtual wxCoord ScrollbarToPixel(const wxScrollBar *scrollbar,
-                                     int thumbPos = -1)
-        { return m_renderer->ScrollbarToPixel(scrollbar, thumbPos); }
-    virtual int PixelToScrollbar(const wxScrollBar *scrollbar,
-                                 wxCoord coord)
-        { return m_renderer->PixelToScrollbar(scrollbar, coord); }
+#endif // wxUSE_SCROLLBAR
+
     virtual wxCoord GetListboxItemHeight(wxCoord fontHeight)
         { return m_renderer->GetListboxItemHeight(fontHeight); }
     virtual wxSize GetCheckBitmapSize() const
@@ -777,11 +768,14 @@ public:
     virtual wxCoord GetCheckItemMargin() const
         { return m_renderer->GetCheckItemMargin(); }
 
+#if wxUSE_TOOLBAR
     virtual wxSize GetToolBarButtonSize(wxCoord *separator) const
         { return m_renderer->GetToolBarButtonSize(separator); }
     virtual wxSize GetToolBarMargin() const
         { return m_renderer->GetToolBarMargin(); }
+#endif // wxUSE_TOOLBAR
 
+#if wxUSE_TEXTCTRL
     virtual wxRect GetTextTotalArea(const wxTextCtrl *text,
                                     const wxRect& rect) const
         { return m_renderer->GetTextTotalArea(text, rect); }
@@ -789,14 +783,19 @@ public:
                                      const wxRect& rect,
                                      wxCoord *extraSpaceBeyond) const
         { return m_renderer->GetTextClientArea(text, rect, extraSpaceBeyond); }
+#endif // wxUSE_TEXTCTRL
 
+#if wxUSE_NOTEBOOK
     virtual wxSize GetTabIndent() const { return m_renderer->GetTabIndent(); }
     virtual wxSize GetTabPadding() const { return m_renderer->GetTabPadding(); }
+#endif // wxUSE_NOTEBOOK
 
+#if wxUSE_SLIDER
     virtual wxCoord GetSliderDim() const
         { return m_renderer->GetSliderDim(); }
     virtual wxCoord GetSliderTickLen() const
         { return m_renderer->GetSliderTickLen(); }
+
     virtual wxRect GetSliderShaftRect(const wxRect& rect,
                                       int lenThumb,
                                       wxOrientation orient,
@@ -806,15 +805,28 @@ public:
                                       int lenThumb,
                                       wxOrientation orient) const
         { return m_renderer->GetSliderThumbSize(rect, lenThumb, orient); }
+#endif // wxUSE_SLIDER
+
     virtual wxSize GetProgressBarStep() const
         { return m_renderer->GetProgressBarStep(); }
+
+#if wxUSE_MENUS
     virtual wxSize GetMenuBarItemSize(const wxSize& sizeText) const
         { return m_renderer->GetMenuBarItemSize(sizeText); }
     virtual wxMenuGeometryInfo *GetMenuGeometry(wxWindow *win,
                                                 const wxMenu& menu) const
         { return m_renderer->GetMenuGeometry(win, menu); }
-    virtual wxSize GetStatusBarBorders(wxCoord *borderBetweenFields) const
-        { return m_renderer->GetStatusBarBorders(borderBetweenFields); }
+#endif // wxUSE_MENUS
+
+#if wxUSE_STATUSBAR
+    virtual wxSize GetStatusBarBorders() const
+        { return m_renderer->GetStatusBarBorders(); }
+    virtual wxCoord GetStatusBarBorderBetweenFields() const
+        { return m_renderer->GetStatusBarBorderBetweenFields(); }
+    virtual wxSize GetStatusBarFieldMargins() const
+        { return m_renderer->GetStatusBarFieldMargins(); }
+#endif // wxUSE_STATUSBAR
+
     virtual wxRect GetFrameClientArea(const wxRect& rect, int flags) const
         { return m_renderer->GetFrameClientArea(rect, flags); }
     virtual wxSize GetFrameTotalSize(const wxSize& clientSize, int flags) const
@@ -828,11 +840,13 @@ public:
                              int flags) const
         { return m_renderer->HitTestFrame(rect, pt, flags); }
 
-    virtual void DrawHeaderButton(wxWindow *win,
+    virtual int  DrawHeaderButton(wxWindow *win,
                                   wxDC& dc,
                                   const wxRect& rect,
-                                  int flags = 0)
-        { m_renderer->DrawHeaderButton(win, dc, rect, flags); }
+                                  int flags = 0,
+                                  wxHeaderSortIconType sortIcon = wxHDR_SORT_ICON_NONE,
+                                  wxHeaderButtonParams* params = NULL)
+        { return m_renderer->DrawHeaderButton(win, dc, rect, flags, sortIcon, params); }
     virtual void DrawTreeItemButton(wxWindow *win,
                                     wxDC& dc,
                                     const wxRect& rect,
@@ -848,15 +862,16 @@ protected:
 // OnPaint()
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxControlRenderer
+class WXDLLIMPEXP_CORE wxControlRenderer
 {
 public:
     // create a renderer for this dc with this "fundamental" renderer
     wxControlRenderer(wxWindow *control, wxDC& dc, wxRenderer *renderer);
 
     // operations
-    void DrawLabel(const wxBitmap& bitmap = wxNullBitmap,
-                   wxCoord marginX = 0, wxCoord marginY = 0);
+    void DrawLabel();
+    void DrawButtonLabel(const wxBitmap& bitmap = wxNullBitmap,
+                         wxCoord marginX = 0, wxCoord marginY = 0);
 #if wxUSE_LISTBOX
     void DrawItems(const wxListBox *listbox,
                    size_t itemFirst, size_t itemLast);
@@ -894,10 +909,13 @@ public:
                            wxStretch stretch = wxSTRETCH_NOT);
 
 private:
+
+#if wxUSE_LISTBOX
     // common part of DrawItems() and DrawCheckItems()
     void DoDrawItems(const wxListBox *listbox,
                      size_t itemFirst, size_t itemLast,
                      bool isCheckLbox = false);
+#endif // wxUSE_LISTBOX
 
     wxWindow *m_window;
     wxRenderer *m_renderer;
@@ -906,4 +924,3 @@ private:
 };
 
 #endif // _WX_UNIV_RENDERER_H_
-

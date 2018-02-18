@@ -1,18 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        imagpng.h
+// Name:        wx/imagpng.h
 // Purpose:     wxImage PNG handler
 // Author:      Robert Roebling
-// RCS-ID:      $Id: imagpng.h,v 1.11 2005/03/16 16:18:19 ABX Exp $
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_IMAGPNG_H_
 #define _WX_IMAGPNG_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "imagpng.h"
-#endif
 
 #include "wx/defs.h"
 
@@ -23,18 +18,25 @@
 #if wxUSE_LIBPNG
 
 #include "wx/image.h"
+#include "wx/versioninfo.h"
 
 #define wxIMAGE_OPTION_PNG_FORMAT    wxT("PngFormat")
 #define wxIMAGE_OPTION_PNG_BITDEPTH  wxT("PngBitDepth")
+#define wxIMAGE_OPTION_PNG_FILTER    wxT("PngF")
+#define wxIMAGE_OPTION_PNG_COMPRESSION_LEVEL       wxT("PngZL")
+#define wxIMAGE_OPTION_PNG_COMPRESSION_MEM_LEVEL   wxT("PngZM")
+#define wxIMAGE_OPTION_PNG_COMPRESSION_STRATEGY    wxT("PngZS")
+#define wxIMAGE_OPTION_PNG_COMPRESSION_BUFFER_SIZE wxT("PngZB")
 
 enum
 {
     wxPNG_TYPE_COLOUR = 0,
     wxPNG_TYPE_GREY = 2,
-    wxPNG_TYPE_GREY_RED = 3
+    wxPNG_TYPE_GREY_RED = 3,
+    wxPNG_TYPE_PALETTE = 4
 };
 
-class WXDLLEXPORT wxPNGHandler: public wxImageHandler
+class WXDLLIMPEXP_CORE wxPNGHandler: public wxImageHandler
 {
 public:
     inline wxPNGHandler()
@@ -45,9 +47,12 @@ public:
         m_mime = wxT("image/png");
     }
 
+    static wxVersionInfo GetLibraryVersionInfo();
+
 #if wxUSE_STREAMS
     virtual bool LoadFile( wxImage *image, wxInputStream& stream, bool verbose=true, int index=-1 );
     virtual bool SaveFile( wxImage *image, wxOutputStream& stream, bool verbose=true );
+protected:
     virtual bool DoCanRead( wxInputStream& stream );
 #endif
 

@@ -1,9 +1,8 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        msw/statline.h
+// Name:        wx/os2/statline.h
 // Purpose:     MSW version of wxStaticLine class
 // Author:      Vadim Zeitlin
 // Created:     28.06.99
-// Version:     $Id: statline.h,v 1.8 2005/03/11 02:13:00 VZ Exp $
 // Copyright:   (c) 1998 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,15 +10,11 @@
 #ifndef _WX_OS2_STATLINE_H_
 #define _WX_OS2_STATLINE_H_
 
-#ifdef __GNUG__
-    #pragma interface
-#endif
-
 // ----------------------------------------------------------------------------
 // wxStaticLine
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxStaticLine : public wxStaticLineBase
+class WXDLLIMPEXP_CORE wxStaticLine : public wxStaticLineBase
 {
 
 public:
@@ -30,7 +25,7 @@ public:
                  ,const wxPoint&  rPos = wxDefaultPosition
                  ,const wxSize&   rSize = wxDefaultSize
                  ,long            lStyle = wxLI_HORIZONTAL
-                 ,const wxString& rsName = wxStaticTextNameStr
+                 ,const wxString& rsName = wxStaticLineNameStr
                 )
     {
         Create(pParent, vId, rPos, rSize, lStyle, rsName);
@@ -41,14 +36,14 @@ public:
                  ,const wxPoint&  rPos = wxDefaultPosition
                  ,const wxSize&   rSize = wxDefaultSize
                  ,long            lStyle = wxLI_HORIZONTAL
-                 ,const wxString& rsName = wxStaticTextNameStr
+                 ,const wxString& rsName = wxStaticLineNameStr
                 );
 
     inline bool          IsVertical(void) const { return((GetWindowStyleFlag() & wxLI_VERTICAL) != 0); }
     inline static int    GetDefaultSize(void) { return 2; }
 
     //
-    // Overriden base class virtuals
+    // Overridden base class virtuals
     //
     inline virtual bool AcceptsFocus(void) const {return FALSE;}
 

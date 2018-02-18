@@ -5,17 +5,12 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     10.09.00
-// RCS-ID:      $Id: tipwin.h,v 1.14 2004/05/23 20:50:25 JS Exp $
 // Copyright:   (c) 2000 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_TIPWIN_H_
 #define _WX_TIPWIN_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "tipwin.h"
-#endif
 
 #if wxUSE_TIPWINDOW
 
@@ -30,13 +25,13 @@
 #endif
 #include "wx/arrstr.h"
 
-class WXDLLEXPORT wxTipWindowView;
+class WXDLLIMPEXP_FWD_CORE wxTipWindowView;
 
 // ----------------------------------------------------------------------------
 // wxTipWindow
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxTipWindow : public wxTipWindowBase
+class WXDLLIMPEXP_CORE wxTipWindow : public wxTipWindowBase
 {
 public:
     // the mandatory ctor parameters are: the parent window and the text to
@@ -94,7 +89,7 @@ private:
 
     friend class wxTipWindowView;
 
-    DECLARE_NO_COPY_CLASS(wxTipWindow)
+    wxDECLARE_NO_COPY_CLASS(wxTipWindow);
 };
 
 #endif // wxUSE_TIPWINDOW

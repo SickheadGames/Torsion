@@ -1,26 +1,21 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Name:        wx/regex.h
 // Purpose:     regular expression matching
-// Author:      Karsten Ballüder
+// Author:      Karsten Ballueder
 // Modified by: VZ at 13.07.01 (integrated to wxWin)
 // Created:     05.02.2000
-// RCS-ID:      $Id: regex.h,v 1.14.4.1 2005/11/27 03:03:48 MW Exp $
-// Copyright:   (c) 2000 Karsten Ballüder <ballueder@gmx.net>
+// Copyright:   (c) 2000 Karsten Ballueder <ballueder@gmx.net>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_REGEX_H_
 #define _WX_REGEX_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "regex.h"
-#endif
-
 #include "wx/defs.h"
 
 #if wxUSE_REGEX
 
-class WXDLLIMPEXP_BASE wxString;
+#include "wx/string.h"
 
 // ----------------------------------------------------------------------------
 // constants
@@ -72,7 +67,7 @@ enum
 // wxRegEx: a regular expression
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxRegExImpl;
+class WXDLLIMPEXP_FWD_BASE wxRegExImpl;
 
 class WXDLLIMPEXP_BASE wxRegEx
 {
@@ -101,12 +96,9 @@ public:
     // len may be the length of text (ignored by most system regex libs)
     //
     // may only be called after successful call to Compile()
-    bool Matches(const wxChar *text, int flags = 0) const;
-#if wxABI_VERSION >= 20603
-    bool Matches(const wxChar *text, int flags, size_t len) const;
-    bool Matches(const wxString& text, int flags = 0) const
-        { return Matches(text.c_str(), flags, text.length()); }
-#endif
+    bool Matches(const wxString& text, int flags = 0) const;
+    bool Matches(const wxChar *text, int flags, size_t len) const
+        { return Matches(wxString(text, len), flags); }
 
     // get the start index and the length of the match of the expression
     // (index 0) or a bracketed subexpression (index != 0)
@@ -137,16 +129,16 @@ public:
     // pattern match
     //
     // maxMatches may be used to limit the number of replacements made, setting
-    // it to 1, for example, will only replace first occurence (if any) of the
+    // it to 1, for example, will only replace first occurrence (if any) of the
     // pattern in the text while default value of 0 means replace all
     int Replace(wxString *text, const wxString& replacement,
                 size_t maxMatches = 0) const;
 
-    // replace the first occurence
+    // replace the first occurrence
     int ReplaceFirst(wxString *text, const wxString& replacement) const
         { return Replace(text, replacement, 1); }
 
-    // replace all occurences: this is actually a synonym for Replace()
+    // replace all occurrences: this is actually a synonym for Replace()
     int ReplaceAll(wxString *text, const wxString& replacement) const
         { return Replace(text, replacement, 0); }
 

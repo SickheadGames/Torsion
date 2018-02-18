@@ -4,17 +4,12 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     12.02.01
-// RCS-ID:      $Id: scrthumb.h,v 1.9 2004/08/10 13:08:34 ABX Exp $
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_UNIV_SCRTHUMB_H_
 #define _WX_UNIV_SCRTHUMB_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univscrthumb.h"
-#endif
 
 // ----------------------------------------------------------------------------
 // wxScrollThumb is not a control but just a class containing the common
@@ -24,10 +19,10 @@
 // This class is similar to wxScrollThumb.
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxControlWithThumb;
-class WXDLLEXPORT wxMouseEvent;
-class WXDLLEXPORT wxRect;
-class WXDLLEXPORT wxScrollTimer;
+class WXDLLIMPEXP_FWD_CORE wxControlWithThumb;
+class WXDLLIMPEXP_FWD_CORE wxMouseEvent;
+class WXDLLIMPEXP_FWD_CORE wxRect;
+class WXDLLIMPEXP_FWD_CORE wxScrollTimer;
 
 #include "wx/timer.h"
 
@@ -35,7 +30,7 @@ class WXDLLEXPORT wxScrollTimer;
 // wxScrollThumb: an abstraction of scrollbar thumb
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxScrollThumb
+class WXDLLIMPEXP_CORE wxScrollThumb
 {
 public:
     enum Shaft
@@ -80,16 +75,18 @@ private:
     Shaft m_shaftPart;
 
     // the data for the mouse capture
-    struct WXDLLEXPORT wxScrollThumbCaptureData *m_captureData;
+    struct WXDLLIMPEXP_FWD_CORE wxScrollThumbCaptureData *m_captureData;
 };
 
 // ----------------------------------------------------------------------------
 // wxControlWithThumb: interface implemented by controls using wxScrollThumb
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxControlWithThumb
+class WXDLLIMPEXP_CORE wxControlWithThumb
 {
 public:
+    virtual ~wxControlWithThumb() {}
+
     // simple accessors
     // ----------------
 

@@ -1,32 +1,27 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        listbox.h
+// Name:        wx/motif/listbox.h
 // Purpose:     wxListBox class
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id: listbox.h,v 1.25 2005/02/13 17:07:52 VZ Exp $
 // Copyright:   (c) Julian Smart
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_LISTBOX_H_
 #define _WX_LISTBOX_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "listbox.h"
-#endif
-
 #include "wx/ctrlsub.h"
 #include "wx/clntdata.h"
 
 // forward decl for GetSelections()
-class WXDLLEXPORT wxArrayInt;
+class WXDLLIMPEXP_FWD_BASE wxArrayInt;
 
 // List box item
-class WXDLLEXPORT wxListBox: public wxListBoxBase
+class WXDLLIMPEXP_CORE wxListBox: public wxListBoxBase
 {
     DECLARE_DYNAMIC_CLASS(wxListBox)
-        
+
 public:
     wxListBox();
     wxListBox(wxWindow *parent, wxWindowID id,
@@ -39,7 +34,7 @@ public:
     {
         Create(parent, id, pos, size, n, choices, style, validator, name);
     }
-    
+
     wxListBox(wxWindow *parent, wxWindowID id,
         const wxPoint& pos,
         const wxSize& size,
@@ -50,7 +45,7 @@ public:
     {
         Create(parent, id, pos, size, choices, style, validator, name);
     }
-    
+
     bool Create(wxWindow *parent, wxWindowID id,
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
@@ -58,7 +53,7 @@ public:
         long style = 0,
         const wxValidator& validator = wxDefaultValidator,
         const wxString& name = wxListBoxNameStr);
-    
+
     bool Create(wxWindow *parent, wxWindowID id,
         const wxPoint& pos,
         const wxSize& size,
@@ -66,49 +61,41 @@ public:
         long style = 0,
         const wxValidator& validator = wxDefaultValidator,
         const wxString& name = wxListBoxNameStr);
-    
-    ~wxListBox();
-    
+
     // implementation of wxControlWithItems
-    virtual int GetCount() const;
-    virtual int DoAppend(const wxString& item);
-    virtual void DoSetItemClientData(int n, void* clientData);
-    virtual void* DoGetItemClientData(int n) const;
-    virtual void DoSetItemClientObject(int n, wxClientData* clientData);
-    virtual wxClientData* DoGetItemClientObject(int n) const;
+    virtual unsigned int GetCount() const;
+    virtual int DoInsertItems(const wxArrayStringsAdapter& items,
+                              unsigned int pos,
+                              void **clientData, wxClientDataType type);
     virtual int GetSelection() const;
-    virtual void Delete(int n);
-    virtual int FindString(const wxString& s) const;
-    virtual void Clear();
-    virtual void SetString(int n, const wxString& s);
-    virtual wxString GetString(int n) const;
+    virtual void DoDeleteOneItem(unsigned int n);
+    virtual int FindString(const wxString& s, bool bCase = false) const;
+    virtual void DoClear();
+    virtual void SetString(unsigned int n, const wxString& s);
+    virtual wxString GetString(unsigned int n) const;
 
     // implementation of wxListBoxbase
     virtual void DoSetSelection(int n, bool select);
-    virtual void DoInsertItems(const wxArrayString& items, int pos);
-    virtual void DoSetItems(const wxArrayString& items, void **clientData);
     virtual void DoSetFirstItem(int n);
     virtual int GetSelections(wxArrayInt& aSelections) const;
     virtual bool IsSelected(int n) const;
 
     // For single or multiple choice list item
     void Command(wxCommandEvent& event);
-    
+
     // Implementation
     virtual void ChangeBackgroundColour();
     virtual void ChangeForegroundColour();
     WXWidget GetTopWidget() const;
 
 #if wxUSE_CHECKLISTBOX
-    virtual void DoToggleItem(int item, int x) {};
+    virtual void DoToggleItem(int WXUNUSED(item), int WXUNUSED(x)) {}
 #endif
 protected:
     virtual wxSize DoGetBestSize() const;
 
-    int       m_noItems;
-    
-    // List mapping positions->client data
-    wxClientDataDictionary m_clientDataDict;
+    unsigned int m_noItems;
+
 private:
     void SetSelectionPolicy();
 };

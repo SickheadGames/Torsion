@@ -1,8 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        forcelnk.h
-// Purpose:     see bellow
+// Name:        wx/html/forcelnk.h
+// Purpose:     macros which force the linker to link apparently unused code
 // Author:      Vaclav Slavik
-// RCS-ID:      $Id: forcelnk.h,v 1.8 2004/05/23 20:50:58 JS Exp $
 // Copyright:   (c) Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -40,22 +39,11 @@ See mod_*.cpp and htmlwin.cpp for example :-)
 #ifndef _WX_FORCELNK_H_
 #define _WX_FORCELNK_H_
 
+#include "wx/link.h"
 
-
-// This must be part of the module you want to force:
-#define FORCE_LINK_ME(module_name)                                    \
-                int _wx_link_dummy_func_##module_name ();             \
-                int _wx_link_dummy_func_##module_name ()              \
-                {                                                     \
-                    return 1;                                         \
-                }
-
-
-// And this must be somewhere where it certainly will be linked:
-#define FORCE_LINK(module_name)                                       \
-                extern int _wx_link_dummy_func_##module_name ();      \
-                static int _wx_link_dummy_var_##module_name =         \
-                               _wx_link_dummy_func_##module_name ();
+// compatibility defines
+#define FORCE_LINK wxFORCE_LINK_MODULE
+#define FORCE_LINK_ME wxFORCE_LINK_THIS_MODULE
 
 #define FORCE_WXHTML_MODULES() \
     FORCE_LINK(m_layout) \
@@ -67,6 +55,7 @@ See mod_*.cpp and htmlwin.cpp for example :-)
     FORCE_LINK(m_hline) \
     FORCE_LINK(m_links) \
     FORCE_LINK(m_tables) \
+    FORCE_LINK(m_span) \
     FORCE_LINK(m_style)
 
 

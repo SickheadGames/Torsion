@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        dcprint.h
+// Name:        wx/os2/dcprint.h
 // Purpose:     wxPrinterDC class
 // Author:      David Webster
 // Modified by:
 // Created:     09/12/99
-// RCS-ID:      $Id: dcprint.h,v 1.10 2004/05/23 20:51:38 JS Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,26 +15,24 @@
 
 #include "wx/dc.h"
 #include "wx/cmndata.h"
+#include "wx/os2/dc.h"
 
-class WXDLLEXPORT wxPrinterDC: public wxDC
+class WXDLLIMPEXP_CORE wxPrinterDCImpl: public wxPMDCImpl
 {
  public:
-    // Create a printer DC [obsolete]
-    wxPrinterDC( const wxString& rsDriver
-                ,const wxString& rsDevice
-                ,const wxString& rsOutput
-                ,bool            bInteractive = TRUE
-                ,int             nOrientation = wxPORTRAIT
-               );
+    // Create a printer DC
 
     // Create from print data
-    wxPrinterDC(const wxPrintData& rData);
-    wxPrinterDC(WXHDC hTheDC);
+    wxPrinterDCImpl( wxPrinterDC *owner, const wxPrintData& rData );
+    wxPrinterDCImpl( wxPrinterDC *owner, WXHDC hTheDC);
 
-    bool StartDoc(const wxString& rsMessage);
-    void EndDoc(void);
-    void StartPage(void);
-    void EndPage(void);
+    // override some base class virtuals
+    virtual bool StartDoc(const wxString& rsMessage);
+    virtual void EndDoc(void);
+    virtual void StartPage(void);
+    virtual void EndPage(void);
+
+    virtual wxRect GetPaperRect() const;
 
 protected:
     virtual void DoDrawBitmap( const wxBitmap& rBmp
@@ -50,7 +47,7 @@ protected:
                         ,wxDC*   pSource
                         ,wxCoord vXsrc
                         ,wxCoord vYsrc
-                        ,int     nRop = wxCOPY
+                        ,wxRasterOperationMode     nRop = wxCOPY
                         ,bool    bUseMask = FALSE
                         ,wxCoord vXsrcMask = -1
                         ,wxCoord vYsrcMask = -1
@@ -61,11 +58,12 @@ protected:
 
     wxPrintData                     m_printData;
 private:
-    DECLARE_CLASS(wxPrinterDC)
+    DECLARE_CLASS(wxPrinterDCImpl)
+    wxDECLARE_NO_COPY_CLASS(wxPrinterDCImpl);
 }; // end of CLASS wxPrinterDC
 
 // Gets an HDC for the specified printer configuration
-WXHDC WXDLLEXPORT wxGetPrinterDC(const wxPrintData& rData);
+WXHDC WXDLLIMPEXP_CORE wxGetPrinterDC(const wxPrintData& rData);
 
 #endif // wxUSE_PRINTING_ARCHITECTURE
 

@@ -1,29 +1,21 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/gtk/app.h
-// Purpose:
+// Purpose:     wxApp definition for wxGTK
 // Author:      Robert Roebling
-// Id:          $Id: app.h,v 1.56 2005/08/02 22:57:51 MW Exp $
 // Copyright:   (c) 1998 Robert Roebling, Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef __GTKAPPH__
-#define __GTKAPPH__
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface
-#endif
-
-#include "wx/frame.h"
-#include "wx/icon.h"
-#include "wx/strconv.h"
+#ifndef _WX_GTK_APP_H_
+#define _WX_GTK_APP_H_
 
 //-----------------------------------------------------------------------------
 // classes
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxApp;
-class WXDLLIMPEXP_BASE wxLog;
+#if wxUSE_LIBHILDON || wxUSE_LIBHILDON2
+typedef struct _HildonProgram HildonProgram;
+#endif // wxUSE_LIBHILDON || wxUSE_LIBHILDON2
 
 //-----------------------------------------------------------------------------
 // wxApp
@@ -35,48 +27,67 @@ public:
     wxApp();
     virtual ~wxApp();
 
-    /* override for altering the way wxGTK intializes the GUI
+    /* override for altering the way wxGTK initializes the GUI
      * (palette/visual/colorcube). under wxMSW, OnInitGui() does nothing by
      * default. when overriding this method, the code in it is likely to be
      * platform dependent, otherwise use OnInit(). */
+    virtual bool SetNativeTheme(const wxString& theme);
     virtual bool OnInitGui();
 
     // override base class (pure) virtuals
-    virtual bool Yield(bool onlyIfNeeded = FALSE);
     virtual void WakeUpIdle();
 
     virtual bool Initialize(int& argc, wxChar **argv);
     virtual void CleanUp();
 
-    static bool InitialzeVisual();
+    virtual void OnAssertFailure(const wxChar *file,
+                                 int line,
+                                 const wxChar *func,
+                                 const wxChar *cond,
+                                 const wxChar *msg);
 
-#ifdef __WXDEBUG__
-    virtual void OnAssert(const wxChar *file, int line, const wxChar *cond, const wxChar *msg);
+    // GTK-specific methods
+    // -------------------
 
-    bool IsInAssert() const { return m_isInAssert; }
-#endif // __WXDEBUG__
+    // this can be overridden to return a specific visual to be used for GTK+
+    // instead of the default one (it's used by wxGLApp)
+    //
+    // must return XVisualInfo pointer (it is not freed by caller)
+    virtual void *GetXVisualInfo() { return NULL; }
 
-    gint            m_idleTag;
-    void RemoveIdleTag();
-    
-    unsigned char  *m_colorCube;
+    // Check if we're using a global menu. Currently this is only true when
+    // running under Ubuntu Unity and global menu is not disabled.
+    //
+    // This is mostly used in the implementation in order to work around
+    // various bugs arising due to this.
+    static bool GTKIsUsingGlobalMenu();
 
-    // Used by the the wxGLApp and wxGLCanvas class for GL-based X visual
-    // selection.
-    void           *m_glVisualInfo; // this is actually an XVisualInfo*
-    void           *m_glFBCInfo; // this is actually an GLXFBConfig*
-    // This returns the current visual: either that used by wxRootWindow
-    // or the XVisualInfo* for SGI.
-    GdkVisual      *GetGdkVisual();
-    
+#if wxUSE_LIBHILDON || wxUSE_LIBHILDON2
+    // Maemo-specific method: get the main program object
+    HildonProgram *GetHildonProgram();
+#endif // wxUSE_LIBHILDON || wxUSE_LIBHILDON2
+
+    // implementation only from now on
+    // -------------------------------
+
+    // check for pending events, without interference from our idle source
+    bool EventsPending();
+    bool DoIdle();
+
 private:
     // true if we're inside an assert modal dialog
-#ifdef __WXDEBUG__
     bool m_isInAssert;
-#endif // __WXDEBUG__
+
+#if wxUSE_THREADS
+    wxMutex m_idleMutex;
+#endif
+    unsigned m_idleSourceId;
+
+#if wxUSE_LIBHILDON || wxUSE_LIBHILDON2
+    HildonProgram *m_hildonProgram;
+#endif // wxUSE_LIBHILDON || wxUSE_LIBHILDON2
 
     DECLARE_DYNAMIC_CLASS(wxApp)
-    DECLARE_EVENT_TABLE()
 };
 
-#endif // __GTKAPPH__
+#endif // _WX_GTK_APP_H_

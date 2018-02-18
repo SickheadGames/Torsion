@@ -4,7 +4,6 @@
 // Author:      Stefan Neis
 // Modified by:
 // Created:     22.09.2003
-// RCS-ID:      $Id: apptrait.h,v 1.3 2004/05/23 20:51:37 JS Exp $
 // Copyright:   (c) 2003 Stefan Neis <Stefan.Neis@t-online.de>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,7 +18,12 @@
 class WXDLLIMPEXP_BASE wxConsoleAppTraits : public wxConsoleAppTraitsBase
 {
 public:
-    virtual wxToolkitInfo& GetToolkitInfo();
+#if wxUSE_CONSOLE_EVENTLOOP
+    virtual wxEventLoopBase *CreateEventLoop();
+#endif // wxUSE_CONSOLE_EVENTLOOP
+#if wxUSE_TIMER
+    virtual wxTimerImpl *CreateTimerImpl(wxTimer *timer);
+#endif
 };
 
 #if wxUSE_GUI
@@ -27,7 +31,11 @@ public:
 class WXDLLIMPEXP_CORE wxGUIAppTraits : public wxGUIAppTraitsBase
 {
 public:
-    virtual wxToolkitInfo& GetToolkitInfo();
+    virtual wxEventLoopBase *CreateEventLoop();
+#if wxUSE_TIMER
+    virtual wxTimerImpl *CreateTimerImpl(wxTimer *timer);
+#endif
+    virtual wxPortId GetToolkitVersion(int *majVer = NULL, int *minVer = NULL) const;
 
     // wxThread helpers
     // ----------------
@@ -37,7 +45,23 @@ public:
 
     // Clean up message queue.
     virtual void TerminateGui(unsigned long ulHab);
+#ifdef __WXGTK__
+    virtual wxString GetDesktopEnvironment() const;
+#endif
+#if wxUSE_SOCKETS
+    virtual wxFDIOManager *GetFDIOManager();
+#endif
 };
+
+#ifndef __WXPM__
+inline void wxGUIAppTraits::InitializeGui(unsigned long &WXUNUSED(ulHab))
+{
+}
+
+inline void wxGUIAppTraits::TerminateGui(unsigned long WXUNUSED(ulHab))
+{
+}
+#endif
 
 #endif // wxUSE_GUI
 

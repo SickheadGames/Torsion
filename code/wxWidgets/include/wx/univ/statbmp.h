@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     25.08.00
-// RCS-ID:      $Id: statbmp.h,v 1.11 2004/08/10 13:08:34 ABX Exp $
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,17 +11,13 @@
 #ifndef _WX_UNIV_STATBMP_H_
 #define _WX_UNIV_STATBMP_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univstatbmp.h"
-#endif
-
 #include "wx/bitmap.h"
 
 // ----------------------------------------------------------------------------
 // wxStaticBitmap
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxStaticBitmap : public wxStaticBitmapBase
+class WXDLLIMPEXP_CORE wxStaticBitmap : public wxStaticBitmapBase
 {
 public:
     wxStaticBitmap()
@@ -64,10 +59,11 @@ public:
     wxIcon GetIcon() const;
 
     virtual bool HasTransparentBackground() { return true; }
-    
-private:
+
+protected:
     virtual void DoDraw(wxControlRenderer *renderer);
 
+private:
     // the bitmap which we show
     wxBitmap m_bitmap;
 

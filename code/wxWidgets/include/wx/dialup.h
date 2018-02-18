@@ -4,17 +4,12 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     07.07.99
-// RCS-ID:      $Id: dialup.h,v 1.27 2005/03/09 16:29:55 ABX Exp $
 // Copyright:   (c) Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_DIALUP_H
 #define _WX_DIALUP_H
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "dialup.h"
-#endif
 
 #if wxUSE_DIALUP_MANAGER
 
@@ -24,7 +19,7 @@
 // misc
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxArrayString;
+class WXDLLIMPEXP_FWD_BASE wxArrayString;
 
 #define WXDIALUP_MANAGER_DEFAULT_BEACONHOST  wxT("www.yahoo.com")
 
@@ -47,7 +42,7 @@ class WXDLLIMPEXP_BASE wxArrayString;
  *    main thread?
  */
 
-class WXDLLEXPORT wxDialUpManager
+class WXDLLIMPEXP_CORE wxDialUpManager
 {
 public:
     // this function should create and return the object of the
@@ -156,13 +151,13 @@ public:
 // wxDialUpManager events
 // ----------------------------------------------------------------------------
 
-BEGIN_DECLARE_EVENT_TYPES()
-    DECLARE_EVENT_TYPE(wxEVT_DIALUP_CONNECTED, 450)
-    DECLARE_EVENT_TYPE(wxEVT_DIALUP_DISCONNECTED, 451)
-END_DECLARE_EVENT_TYPES()
+class WXDLLIMPEXP_FWD_CORE wxDialUpEvent;
+
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_DIALUP_CONNECTED, wxDialUpEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_DIALUP_DISCONNECTED, wxDialUpEvent );
 
 // the event class for the dialup events
-class WXDLLEXPORT wxDialUpEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxDialUpEvent : public wxEvent
 {
 public:
     wxDialUpEvent(bool isConnected, bool isOwnEvent) : wxEvent(isOwnEvent)
@@ -175,7 +170,7 @@ public:
     bool IsConnectedEvent() const
         { return GetEventType() == wxEVT_DIALUP_CONNECTED; }
 
-    // does this event come from wxDialUpManager::Dial() or from some extrenal
+    // does this event come from wxDialUpManager::Dial() or from some external
     // process (i.e. does it result from our own attempt to establish the
     // connection)?
     bool IsOwnEvent() const { return m_id != 0; }
@@ -184,14 +179,14 @@ public:
     virtual wxEvent *Clone() const { return new wxDialUpEvent(*this); }
 
 private:
-    DECLARE_NO_ASSIGN_CLASS(wxDialUpEvent)
+    wxDECLARE_NO_ASSIGN_CLASS(wxDialUpEvent);
 };
 
 // the type of dialup event handler function
 typedef void (wxEvtHandler::*wxDialUpEventFunction)(wxDialUpEvent&);
 
 #define wxDialUpEventHandler(func) \
-    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxDialUpEventFunction, &func)
+    wxEVENT_HANDLER_CAST(wxDialUpEventFunction, func)
 
 // macros to catch dialup events
 #define EVT_DIALUP_CONNECTED(func) \

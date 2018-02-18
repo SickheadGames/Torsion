@@ -1,10 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Name:        mac/dataform.h
+// Name:        wx/os2/dataform.h
 // Purpose:     declaration of the wxDataFormat class
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     10/21/99
-// RCS-ID:      $Id: dataform.h,v 1.8 2004/05/23 20:51:38 JS Exp $
 // Copyright:   (c) 1999 Stefan Csomor
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,7 +15,7 @@ class wxDataFormat
 {
 public:
     wxDataFormat(unsigned int uFormat = wxDF_INVALID) { m_uFormat = uFormat; }
-    wxDataFormat(const wxChar* zFormat) { SetId(zFormat); }
+    wxDataFormat(const wxString& zFormat) { SetId(zFormat); }
 
     wxDataFormat& operator=(unsigned int uFormat) { m_uFormat = uFormat; return(*this); }
     wxDataFormat& operator=(const wxDataFormat& rFormat) {m_uFormat = rFormat.m_uFormat; return(*this); }
@@ -42,7 +41,7 @@ public:
     // application-specific formats
     //
     wxString GetId(void) const;
-    void     SetId(const wxChar* pId);
+    void     SetId(const wxString& pId);
 
 private:
     unsigned int                    m_uFormat;

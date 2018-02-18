@@ -37,15 +37,15 @@ protected:
     virtual bool OnClose()
         { return true; }
 
-    virtual bool OnRead(wxMBConv& WXUNUSED(conv))
+    virtual bool OnRead(const wxMBConv& WXUNUSED(conv))
         { return true; }
 
     virtual bool OnWrite(wxTextFileType WXUNUSED(typeNew),
-                         wxMBConv& WXUNUSED(conv) = wxConvUTF8)
+                         const wxMBConv& WXUNUSED(conv) = wxMBConvUTF8())
         { return true; }
 
 private:
-    DECLARE_NO_COPY_CLASS(wxMemoryText)
+    wxDECLARE_NO_COPY_CLASS(wxMemoryText);
 };
 
 #endif // wxUSE_TEXTBUFFER

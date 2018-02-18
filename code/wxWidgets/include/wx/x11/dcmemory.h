@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        dcmemory.h
+// Name:        wx/x11/dcmemory.h
 // Purpose:     wxMemoryDC class
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id: dcmemory.h,v 1.7 2005/08/02 18:16:49 MW Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,26 +11,33 @@
 #ifndef _WX_DCMEMORY_H_
 #define _WX_DCMEMORY_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "dcmemory.h"
-#endif
+#include "wx/dc.h"
+#include "wx/dcmemory.h"
+#include "wx/x11/dcclient.h"
 
-#include "wx/dcclient.h"
-
-class WXDLLIMPEXP_CORE wxMemoryDC : public wxWindowDC
+class WXDLLIMPEXP_CORE wxMemoryDCImpl : public wxWindowDCImpl
 {
 public:
-    wxMemoryDC();
-    wxMemoryDC( wxDC *dc ); // Create compatible DC
-    ~wxMemoryDC();
-    virtual void SelectObject( const wxBitmap& bitmap );
-    void DoGetSize( int *width, int *height ) const;
+    wxMemoryDCImpl( wxDC* owner );
+    wxMemoryDCImpl( wxDC* owner, wxBitmap& bitmap);
+    wxMemoryDCImpl( wxDC* owner, wxDC *dc );
+    virtual ~wxMemoryDCImpl();
+
+    virtual const wxBitmap& GetSelectedBitmap() const;
+    virtual wxBitmap& GetSelectedBitmap();
 
     // implementation
     wxBitmap  m_selected;
 
+protected:
+    virtual void DoGetSize( int *width, int *height ) const;
+    virtual void DoSelect(const wxBitmap& bitmap);
+
 private:
-    DECLARE_DYNAMIC_CLASS(wxMemoryDC)
+    void Init();
+
+private:
+    DECLARE_CLASS(wxMemoryDCImpl)
 };
 
 #endif

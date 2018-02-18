@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     05.11.99
-// RCS-ID:      $Id: fontutil.h,v 1.37 2005/07/22 16:56:23 ABX Exp $
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,10 +15,6 @@
 #ifndef _WX_FONTUTIL_H_
 #define _WX_FONTUTIL_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "fontutil.h"
-#endif
-
 // ----------------------------------------------------------------------------
 // headers
 // ----------------------------------------------------------------------------
@@ -30,7 +25,8 @@
     #include "wx/msw/wrapwin.h"
 #endif
 
-struct WXDLLEXPORT wxNativeEncodingInfo;
+class WXDLLIMPEXP_FWD_BASE wxArrayString;
+struct WXDLLIMPEXP_FWD_CORE wxNativeEncodingInfo;
 
 #if defined(_WX_X_FONTLIKE)
 
@@ -68,13 +64,17 @@ enum wxXLFDField
 // functions, the user code can only get the objects of this type from
 // somewhere and pass it somewhere else (possibly save them somewhere using
 // ToString() and restore them using FromString())
-//
-// NB: it is a POD currently for max efficiency but if it continues to grow
-//     further it might make sense to make it a real class with virtual methods
-struct WXDLLEXPORT wxNativeFontInfo
+
+class WXDLLIMPEXP_CORE wxNativeFontInfo
 {
+public:
 #if wxUSE_PANGO
     PangoFontDescription *description;
+
+    // Pango font description doesn't have these attributes, so we store them
+    // separately and handle them ourselves in {To,From}String() methods.
+    bool m_underlined;
+    bool m_strikethrough;
 #elif defined(_WX_X_FONTLIKE)
     // the members can't be accessed directly as we only parse the
     // xFontName on demand
@@ -110,12 +110,77 @@ public:
     // set the XFLD
     void SetXFontName(const wxString& xFontName);
 #elif defined(__WXMSW__)
+    wxNativeFontInfo(const LOGFONT& lf_) : lf(lf_) { }
+
     LOGFONT      lf;
 #elif defined(__WXPM__)
     // OS/2 native structures that define a font
     FATTRS       fa;
     FONTMETRICS  fm;
     FACENAMEDESC fn;
+#elif defined(__WXOSX__)
+public:
+    wxNativeFontInfo(const wxNativeFontInfo& info) { Init(info); }
+    wxNativeFontInfo( int size,
+                  wxFontFamily family,
+                  wxFontStyle style,
+                  wxFontWeight weight,
+                  bool underlined,
+                  const wxString& faceName,
+                  wxFontEncoding encoding)
+    { Init(size,family,style,weight,underlined,faceName,encoding); }
+
+    ~wxNativeFontInfo() { Free(); }
+
+    wxNativeFontInfo& operator=(const wxNativeFontInfo& info)
+    {
+        if (this != &info)
+        {
+            Free();
+            Init(info);
+        }
+        return *this;
+    }
+
+    void Init(CTFontDescriptorRef descr);
+    void Init(const wxNativeFontInfo& info);
+    void Init(int size,
+                  wxFontFamily family,
+                  wxFontStyle style,
+                  wxFontWeight weight,
+                  bool underlined,
+                  const wxString& faceName ,
+                  wxFontEncoding encoding);
+
+    void Free();
+    void EnsureValid();
+
+    static void UpdateNamesMap(const wxString& familyname, CTFontDescriptorRef descr);
+    static void UpdateNamesMap(const wxString& familyname, CTFontRef font);
+
+    bool m_descriptorValid;
+
+#if wxOSX_USE_ATSU_TEXT
+    bool            m_atsuFontValid;
+    // the atsu font ID
+    wxUint32        m_atsuFontID;
+    // the qd styles that are not intrinsic to the font above
+    wxInt16         m_atsuAdditionalQDStyles;
+#if wxOSX_USE_CARBON
+    wxInt16         m_qdFontFamily;
+    wxInt16         m_qdFontStyle;
+#endif
+#endif
+
+    int           m_pointSize;
+    wxFontFamily  m_family;
+    wxFontStyle   m_style;
+    wxFontWeight  m_weight;
+    bool          m_underlined;
+    bool          m_strikethrough;
+    wxString      m_faceName;
+    wxFontEncoding m_encoding;
+public :
 #else // other platforms
     //
     //  This is a generic implementation that should work on all ports
@@ -128,6 +193,7 @@ public:
     wxFontStyle   style;
     wxFontWeight  weight;
     bool          underlined;
+    bool          strikethrough;
     wxString      faceName;
     wxFontEncoding encoding;
 #endif // platforms
@@ -146,8 +212,11 @@ public:
 
     wxNativeFontInfo& operator=(const wxNativeFontInfo& info)
     {
-        Free();
-        Init(info);
+        if (this != &info)
+        {
+            Free();
+            Init(info);
+        }
         return *this;
     }
 #endif // wxUSE_PANGO
@@ -158,10 +227,14 @@ public:
     // init with the parameters of the given font
     void InitFromFont(const wxFont& font)
     {
+#if wxUSE_PANGO
+        Init(*font.GetNativeFontInfo());
+#else
         // translate all font parameters
         SetStyle((wxFontStyle)font.GetStyle());
         SetWeight((wxFontWeight)font.GetWeight());
         SetUnderlined(font.GetUnderlined());
+        SetStrikethrough(font.GetStrikethrough());
 #if defined(__WXMSW__)
         if ( font.IsUsingSizeInPixels() )
             SetPixelSize(font.GetPixelSize());
@@ -182,6 +255,7 @@ public:
         // deal with encoding now (it may override the font family and facename
         // so do it after setting them)
         SetEncoding(font.GetEncoding());
+#endif // !wxUSE_PANGO
     }
 
     // accessors and modifiers for the font elements
@@ -190,6 +264,7 @@ public:
     wxFontStyle GetStyle() const;
     wxFontWeight GetWeight() const;
     bool GetUnderlined() const;
+    bool GetStrikethrough() const;
     wxString GetFaceName() const;
     wxFontFamily GetFamily() const;
     wxFontEncoding GetEncoding() const;
@@ -199,9 +274,17 @@ public:
     void SetStyle(wxFontStyle style);
     void SetWeight(wxFontWeight weight);
     void SetUnderlined(bool underlined);
-    void SetFaceName(wxString facename);
+    void SetStrikethrough(bool strikethrough);
+    bool SetFaceName(const wxString& facename);
     void SetFamily(wxFontFamily family);
     void SetEncoding(wxFontEncoding encoding);
+
+    // sets the first facename in the given array which is found
+    // to be valid. If no valid facename is given, sets the
+    // first valid facename returned by wxFontEnumerator::GetFacenames().
+    // Does not return a bool since it cannot fail.
+    void SetFaceName(const wxArrayString &facenames);
+
 
     // it is important to be able to serialize wxNativeFontInfo objects to be
     // able to store them (in config file, for example)
@@ -222,12 +305,12 @@ public:
 // translate a wxFontEncoding into native encoding parameter (defined above),
 // returning true if an (exact) macth could be found, false otherwise (without
 // attempting any substitutions)
-extern bool wxGetNativeFontEncoding(wxFontEncoding encoding,
-                                    wxNativeEncodingInfo *info);
+WXDLLIMPEXP_CORE bool wxGetNativeFontEncoding(wxFontEncoding encoding,
+                                              wxNativeEncodingInfo *info);
 
 // test for the existence of the font described by this facename/encoding,
 // return true if such font(s) exist, false otherwise
-extern bool wxTestFontEncoding(const wxNativeEncodingInfo& info);
+WXDLLIMPEXP_CORE bool wxTestFontEncoding(const wxNativeEncodingInfo& info);
 
 // ----------------------------------------------------------------------------
 // font-related functions (X and GTK)
@@ -236,13 +319,5 @@ extern bool wxTestFontEncoding(const wxNativeEncodingInfo& info);
 #ifdef _WX_X_FONTLIKE
     #include "wx/unix/fontutil.h"
 #endif // X || GDK
-
-// ----------------------------------------------------------------------------
-// font-related functions (MGL)
-// ----------------------------------------------------------------------------
-
-#ifdef __WXMGL__
-    #include "wx/mgl/fontutil.h"
-#endif // __WXMGL__
 
 #endif // _WX_FONTUTIL_H_

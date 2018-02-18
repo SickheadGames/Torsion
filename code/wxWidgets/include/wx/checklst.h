@@ -4,13 +4,14 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     12.09.00
-// RCS-ID:      $Id: checklst.h,v 1.12.4.1 2006/02/24 16:05:34 JS Exp $
 // Copyright:   (c) Vadim Zeitlin
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_CHECKLST_H_BASE_
 #define _WX_CHECKLST_H_BASE_
+
+#include "wx/defs.h"
 
 #if wxUSE_CHECKLISTBOX
 
@@ -20,16 +21,24 @@
 // wxCheckListBox: a listbox whose items may be checked
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxCheckListBoxBase : public wxListBox
+class WXDLLIMPEXP_CORE wxCheckListBoxBase : public
+                                              #ifdef __WXWINCE__
+                                                  // keep virtuals synchronised
+                                                  wxListBoxBase
+                                              #else
+                                                  wxListBox
+                                              #endif
 {
 public:
     wxCheckListBoxBase() { }
 
     // check list box specific methods
-    virtual bool IsChecked(size_t item) const = 0;
-    virtual void Check(size_t item, bool check = true) = 0;
+    virtual bool IsChecked(unsigned int item) const = 0;
+    virtual void Check(unsigned int item, bool check = true) = 0;
 
-    DECLARE_NO_COPY_CLASS(wxCheckListBoxBase)
+    virtual unsigned int GetCheckedItems(wxArrayInt& checkedItems) const;
+
+    wxDECLARE_NO_COPY_CLASS(wxCheckListBoxBase);
 };
 
 #if defined(__WXUNIVERSAL__)
@@ -40,10 +49,12 @@ public:
     #include "wx/msw/checklst.h"
 #elif defined(__WXMOTIF__)
     #include "wx/motif/checklst.h"
-#elif defined(__WXGTK__)
+#elif defined(__WXGTK20__)
     #include "wx/gtk/checklst.h"
+#elif defined(__WXGTK__)
+    #include "wx/gtk1/checklst.h"
 #elif defined(__WXMAC__)
-    #include "wx/mac/checklst.h"
+    #include "wx/osx/checklst.h"
 #elif defined(__WXCOCOA__)
     #include "wx/cocoa/checklst.h"
 #elif defined(__WXPM__)

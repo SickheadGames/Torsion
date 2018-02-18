@@ -1,19 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Name:        gtk/dataobj2.h
+// Name:        wx/gtk/dataobj2.h
 // Purpose:     declaration of standard wxDataObjectSimple-derived classes
 // Author:      Robert Roebling
 // Created:     19.10.99 (extracted from gtk/dataobj.h)
-// RCS-ID:      $Id: dataobj2.h,v 1.10 2005/08/02 22:57:54 MW Exp $
 // Copyright:   (c) 1998, 1999 Vadim Zeitlin, Robert Roebling
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_GTK_DATAOBJ2_H_
 #define _WX_GTK_DATAOBJ2_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "dataobj.h"
-#endif
 
 // ----------------------------------------------------------------------------
 // wxBitmapDataObject is a specialization of wxDataObject for bitmaps
@@ -27,7 +22,7 @@ public:
     wxBitmapDataObject(const wxBitmap& bitmap);
 
     // destr
-    ~wxBitmapDataObject();
+    virtual ~wxBitmapDataObject();
 
     // override base class virtual to update PNG data too
     virtual void SetBitmap(const wxBitmap& bitmap);
@@ -38,9 +33,21 @@ public:
     virtual size_t GetDataSize() const { return m_pngSize; }
     virtual bool GetDataHere(void *buf) const;
     virtual bool SetData(size_t len, const void *buf);
+    // Must provide overloads to avoid hiding them (and warnings about it)
+    virtual size_t GetDataSize(const wxDataFormat&) const
+    {
+        return GetDataSize();
+    }
+    virtual bool GetDataHere(const wxDataFormat&, void *buf) const
+    {
+        return GetDataHere(buf);
+    }
+    virtual bool SetData(const wxDataFormat&, size_t len, const void *buf)
+    {
+        return SetData(len, buf);
+    }
 
 protected:
-    void Init() { m_pngData = (void *)NULL; m_pngSize = 0; }
     void Clear() { free(m_pngData); }
     void ClearAll() { Clear(); Init(); }
 
@@ -50,13 +57,7 @@ protected:
     void DoConvertToPng();
 
 private:
-    // virtual function hiding supression
-    size_t GetDataSize(const wxDataFormat& format) const
-        { return(wxDataObjectSimple::GetDataSize(format)); }
-    bool GetDataHere(const wxDataFormat& format, void* pBuf) const
-        { return(wxDataObjectSimple::GetDataHere(format, pBuf)); }
-    bool SetData(const wxDataFormat& format, size_t nLen, const void* pBuf)
-        { return(wxDataObjectSimple::SetData(format, nLen, pBuf)); }
+    void Init() { m_pngData = NULL; m_pngSize = 0; }
 };
 
 // ----------------------------------------------------------------------------
@@ -74,16 +75,40 @@ public:
     virtual size_t GetDataSize() const;
     virtual bool GetDataHere(void *buf) const;
     virtual bool SetData(size_t len, const void *buf);
+    // Must provide overloads to avoid hiding them (and warnings about it)
+    virtual size_t GetDataSize(const wxDataFormat&) const
+    {
+        return GetDataSize();
+    }
+    virtual bool GetDataHere(const wxDataFormat&, void *buf) const
+    {
+        return GetDataHere(buf);
+    }
+    virtual bool SetData(const wxDataFormat&, size_t len, const void *buf)
+    {
+        return SetData(len, buf);
+    }
+};
+
+// ----------------------------------------------------------------------------
+// wxURLDataObject is a specialization of wxDataObject for URLs
+// ----------------------------------------------------------------------------
+
+class WXDLLIMPEXP_CORE wxURLDataObject : public wxDataObjectComposite
+{
+public:
+    wxURLDataObject(const wxString& url = wxEmptyString);
+
+    wxString GetURL() const;
+    void SetURL(const wxString& url);
 
 private:
-    // virtual function hiding supression
-    size_t GetDataSize(const wxDataFormat& format) const
-        { return(wxDataObjectSimple::GetDataSize(format)); }
-    bool GetDataHere(const wxDataFormat& format, void* pBuf) const
-        { return(wxDataObjectSimple::GetDataHere(format, pBuf)); }
-    bool SetData(const wxDataFormat& format, size_t nLen, const void* pBuf)
-        { return(wxDataObjectSimple::SetData(format, nLen, pBuf)); }
+    class wxTextURIListDataObject* const m_dobjURIList;
+    wxTextDataObject* const m_dobjText;
+
+    wxDECLARE_NO_COPY_CLASS(wxURLDataObject);
 };
+
 
 #endif // _WX_GTK_DATAOBJ2_H_
 

@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        control.h
+// Name:        wx/os2/control.h
 // Purpose:     wxControl class
 // Author:      David Webster
 // Modified by:
 // Created:     09/17/99
-// RCS-ID:      $Id: control.h,v 1.21.4.1 2006/01/15 14:48:16 SN Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,7 +14,7 @@
 #include "wx/dynarray.h"
 
 // General item class
-class WXDLLEXPORT wxControl : public wxControlBase
+class WXDLLIMPEXP_CORE wxControl : public wxControlBase
 {
     DECLARE_ABSTRACT_CLASS(wxControl)
 
@@ -30,16 +29,8 @@ public:
              ,const wxString&    rsName = wxControlNameStr
             )
     {
-        Create( pParent
-               ,vId
-               ,rPos
-               ,rSize
-               ,lStyle
-               ,rValidator
-               ,rsName
-              );
+        Create( pParent, vId, rPos, rSize, lStyle, rValidator, rsName );
     }
-    virtual ~wxControl();
 
     bool Create( wxWindow*          pParent
                 ,wxWindowID         vId
@@ -51,6 +42,7 @@ public:
                );
 
     virtual void SetLabel(const wxString& rsLabel);
+    virtual wxString GetLabel() const { return m_label; }
 
     //
     // Simulates an event
@@ -70,8 +62,8 @@ public:
     //
     // For ownerdraw items
     //
-    virtual bool OS2OnDraw(WXDRAWITEMSTRUCT* WXUNUSED(pItem)) { return FALSE; };
-    virtual long OS2OnMeasure(WXMEASUREITEMSTRUCT* WXUNUSED(pItem)) { return 0L; };
+    virtual bool OS2OnDraw(WXDRAWITEMSTRUCT* WXUNUSED(pItem)) { return false; }
+    virtual long OS2OnMeasure(WXMEASUREITEMSTRUCT* WXUNUSED(pItem)) { return 0L; }
 
     wxArrayLong&     GetSubcontrols() { return m_aSubControls; }
     void             OnEraseBackground(wxEraseEvent& rEvent);
@@ -101,7 +93,7 @@ public:
                           ,long            lStyle
                          );
     //
-    // Create the control of the given class with the given style, returns FALSE
+    // Create the control of the given class with the given style, returns false
     // if creation failed.
     //
     bool OS2CreateControl( const wxChar*   zClassname
@@ -125,11 +117,13 @@ public:
     inline void SetYComp(const int nYComp) {m_nYComp = nYComp;}
 
 private:
-    int                             m_nXComp;
-    int                             m_nYComp;
+    int m_nXComp;
+    int m_nYComp;
+
+    wxString m_label;
     WXDWORD  m_dwStyle;
-   DECLARE_EVENT_TABLE()
+
+    DECLARE_EVENT_TABLE()
 }; // end of wxControl
 
 #endif // _WX_CONTROL_H_
-

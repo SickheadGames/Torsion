@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     05.05.01
-// RCS-ID:      $Id: menuitem.h,v 1.13 2004/08/10 13:08:33 ABX Exp $
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,28 +11,24 @@
 #ifndef _WX_UNIV_MENUITEM_H_
 #define _WX_UNIV_MENUITEM_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univmenuitem.h"
-#endif
-
 // ----------------------------------------------------------------------------
 // wxMenuItem implements wxMenuItemBase
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxMenuItem : public wxMenuItemBase
+class WXDLLIMPEXP_CORE wxMenuItem : public wxMenuItemBase
 {
 public:
     // ctor & dtor
-    wxMenuItem(wxMenu *parentMenu = (wxMenu *)NULL,
+    wxMenuItem(wxMenu *parentMenu = NULL,
                int id = wxID_SEPARATOR,
                const wxString& name = wxEmptyString,
                const wxString& help = wxEmptyString,
                wxItemKind kind = wxITEM_NORMAL,
-               wxMenu *subMenu = (wxMenu *)NULL);
+               wxMenu *subMenu = NULL);
     virtual ~wxMenuItem();
 
     // override base class virtuals to update the item appearance on screen
-    virtual void SetText(const wxString& text);
+    virtual void SetItemLabel(const wxString& text);
     virtual void SetCheckable(bool checkable);
 
     virtual void Enable(bool enable = true);
@@ -76,14 +71,14 @@ public:
 
     wxCoord GetPosition() const
     {
-        wxASSERT_MSG( m_posY != wxDefaultCoord, _T("must call SetHeight first!") );
+        wxASSERT_MSG( m_posY != wxDefaultCoord, wxT("must call SetHeight first!") );
 
         return m_posY;
     }
 
     wxCoord GetHeight() const
     {
-        wxASSERT_MSG( m_height != wxDefaultCoord, _T("must call SetHeight first!") );
+        wxASSERT_MSG( m_height != wxDefaultCoord, wxT("must call SetHeight first!") );
 
         return m_height;
     }
@@ -98,7 +93,7 @@ protected:
     // the bitmaps (may be invalid, then they're not used)
     wxBitmap m_bmpChecked,
              m_bmpUnchecked,
-             m_bmpDisabled; 
+             m_bmpDisabled;
 
     // the positions of the first and last items of the radio group this item
     // belongs to or -1: start is the radio group start and is valid for all

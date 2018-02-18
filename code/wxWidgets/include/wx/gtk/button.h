@@ -1,44 +1,22 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/gtk/button.h
-// Purpose:
+// Purpose:     wxGTK wxButton class declaration
 // Author:      Robert Roebling
-// Id:          $Id: button.h,v 1.31 2005/08/02 22:57:51 MW Exp $
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef __GTKBUTTONH__
-#define __GTKBUTTONH__
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface
-#endif
-
-#include "wx/defs.h"
-#include "wx/object.h"
-#include "wx/list.h"
-#include "wx/control.h"
-
-//-----------------------------------------------------------------------------
-// classes
-//-----------------------------------------------------------------------------
-
-class WXDLLIMPEXP_CORE wxButton;
-
-//-----------------------------------------------------------------------------
-// global data
-//-----------------------------------------------------------------------------
-
-extern WXDLLIMPEXP_CORE const wxChar *wxButtonNameStr;
+#ifndef _WX_GTK_BUTTON_H_
+#define _WX_GTK_BUTTON_H_
 
 //-----------------------------------------------------------------------------
 // wxButton
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxButton: public wxButtonBase
+class WXDLLIMPEXP_CORE wxButton : public wxButtonBase
 {
 public:
-    wxButton();
+    wxButton() {}
     wxButton(wxWindow *parent, wxWindowID id,
            const wxString& label = wxEmptyString,
            const wxPoint& pos = wxDefaultPosition,
@@ -49,8 +27,6 @@ public:
         Create(parent, id, label, pos, size, style, validator, name);
     }
 
-    virtual ~wxButton();
-
     bool Create(wxWindow *parent, wxWindowID id,
            const wxString& label = wxEmptyString,
            const wxPoint& pos = wxDefaultPosition,
@@ -58,28 +34,40 @@ public:
            const wxValidator& validator = wxDefaultValidator,
            const wxString& name = wxButtonNameStr);
 
-    virtual void SetDefault();
+    virtual wxWindow *SetDefault();
     virtual void SetLabel( const wxString &label );
-    virtual bool Enable( bool enable = TRUE );
 
     // implementation
     // --------------
 
-    void DoApplyWidgetStyle(GtkRcStyle *style);
-    bool IsOwnGtkWindow( GdkWindow *window );
-
-    // Since this wxButton doesn't derive from wxButtonBase (why?) we need
-    // to override this here too...
-    virtual bool ShouldInheritColours() const { return false; }
-    
     static wxVisualAttributes
     GetClassDefaultAttributes(wxWindowVariant variant = wxWINDOW_VARIANT_NORMAL);
 
+    // helper to allow access to protected member from GTK callback
+    void MoveWindow(int x, int y, int width, int height) { DoMoveWindow(x, y, width, height); }
+
+    // called from GTK callbacks: they update the button state and call
+    // GTKUpdateBitmap()
+    void GTKMouseEnters();
+    void GTKMouseLeaves();
+    void GTKPressed();
+    void GTKReleased();
+
 protected:
     virtual wxSize DoGetBestSize() const;
+    virtual void DoApplyWidgetStyle(GtkRcStyle *style);
+
+#if wxUSE_MARKUP
+    virtual bool DoSetLabelMarkup(const wxString& markup);
+#endif // wxUSE_MARKUP
 
 private:
+    typedef wxButtonBase base_type;
+
+    // Return the GtkLabel used by this button.
+    GtkLabel *GTKGetLabel() const;
+
     DECLARE_DYNAMIC_CLASS(wxButton)
 };
 
-#endif // __GTKBUTTONH__
+#endif // _WX_GTK_BUTTON_H_

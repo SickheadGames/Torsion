@@ -4,17 +4,12 @@
 // Author:      David Webster
 // Modified by:
 // Created:     01.21.99
-// RCS-ID:      $Id: mimetype.h,v 1.8 2005/07/21 17:17:14 ABX Exp $
 // Copyright:   adopted from msw port -- (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence (part of wxExtra library)
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _MIMETYPE_IMPL_H
 #define _MIMETYPE_IMPL_H
-
-#ifdef    __GNUG__
-    #pragma interface "mimetype.h"
-#endif
 
 #include "wx/defs.h"
 
@@ -99,12 +94,6 @@ public:
     wxFileType *GetFileTypeFromMimeType(const wxString& mimeType);
 
     size_t EnumAllFileTypes(wxArrayString& mimetypes);
-
-    // these are NOPs under OS/2
-    bool ReadMailcap(const wxString& WXUNUSED(filename), bool WXUNUSED(fallback) = true)
-        { return true; }
-    bool ReadMimeTypes(const wxString& WXUNUSED(filename))
-        { return true; }
 
     void AddFallback(const wxFileTypeInfo& ft) { m_fallbacks.Add(ft); }
 

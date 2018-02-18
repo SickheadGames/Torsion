@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        wx/univ/spinbutt.h
+// Name:        wx/msw/spinbutt.h
 // Purpose:     wxSpinButton class
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: spinbutt.h,v 1.21 2004/08/05 16:52:08 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,16 +11,12 @@
 #ifndef _WX_SPINBUTT_H_
 #define _WX_SPINBUTT_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "spinbutt.h"
-#endif
-
 #include "wx/control.h"
 #include "wx/event.h"
 
 #if wxUSE_SPINBTN
 
-class WXDLLEXPORT wxSpinButton : public wxSpinButtonBase
+class WXDLLIMPEXP_CORE wxSpinButton : public wxSpinButtonBase
 {
 public:
     // construction
@@ -61,8 +56,14 @@ public:
     // a wxSpinButton can't do anything useful with focus, only wxSpinCtrl can
     virtual bool AcceptsFocus() const { return false; }
 
+    // returns true if the platform should explicitly apply a theme border
+    virtual bool CanApplyThemeBorder() const { return false; }
+
 protected:
    virtual wxSize DoGetBestSize() const;
+
+   // ensure that the control displays a value in the current range
+   virtual void NormalizeValue();
 
 private:
     DECLARE_DYNAMIC_CLASS_NO_COPY(wxSpinButton)

@@ -1,9 +1,9 @@
 /*
- * File:	pngread.h
- * Purpose:	PNG file reader
- * Author:	Alejandro Aguilar Sierra/Julian Smart
- * Created:	1995
- * Copyright:	(c) 1995, Alejandro Aguilar Sierra <asierra@servidor.unam.mx>
+ * File:    wx/os2/pngread.h
+ * Purpose: PNG file reader
+ * Author:  Alejandro Aguilar Sierra/Julian Smart
+ * Created: 1995
+ * Copyright: (c) 1995, Alejandro Aguilar Sierra <asierra@servidor.unam.mx>
  *
  *
  */
@@ -21,15 +21,15 @@ typedef byte* ImagePointerType;
 
 typedef struct
 {
-	byte red;
-	byte green;
-   byte blue;
+    byte red;
+    byte green;
+    byte blue;
 } rgb_color_struct;
 
 
-#define COLORTYPE_PALETTE	1
-#define COLORTYPE_COLOR		2
-#define COLORTYPE_ALPHA		4
+#define COLORTYPE_PALETTE  1
+#define COLORTYPE_COLOR    2
+#define COLORTYPE_ALPHA    4
 
 class wxPNGReader
 {
@@ -61,10 +61,10 @@ public:
   bool ReadFile( wxChar* ImageFileName=0 );
   bool SaveFile( wxChar* ImageFileName=0 );
   bool SaveXPM(wxChar *filename, wxChar *name = 0);
-  int  GetWidth( void ) const { return Width; };
-  int  GetHeight( void ) const { return Height; };
-  int  GetDepth( void ) const { return Depth; };
-  int  GetColorType( void ) const { return ColorType; };
+  int  GetWidth( void ) const { return Width; }
+  int  GetHeight( void ) const { return Height; }
+  int  GetDepth( void ) const { return Depth; }
+  int  GetColorType( void ) const { return ColorType; }
 
   int  GetIndex(int x, int y);
   bool GetRGB(int x, int y, byte* r, byte* g, byte* b);
@@ -88,7 +88,8 @@ public:
   virtual bool InstantiateBitmap(wxBitmap *bitmap);
   wxMask *CreateMask(void);
 
-  inline bool Ok(void) { return imageOK; }
+  inline bool Ok() const { return IsOk(); }
+  inline bool IsOk(void) { return imageOK; }
 };
 
 class wxPNGReaderIter
@@ -142,7 +143,7 @@ inline
 wxPNGReaderIter::wxPNGReaderIter(wxPNGReader *imax): ima(imax)
 {
   if (ima)
-	 IterImage = ima->RawImage;
+    IterImage = ima->RawImage;
   Itx = Ity = 0;
   Stepx = Stepy = 0;
 }
@@ -157,9 +158,9 @@ inline
 bool wxPNGReaderIter::ItOK ()
 {
   if (ima)
-	 return ima->Inside(Itx, Ity);
+    return ima->Inside(Itx, Ity);
   else
-	 return FALSE;
+    return FALSE;
 }
 
 
@@ -205,7 +206,7 @@ inline void wxPNGReaderIter::SetRow(byte *buf, int n)
 // Here should be bcopy or memcpy
   //_fmemcpy(IterImage, (void far *)buf, n);
   if (n<0)
-	 n = ima->GetWidth();
+    n = ima->GetWidth();
 
   for (int i=0; i<n; i++) IterImage[i] = buf[i];
 }
@@ -283,4 +284,4 @@ inline bool wxPNGReaderIter::PrevStep()
 }
 
 #endif
-
+    // _WX_PNGREAD__

@@ -1,20 +1,15 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        radiobox.h
+// Name:        wx/motif/radiobox.h
 // Purpose:     wxRadioBox class
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id: radiobox.h,v 1.26.2.1 2006/01/08 01:28:49 SN Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_MOTIF_RADIOBOX_H_
 #define _WX_MOTIF_RADIOBOX_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA) && !defined(__EMX__)
-    #pragma interface "radiobox.h"
-#endif
 
 #ifndef wxWIDGET_ARRAY_DEFINED
     #define wxWIDGET_ARRAY_DEFINED
@@ -25,7 +20,7 @@
 
 #include "wx/arrstr.h"
 
-class WXDLLEXPORT wxRadioBox : public wxControl, public wxRadioBoxBase
+class WXDLLIMPEXP_CORE wxRadioBox : public wxControl, public wxRadioBoxBase
 {
 public:
     wxRadioBox() { Init(); }
@@ -34,7 +29,7 @@ public:
                const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxDefaultSize,
                int n = 0, const wxString choices[] = NULL,
-               int majorDim = 0, long style = wxRA_HORIZONTAL,
+               int majorDim = 0, long style = wxRA_SPECIFY_COLS,
                const wxValidator& val = wxDefaultValidator,
                const wxString& name = wxRadioBoxNameStr)
     {
@@ -48,7 +43,7 @@ public:
                const wxPoint& pos,
                const wxSize& size,
                const wxArrayString& choices,
-               int majorDim = 0, long style = wxRA_HORIZONTAL,
+               int majorDim = 0, long style = wxRA_SPECIFY_COLS,
                const wxValidator& val = wxDefaultValidator,
                const wxString& name = wxRadioBoxNameStr)
     {
@@ -58,13 +53,13 @@ public:
                majorDim, style, val, name);
     }
 
-    ~wxRadioBox();
+    virtual ~wxRadioBox();
 
     bool Create(wxWindow *parent, wxWindowID id, const wxString& title,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 int n = 0, const wxString choices[] = NULL,
-                int majorDim = 0, long style = wxRA_HORIZONTAL,
+                int majorDim = 0, long style = wxRA_SPECIFY_COLS,
                 const wxValidator& val = wxDefaultValidator,
                 const wxString& name = wxRadioBoxNameStr);
 
@@ -72,28 +67,38 @@ public:
                 const wxPoint& pos,
                 const wxSize& size,
                 const wxArrayString& choices,
-                int majorDim = 0, long style = wxRA_HORIZONTAL,
+                int majorDim = 0, long style = wxRA_SPECIFY_COLS,
                 const wxValidator& val = wxDefaultValidator,
                 const wxString& name = wxRadioBoxNameStr);
 
-    int FindString(const wxString& s) const;
-    void SetSelection(int N);
+    // Enabling
+    virtual bool Enable(bool enable = true);
+    virtual bool Enable(unsigned int item, bool enable = true);
+    virtual bool IsItemEnabled(unsigned int WXUNUSED(n)) const
+    {
+        /* TODO */
+        return true;
+    }
+
+    // Showing
+    virtual bool Show(bool show = true);
+    virtual bool Show(unsigned int item, bool show = true);
+    virtual bool IsItemShown(unsigned int WXUNUSED(n)) const
+    {
+        /* TODO */
+        return true;
+    }
+
+    virtual void SetSelection(int n);
     int GetSelection() const;
 
-    void SetString(int item, const wxString& label) ;
-    wxString GetString(int item) const;
-    virtual bool Enable(bool enable = true);
-    virtual bool Enable(int item, bool enable = true);
-    virtual bool Show(int item, bool show = true);
-    virtual bool Show(bool show = true);
+    virtual void SetString(unsigned int item, const wxString& label);
+    virtual wxString GetString(unsigned int item) const;
 
     virtual wxString GetStringSelection() const;
     virtual bool SetStringSelection(const wxString& s);
-    virtual int GetCount() const { return m_noItems; } ;
+    virtual unsigned int GetCount() const { return m_noItems; } ;
     void Command(wxCommandEvent& event);
-
-    int GetColumnCount() const;
-    int GetRowCount() const;
 
     int GetNumberOfRowsOrCols() const { return m_noRowsOrCols; }
     void SetNumberOfRowsOrCols(int n) { m_noRowsOrCols = n; }
@@ -107,12 +112,12 @@ public:
     virtual WXWidget GetLabelWidget() const { return m_labelWidget; }
 
 protected:
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
     virtual void DoSetSize(int x, int y,
                            int width, int height,
                            int sizeFlags = wxSIZE_AUTO);
 
-    int               m_majorDim;
-    int               m_noItems;
+    unsigned int      m_noItems;
     int               m_noRowsOrCols;
     int               m_selectedButton;
 
@@ -127,4 +132,3 @@ private:
 };
 
 #endif // _WX_MOTIF_RADIOBOX_H_
-

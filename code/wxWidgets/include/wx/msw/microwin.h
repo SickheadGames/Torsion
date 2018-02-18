@@ -1,10 +1,9 @@
 /*
 /////////////////////////////////////////////////////////////////////////////
-// Name:        microwin.h
+// Name:        wx/msw/microwin.h
 // Purpose:     Extra implementation for MicroWindows
 // Author:      Julian Smart
 // Created:     2001-05-31
-// RCS-ID:      $Id: microwin.h,v 1.7 2004/08/30 10:18:43 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,11 +11,6 @@
 
 #ifndef _WX_MICROWIN_H_
 #define _WX_MICROWIN_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "microwin.h"
-#endif
-
 
 /* Implemented by microwin.cpp */
 

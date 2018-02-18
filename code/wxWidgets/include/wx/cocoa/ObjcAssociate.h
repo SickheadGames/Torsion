@@ -2,9 +2,8 @@
 // Name:        wx/cocoa/ObjcAssociate.h
 // Purpose:     Associates an Objective-C class with a C++ class
 // Author:      David Elliott
-// Modified by: 
+// Modified by:
 // Created:     2002/12/03
-// RCS-ID:      $Id:
 // Copyright:   (c) 2002 David Elliott <dfe@cox.net>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -76,4 +75,3 @@ void wxClass::Set##ObjcClass(WX_##ObjcClass cocoaObjcClass) \
 }
 
 #endif // __WX_COCOA_OBJC_ASSOCIATE_H__
-

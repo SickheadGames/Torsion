@@ -1,64 +1,58 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        cursor.h
+// Name:        wx/motif/cursor.h
 // Purpose:     wxCursor class
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id: cursor.h,v 1.15 2004/06/28 19:22:47 MBN Exp $
 // Copyright:   (c) Julian Smart
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_CURSOR_H_
 #define _WX_CURSOR_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "cursor.h"
-#endif
-
-#include "wx/object.h"
+#include "wx/gdiobj.h"
 #include "wx/gdicmn.h"
 
-class WXDLLEXPORT wxImage;
+class WXDLLIMPEXP_FWD_CORE wxImage;
 
 // Cursor
-class WXDLLEXPORT wxCursor: public wxObject
+class WXDLLIMPEXP_CORE wxCursor : public wxGDIObject
 {
-    DECLARE_DYNAMIC_CLASS(wxCursor)
-        
 public:
     wxCursor();
-    
-    // Copy constructors
-    wxCursor(const wxCursor& cursor) { Ref(cursor); }
-    
+
     wxCursor(const char bits[], int width, int height,
              int hotSpotX = -1, int hotSpotY = -1,
-             const char maskBits[] = NULL);
-    
-    wxCursor(const wxString& name, long flags = wxBITMAP_TYPE_XBM,
-        int hotSpotX = 0, int hotSpotY = 0);
+             const char maskBits[] = NULL,
+             const wxColour* fg = NULL, const wxColour* bg = NULL);
 
-#if wxUSE_IMAGE   
+    wxCursor(const wxString& name,
+             wxBitmapType type = wxCURSOR_DEFAULT_TYPE,
+             int hotSpotX = 0, int hotSpotY = 0);
+
+#if wxUSE_IMAGE
     wxCursor(const wxImage& image);
 #endif
-   
-    wxCursor(wxStockCursor id);
-    ~wxCursor();
-    
-    virtual bool Ok() const;
-    
-    wxCursor& operator = (const wxCursor& cursor)
-        { if (*this == cursor) return (*this); Ref(cursor); return *this; }
-    bool operator == (const wxCursor& cursor) const
-        { return m_refData == cursor.m_refData; }
-    bool operator != (const wxCursor& cursor) const
-        { return m_refData != cursor.m_refData; }
+
+    wxCursor(wxStockCursor id) { InitFromStock(id); }
+#if WXWIN_COMPATIBILITY_2_8
+    wxCursor(int id) { InitFromStock((wxStockCursor)id); }
+#endif
+
+    virtual ~wxCursor();
 
     // Motif-specific.
     // Create/get a cursor for the current display
     WXCursor GetXCursor(WXDisplay* display) const;
+
+protected:
+    virtual wxGDIRefData *CreateGDIRefData() const;
+    virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *data) const;
+
 private:
+    void InitFromStock(wxStockCursor);
+
     void Create(const char bits[], int width, int height,
                 int hotSpotX = -1, int hotSpotY = -1,
                 const char maskBits[] = NULL);
@@ -66,9 +60,11 @@ private:
 
     // Make a cursor from standard id
     WXCursor MakeCursor(WXDisplay* display, wxStockCursor id) const;
+
+    DECLARE_DYNAMIC_CLASS(wxCursor)
 };
 
-extern WXDLLEXPORT void wxSetCursor(const wxCursor& cursor);
+extern WXDLLIMPEXP_CORE void wxSetCursor(const wxCursor& cursor);
 
 #endif
 // _WX_CURSOR_H_

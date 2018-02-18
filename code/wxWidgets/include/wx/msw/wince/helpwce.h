@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        helpwce.h
+// Name:        wx/msw/wince/helpwce.h
 // Purpose:     Help system: Windows CE help implementation
 // Author:      Julian Smart
 // Modified by:
 // Created:     2003-07-12
-// RCS-ID:      $Id: helpwce.h,v 1.7 2004/09/08 06:41:03 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,18 +11,14 @@
 #ifndef _WX_HELPWCE_H_
 #define _WX_HELPWCE_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "helpwce.cpp"
-#endif
-
 #if wxUSE_HELP
 
 #include "wx/helpbase.h"
 
-class WXDLLEXPORT wxWinceHelpController : public wxHelpControllerBase
+class WXDLLIMPEXP_CORE wxWinceHelpController : public wxHelpControllerBase
 {
 public:
-    wxWinceHelpController() {}
+    wxWinceHelpController(wxWindow* parentWindow = NULL): wxHelpControllerBase(parentWindow) {}
     virtual ~wxWinceHelpController() {}
 
     // Must call this to set the filename
@@ -50,7 +45,7 @@ protected:
     // View topic, or just the HTML file
     bool ViewURL(const wxString& topic = wxEmptyString);
 
-protected:
+private:
     wxString m_helpFile;
 
     DECLARE_CLASS(wxWinceHelpController)
@@ -60,4 +55,3 @@ protected:
 
 #endif
 // _WX_HELPWCE_H_
-

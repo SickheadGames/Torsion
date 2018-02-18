@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: minifram.h,v 1.13 2004/05/23 20:51:28 JS Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,13 +11,9 @@
 #ifndef _WX_MINIFRAM_H_
 #define _WX_MINIFRAM_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "minifram.h"
-#endif
-
 #include "wx/frame.h"
 
-class WXDLLEXPORT wxMiniFrame : public wxFrame
+class WXDLLIMPEXP_CORE wxMiniFrame : public wxFrame
 {
 public:
   wxMiniFrame() { }

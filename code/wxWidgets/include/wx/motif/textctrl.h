@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        textctrl.h
+// Name:        wx/motif/textctrl.h
 // Purpose:     wxTextCtrl class
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id: textctrl.h,v 1.24 2005/01/19 16:25:06 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,42 +11,36 @@
 #ifndef _WX_TEXTCTRL_H_
 #define _WX_TEXTCTRL_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "textctrl.h"
-#endif
-
 // Single-line text item
-class WXDLLEXPORT wxTextCtrl : public wxTextCtrlBase
+class WXDLLIMPEXP_CORE wxTextCtrl : public wxTextCtrlBase
 {
-    DECLARE_DYNAMIC_CLASS(wxTextCtrl)
-
 public:
     // creation
     // --------
+
     wxTextCtrl();
     wxTextCtrl(wxWindow *parent,
-        wxWindowID id,
-        const wxString& value = wxEmptyString,
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize,
-        long style = 0,
-        const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxTextCtrlNameStr)
+               wxWindowID id,
+               const wxString& value = wxEmptyString,
+               const wxPoint& pos = wxDefaultPosition,
+               const wxSize& size = wxDefaultSize,
+               long style = 0,
+               const wxValidator& validator = wxDefaultValidator,
+               const wxString& name = wxTextCtrlNameStr)
     {
         Create(parent, id, value, pos, size, style, validator, name);
     }
 
     bool Create(wxWindow *parent, wxWindowID id,
-        const wxString& value = wxEmptyString,
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = 0,
-        const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxTextCtrlNameStr);
+                const wxString& value = wxEmptyString,
+                const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize, long style = 0,
+                const wxValidator& validator = wxDefaultValidator,
+                const wxString& name = wxTextCtrlNameStr);
 
     // accessors
     // ---------
     virtual wxString GetValue() const;
-    virtual void SetValue(const wxString& value);
 
     virtual int GetLineLength(long lineNo) const;
     virtual wxString GetLineText(long lineNo) const;
@@ -56,36 +49,6 @@ public:
     // operations
     // ----------
 
-    // Clipboard operations
-    virtual void Copy();
-    virtual void Cut();
-    virtual void Paste();
-    virtual bool CanCopy() const;
-    virtual bool CanCut() const;
-    virtual bool CanPaste() const;
-
-    // Undo/redo
-    virtual void Undo();
-    virtual void Redo();
-
-    virtual bool CanUndo() const;
-    virtual bool CanRedo() const;
-
-    virtual void SetInsertionPoint(long pos);
-    virtual void SetInsertionPointEnd();
-    virtual long GetInsertionPoint() const;
-    virtual wxTextPos GetLastPosition() const;
-    virtual void Replace(long from, long to, const wxString& value);
-    virtual void Remove(long from, long to);
-    virtual void SetSelection(long from, long to);
-    virtual void SetEditable(bool editable);
-    // If the return values from and to are the same, there is no
-    // selection.
-    virtual void GetSelection(long* from, long* to) const;
-    virtual bool IsEditable() const ;
-
-    virtual void WriteText(const wxString& text);
-    virtual void AppendText(const wxString& text);
     virtual void MarkDirty();
     virtual void DiscardEdits();
     virtual bool IsModified() const;
@@ -93,7 +56,6 @@ public:
     virtual long XYToPosition(long x, long y) const;
     virtual bool PositionToXY(long pos, long *x, long *y) const;
     virtual void ShowPosition(long pos);
-    virtual void Clear();
 
     // callbacks
     // ---------
@@ -125,12 +87,15 @@ public:
 
     // send the CHAR and TEXT_UPDATED events
     void DoSendEvents(void /* XmTextVerifyCallbackStruct */ *cbs,
-        long keycode);
+                      long keycode);
 
 protected:
-    wxString  m_fileName;
-
     virtual wxSize DoGetBestSize() const;
+
+    virtual void DoSetValue(const wxString& value, int flags = 0);
+
+    virtual WXWidget GetTextWidget() const { return m_mainWidget; }
+
 public:
     // Motif-specific
     void*     m_tempCallbackStruct;
@@ -142,6 +107,7 @@ public:
 
 private:
     DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS(wxTextCtrl)
 };
 
 #endif

@@ -2,11 +2,10 @@
 // Name:        wx/cocoa/region.h
 // Purpose:     wxRegion class
 // Author:      David Elliott
-// Modified by: 
+// Modified by:
 // Created:     2004/04/12
-// RCS-ID:      $Id: region.h,v 1.10 2004/06/03 21:12:49 VS Exp $
 // Copyright:   (c) 2004 David Elliott
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_COCOA_REGION_H__
@@ -14,11 +13,14 @@
 
 #include "wx/generic/region.h"
 
+#if defined(__LP64__) || defined(NS_BUILD_32_LIKE_64)
+typedef struct CGRect NSRect;
+#else
 typedef struct _NSRect NSRect;
+#endif
 
-class WXDLLEXPORT wxRegion : public wxRegionGeneric
+class WXDLLIMPEXP_CORE wxRegion : public wxRegionGeneric
 {
-    DECLARE_DYNAMIC_CLASS(wxRegion);
 public:
     wxRegion(wxCoord x, wxCoord y, wxCoord w, wxCoord h)
     :   wxRegionGeneric(x,y,w,h)
@@ -37,7 +39,7 @@ public:
              const wxColour& transColour, int tolerance = 0)
     :   wxRegionGeneric()
         { Union(bmp, transColour, tolerance); }
-    ~wxRegion() {}
+    virtual ~wxRegion() {}
     wxRegion(const wxRegion& r)
     :   wxRegionGeneric(r)
     {}
@@ -48,30 +50,11 @@ public:
     wxRegion(const NSRect& rect);
     wxRegion(const NSRect *rects, int count);
 
-    // Use the non-transparent pixels of a wxBitmap for the region to combine
-    // with this region.  First version takes transparency from bitmap's mask,
-    // second lets the user specify the colour to be treated as transparent
-    // along with an optional tolerance value.
-    // NOTE: implemented in common/rgncmn.cpp
-    bool Union(const wxBitmap& bmp);
-    bool Union(const wxBitmap& bmp,
-               const wxColour& transColour, int tolerance = 0);
-    /* And because of function hiding: */
-    bool Union(long x, long y, long width, long height)
-    {   return wxRegionGeneric::Union(x,y,width,height); }
-    bool Union(const wxRect& rect)
-    {   return wxRegionGeneric::Union(rect); }
-    bool Union(const wxRegion& region)
-    {   return wxRegionGeneric::Union(region); }
-
-    // Convert the region to a B&W bitmap with the black pixels being inside
-    // the region.
-    // NOTE: implemented in common/rgncmn.cpp
-    wxBitmap ConvertToBitmap() const;
-
+private:
+    DECLARE_DYNAMIC_CLASS(wxRegion);
 };
 
-class WXDLLEXPORT wxRegionIterator : public wxRegionIteratorGeneric
+class WXDLLIMPEXP_CORE wxRegionIterator : public wxRegionIteratorGeneric
 {
 //    DECLARE_DYNAMIC_CLASS(wxRegionIteratorGeneric);
 public:
@@ -82,10 +65,11 @@ public:
     wxRegionIterator(const wxRegionIterator& iterator)
     :   wxRegionIteratorGeneric(iterator)
     {}
-    ~wxRegionIterator() {}
+    virtual ~wxRegionIterator() {}
 
     wxRegionIterator& operator=(const wxRegionIterator& iter)
     {   return *(wxRegionIterator*)&(this->wxRegionIteratorGeneric::operator=(iter)); }
 };
 
-#endif //ndef _WX_COCOA_REGION_H__
+#endif
+    //ndef _WX_COCOA_REGION_H__

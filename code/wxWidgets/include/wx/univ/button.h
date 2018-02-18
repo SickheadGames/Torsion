@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     15.08.00
-// RCS-ID:      $Id: button.h,v 1.16 2004/08/30 14:39:06 VS Exp $
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,11 +11,7 @@
 #ifndef _WX_UNIV_BUTTON_H_
 #define _WX_UNIV_BUTTON_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univbutton.h"
-#endif
-
-class WXDLLEXPORT wxInputHandler;
+class WXDLLIMPEXP_FWD_CORE wxInputHandler;
 
 #include "wx/bitmap.h"
 
@@ -24,16 +19,16 @@ class WXDLLEXPORT wxInputHandler;
 // the actions supported by this control
 // ----------------------------------------------------------------------------
 
-#define wxACTION_BUTTON_TOGGLE  _T("toggle")    // press/release the button
-#define wxACTION_BUTTON_PRESS   _T("press")     // press the button
-#define wxACTION_BUTTON_RELEASE _T("release")   // release the button
-#define wxACTION_BUTTON_CLICK   _T("click")     // generate button click event
+#define wxACTION_BUTTON_TOGGLE  wxT("toggle")    // press/release the button
+#define wxACTION_BUTTON_PRESS   wxT("press")     // press the button
+#define wxACTION_BUTTON_RELEASE wxT("release")   // release the button
+#define wxACTION_BUTTON_CLICK   wxT("click")     // generate button click event
 
 // ----------------------------------------------------------------------------
 // wxButton: a push button
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxButton : public wxButtonBase
+class WXDLLIMPEXP_CORE wxButton : public wxButtonBase
 {
 public:
     wxButton() { Init(); }
@@ -51,7 +46,7 @@ public:
 
         Create(parent, id, bitmap, label, pos, size, style, validator, name);
     }
-    
+
     wxButton(wxWindow *parent,
              wxWindowID id,
              const wxString& label = wxEmptyString,
@@ -78,7 +73,7 @@ public:
         return Create(parent, id, wxNullBitmap, label,
                       pos, size, style, validator, name);
     }
-    
+
     bool Create(wxWindow *parent,
                 wxWindowID id,
                 const wxBitmap& bitmap,
@@ -91,29 +86,38 @@ public:
 
     virtual ~wxButton();
 
-    virtual void SetImageLabel(const wxBitmap& bitmap);
-    virtual void SetImageMargins(wxCoord x, wxCoord y);
-    virtual void SetDefault();
+    virtual wxWindow *SetDefault();
 
     virtual bool IsPressed() const { return m_isPressed; }
     virtual bool IsDefault() const { return m_isDefault; }
 
     // wxButton actions
-    void Toggle();
+    virtual void Toggle();
     virtual void Press();
     virtual void Release();
     virtual void Click();
 
-protected:
     virtual bool PerformAction(const wxControlAction& action,
                                long numArg = -1,
                                const wxString& strArg = wxEmptyString);
+
+    virtual bool CanBeHighlighted() const { return true; }
+
+    static wxInputHandler *GetStdInputHandler(wxInputHandler *handlerDef);
+    virtual wxInputHandler *DoGetStdInputHandler(wxInputHandler *handlerDef)
+    {
+        return GetStdInputHandler(handlerDef);
+    }
+
+
+protected:
     virtual wxSize DoGetBestClientSize() const;
-    
+
     virtual bool DoDrawBackground(wxDC& dc);
     virtual void DoDraw(wxControlRenderer *renderer);
 
-    virtual bool CanBeHighlighted() const { return true; }
+    virtual void DoSetBitmap(const wxBitmap& bitmap, State which);
+    virtual void DoSetBitmapMargins(wxCoord x, wxCoord y);
 
     // common part of all ctors
     void Init();
@@ -129,32 +133,6 @@ protected:
 
 private:
     DECLARE_DYNAMIC_CLASS(wxButton)
-};
-
-// ----------------------------------------------------------------------------
-// wxStdButtonInputHandler: translates SPACE and ENTER keys and the left mouse
-// click into button press/release actions
-// ----------------------------------------------------------------------------
-
-class WXDLLEXPORT wxStdButtonInputHandler : public wxStdInputHandler
-{
-public:
-    wxStdButtonInputHandler(wxInputHandler *inphand);
-
-    virtual bool HandleKey(wxInputConsumer *consumer,
-                           const wxKeyEvent& event,
-                           bool pressed);
-    virtual bool HandleMouse(wxInputConsumer *consumer,
-                             const wxMouseEvent& event);
-    virtual bool HandleMouseMove(wxInputConsumer *consumer, const wxMouseEvent& event);
-    virtual bool HandleFocus(wxInputConsumer *consumer, const wxFocusEvent& event);
-    virtual bool HandleActivation(wxInputConsumer *consumer, bool activated);
-
-private:
-    // the window (button) which has capture or NULL and the flag telling if
-    // the mouse is inside the button which captured it or not
-    wxWindow *m_winCapture;
-    bool      m_winHasMouse;
 };
 
 #endif // _WX_UNIV_BUTTON_H_

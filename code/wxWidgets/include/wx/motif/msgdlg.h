@@ -5,7 +5,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id: msgdlg.h,v 1.9 2005/03/11 15:33:40 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -13,42 +12,32 @@
 #ifndef _WX_MSGBOXDLG_H_
 #define _WX_MSGBOXDLG_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "msgdlg.h"
-#endif
-
-#include "wx/setup.h"
-#include "wx/dialog.h"
-
 // ----------------------------------------------------------------------------
 // Message box dialog
 // ----------------------------------------------------------------------------
 
-WXDLLEXPORT_DATA(extern const char*) wxMessageBoxCaptionStr;
-
-class WXDLLEXPORT wxMessageDialog: public wxDialog, public wxMessageDialogBase
+class WXDLLIMPEXP_CORE wxMessageDialog : public wxMessageDialogBase
 {
-    DECLARE_DYNAMIC_CLASS(wxMessageDialog)
-
 public:
     wxMessageDialog(wxWindow *parent,
-        const wxString& message,
-        const wxString& caption = wxMessageBoxCaptionStr,
-        long style = wxOK | wxCENTRE,
-        const wxPoint& pos = wxDefaultPosition);
+                    const wxString& message,
+                    const wxString& caption = wxMessageBoxCaptionStr,
+                    long style = wxOK | wxCENTRE,
+                    const wxPoint& WXUNUSED(pos) = wxDefaultPosition)
+        : wxMessageDialogBase(parent, message, caption, style)
+    {
+    }
 
-    int ShowModal();
+    virtual int ShowModal();
 
     // implementation only from now on
     // called by the Motif callback
     void SetResult(long result) { m_result = result; }
 
 protected:
-    wxString    m_caption;
-    wxString    m_message;
-    wxWindow *  m_parent;
     long        m_result;
+
+    DECLARE_DYNAMIC_CLASS(wxMessageDialog)
 };
 
-#endif
-// _WX_MSGBOXDLG_H_
+#endif // _WX_MSGBOXDLG_H_

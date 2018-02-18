@@ -4,7 +4,6 @@
 // Author:      David Elliott <dfe@cox.net>
 // Modified by:
 // Created:     2003/07/23
-// RCS-ID:      $Id: dataobj2.h,v 1.3 2004/05/23 20:50:42 JS Exp $
 // Copyright:   (c) 2003 David Elliott
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -15,7 +14,7 @@
 //=========================================================================
 // wxBitmapDataObject is a specialization of wxDataObject for bitmaps
 //=========================================================================
-class wxBitmapDataObject : public wxBitmapDataObjectBase
+class WXDLLIMPEXP_CORE wxBitmapDataObject : public wxBitmapDataObjectBase
 {
 public:
     // ctors
@@ -23,7 +22,7 @@ public:
     wxBitmapDataObject(const wxBitmap& bitmap);
 
     // destr
-    ~wxBitmapDataObject();
+    virtual ~wxBitmapDataObject();
 
     // override base class virtual to update PNG data too
     virtual void SetBitmap(const wxBitmap& bitmap);
@@ -36,7 +35,7 @@ public:
     virtual bool SetData(size_t len, const void *buf);
 
 protected:
-    void Init() { m_pngData = (void *)NULL; m_pngSize = 0; }
+    void Init() { m_pngData = NULL; m_pngSize = 0; }
     void Clear() { free(m_pngData); }
     void ClearAll() { Clear(); Init(); }
 
@@ -59,7 +58,7 @@ private:
 // wxFileDataObject is a specialization of wxDataObject for file names
 //=========================================================================
 
-class wxFileDataObject : public wxFileDataObjectBase
+class WXDLLIMPEXP_CORE wxFileDataObject : public wxFileDataObjectBase
 {
 public:
     // implement base class pure virtuals

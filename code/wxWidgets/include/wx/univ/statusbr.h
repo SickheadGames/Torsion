@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     14.10.01
-// RCS-ID:      $Id: statusbr.h,v 1.9 2004/08/10 13:08:34 ABX Exp $
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,26 +11,21 @@
 #ifndef _WX_UNIV_STATUSBR_H_
 #define _WX_UNIV_STATUSBR_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univstatusbr.h"
-#endif
-
 #include "wx/univ/inpcons.h"
 #include "wx/arrstr.h"
 
 // ----------------------------------------------------------------------------
-// wxStatusBar: a window near the bottom of the frame used for status info
+// wxStatusBarUniv: a window near the bottom of the frame used for status info
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxStatusBarUniv : public wxStatusBarBase,
-                                    public wxInputConsumer
+class WXDLLIMPEXP_CORE wxStatusBarUniv : public wxStatusBarBase
 {
 public:
     wxStatusBarUniv() { Init(); }
 
     wxStatusBarUniv(wxWindow *parent,
                     wxWindowID id = wxID_ANY,
-                    long style = 0,
+                    long style = wxSTB_DEFAULT_STYLE,
                     const wxString& name = wxPanelNameStr)
     {
         Init();
@@ -41,37 +35,31 @@ public:
 
     bool Create(wxWindow *parent,
                 wxWindowID id = wxID_ANY,
-                long style = 0,
+                long style = wxSTB_DEFAULT_STYLE,
                 const wxString& name = wxPanelNameStr);
 
-    // set field count/widths
+    // implement base class methods
     virtual void SetFieldsCount(int number = 1, const int *widths = NULL);
     virtual void SetStatusWidths(int n, const int widths[]);
 
-    // get/set the text of the given field
-    virtual void SetStatusText(const wxString& text, int number = 0);
-    virtual wxString GetStatusText(int number = 0) const;
-
-    // Get the position and size of the field's internal bounding rectangle
     virtual bool GetFieldRect(int i, wxRect& rect) const;
-
-    // sets the minimal vertical size of the status bar
     virtual void SetMinHeight(int height);
 
-    // get the dimensions of the horizontal and vertical borders
     virtual int GetBorderX() const;
     virtual int GetBorderY() const;
 
+    // wxInputConsumer pure virtual
+    virtual wxWindow *GetInputWindow() const
+        { return const_cast<wxStatusBar*>(this); }
+
 protected:
+    virtual void DoUpdateStatusText(int i);
+
     // recalculate the field widths
     void OnSize(wxSizeEvent& event);
 
     // draw the statusbar
     virtual void DoDraw(wxControlRenderer *renderer);
-
-    // wxInputConsumer pure virtual
-    virtual wxWindow *GetInputWindow() const
-        { return wxConstCast(this, wxStatusBar); }
 
     // tell them about our preferred height
     virtual wxSize DoGetBestSize() const;
@@ -92,15 +80,12 @@ protected:
     // get the rect for this field without ani side effects (see code)
     wxRect DoGetFieldRect(int n) const;
 
-    // refresh the given field
-    void RefreshField(int i);
-
     // common part of all ctors
     void Init();
 
 private:
-    // the status fields strings
-    wxArrayString m_statusText;
+    // the current status fields strings
+    //wxArrayString m_statusText;
 
     // the absolute status fields widths
     wxArrayInt m_widthsAbs;

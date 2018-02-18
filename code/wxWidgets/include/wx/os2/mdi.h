@@ -1,12 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        mdi.h
+// Name:        wx/os2/mdi.h
 // Purpose:     MDI (Multiple Document Interface) classes.
 //              This doesn't have to be implemented just like Windows,
 //              it could be a tabbed design as in wxGTK.
 // Author:      David Webster
 // Modified by:
 // Created:     10/10/99
-// RCS-ID:      $Id: mdi.h,v 1.9 2004/05/23 20:51:39 JS Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,14 +15,14 @@
 
 #include "wx/frame.h"
 
-class WXDLLEXPORT wxMDIClientWindow;
-class WXDLLEXPORT wxMDIChildFrame;
+class WXDLLIMPEXP_FWD_CORE wxMDIClientWindow;
+class WXDLLIMPEXP_FWD_CORE wxMDIChildFrame;
 
-class WXDLLEXPORT wxMDIParentFrame: public wxFrame
+class WXDLLIMPEXP_CORE wxMDIParentFrame: public wxFrame
 {
 DECLARE_DYNAMIC_CLASS(wxMDIParentFrame)
 
-  friend class WXDLLEXPORT wxMDIChildFrame;
+  friend class WXDLLIMPEXP_FWD_CORE wxMDIChildFrame;
 public:
 
   wxMDIParentFrame();
@@ -38,7 +37,7 @@ public:
       Create(parent, id, title, pos, size, style, name);
   }
 
-  ~wxMDIParentFrame();
+  virtual ~wxMDIParentFrame();
 
   bool Create(wxWindow *parent,
            wxWindowID id,
@@ -103,7 +102,7 @@ private:
     DECLARE_EVENT_TABLE()
 };
 
-class WXDLLEXPORT wxMDIChildFrame: public wxFrame
+class WXDLLIMPEXP_CORE wxMDIChildFrame: public wxFrame
 {
 DECLARE_DYNAMIC_CLASS(wxMDIChildFrame)
 public:
@@ -120,7 +119,7 @@ public:
       Create(parent, id, title, pos, size, style, name);
   }
 
-  ~wxMDIChildFrame();
+  virtual ~wxMDIChildFrame();
 
   bool Create(wxMDIParentFrame *parent,
            wxWindowID id,
@@ -164,7 +163,7 @@ protected:
  * of the children. Phew! So the children are sort of 'adopted'...
  */
 
-class WXDLLEXPORT wxMDIClientWindow: public wxWindow
+class WXDLLIMPEXP_CORE wxMDIClientWindow: public wxWindow
 {
   DECLARE_DYNAMIC_CLASS(wxMDIClientWindow)
 

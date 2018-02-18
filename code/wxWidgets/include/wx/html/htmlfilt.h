@@ -1,19 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        htmlfilt.h
+// Name:        wx/html/htmlfilt.h
 // Purpose:     filters
 // Author:      Vaclav Slavik
-// RCS-ID:      $Id: htmlfilt.h,v 1.10 2004/09/27 19:06:39 ABX Exp $
 // Copyright:   (c) 1999 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-
 #ifndef _WX_HTMLFILT_H_
 #define _WX_HTMLFILT_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "htmlfilt.h"
-#endif
 
 #include "wx/defs.h"
 

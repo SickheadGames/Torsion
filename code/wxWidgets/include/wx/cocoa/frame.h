@@ -4,7 +4,6 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/03/16
-// RCS-ID:      $Id:
 // Copyright:   (c) 2003 David Elliott
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,10 +11,10 @@
 #ifndef _WX_COCOA_FRAME_H_
 #define _WX_COCOA_FRAME_H_
 
-class WXDLLEXPORT wxMenuBar;
-class WXDLLEXPORT wxStatusBar;
+class WXDLLIMPEXP_FWD_CORE wxMenuBar;
+class WXDLLIMPEXP_FWD_CORE wxStatusBar;
 
-class WXDLLEXPORT wxFrame: public wxFrameBase 
+class WXDLLIMPEXP_CORE wxFrame: public wxFrameBase
 {
     DECLARE_EVENT_TABLE()
     DECLARE_DYNAMIC_CLASS(wxFrame)
@@ -86,7 +85,7 @@ public:
 
     // create the main status bar by calling OnCreateStatusBar()
     virtual wxStatusBar* CreateStatusBar(int number = 1,
-                                         long style = wxST_SIZEGRIP,
+                                         long style = wxSTB_DEFAULT_STYLE,
                                          wxWindowID winid = 0,
                                          const wxString& name =
                                             wxStatusLineNameStr);
@@ -95,7 +94,7 @@ public:
 #if wxUSE_TOOLBAR
     // create main toolbar bycalling OnCreateToolBar()
     virtual wxToolBar* CreateToolBar(long style = -1,
-                                     wxWindowID winid = -1,
+                                     wxWindowID winid = wxID_ANY,
                                      const wxString& name = wxToolBarNameStr);
     // sets the main tool bar
     virtual void SetToolBar(wxToolBar *toolbar);

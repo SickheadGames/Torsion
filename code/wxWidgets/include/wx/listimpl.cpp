@@ -1,26 +1,26 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        listimpl.cpp
+// Name:        wx/listimpl.cpp
 // Purpose:     second-part of macro based implementation of template lists
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     16/11/98
-// RCS-ID:      $Id: listimpl.cpp,v 1.8.2.1 2006/01/17 19:02:24 JS Exp $
 // Copyright:   (c) 1998 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#if wxUSE_STL
+#if wxUSE_STD_CONTAINERS
 
-    #undef  WX_DEFINE_LIST
-    #define WX_DEFINE_LIST(name)                                        \
-        void name::DeleteFunction( _WX_DELETEFUNCTIONCONST _WX_LIST_ITEM_TYPE_##name X )  \
-        {                                                               \
-            delete X;                                                   \
-        }
+#undef  WX_DEFINE_LIST
+#define WX_DEFINE_LIST(name)                                                  \
+    void _WX_LIST_HELPER_##name::DeleteFunction( _WX_LIST_ITEM_TYPE_##name X )\
+    {                                                                         \
+        delete X;                                                             \
+    }                                                                         \
+    _WX_LIST_HELPER_##name::BaseListType _WX_LIST_HELPER_##name::EmptyList;
 
-#else // if !wxUSE_STL
-
-    #define _DEFINE_LIST(T, name)         \
+#else // !wxUSE_STD_CONTAINERS
+    #undef WX_DEFINE_LIST_2
+    #define WX_DEFINE_LIST_2(T, name)     \
         void wx##name##Node::DeleteData() \
         {                                 \
             delete (T *)GetData();        \
@@ -29,10 +29,7 @@
     // redefine the macro so that now it will generate the class implementation
     // old value would provoke a compile-time error if this file is not included
     #undef  WX_DEFINE_LIST
-    #define WX_DEFINE_LIST(name) _DEFINE_LIST(_WX_LIST_ITEM_TYPE_##name, name)
+    #define WX_DEFINE_LIST(name) WX_DEFINE_LIST_2(_WX_LIST_ITEM_TYPE_##name, name)
 
-    // don't pollute preprocessor's name space
-    //#undef  _DEFINE_LIST
-
-#endif
+#endif // wxUSE_STD_CONTAINERS/!wxUSE_STD_CONTAINERS
 

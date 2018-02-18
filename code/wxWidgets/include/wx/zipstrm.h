@@ -1,8 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        zipstrm.h
+// Name:        wx/zipstrm.h
 // Purpose:     Streams for Zip files
 // Author:      Mike Wetherell
-// RCS-ID:      $Id: zipstrm.h,v 1.19 2005/04/11 23:26:38 MW Exp $
 // Copyright:   (c) Mike Wetherell
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,16 +9,11 @@
 #ifndef _WX_WXZIPSTREAM_H__
 #define _WX_WXZIPSTREAM_H__
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "zipstrm.h"
-#endif
-
 #include "wx/defs.h"
 
-#if wxUSE_ZLIB && wxUSE_STREAMS && wxUSE_ZIPSTREAM
+#if wxUSE_ZIPSTREAM
 
 #include "wx/archive.h"
-#include "wx/hashmap.h"
 #include "wx/filename.h"
 
 // some methods from wxZipInputStream and wxZipOutputStream stream do not get
@@ -30,7 +24,7 @@
        || !defined __GNUC_MINOR__ \
        || !defined __GNUC_PATCHLEVEL__ \
        || __GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__ < 30402)
-#define WXZIPFIX WXDLLIMPEXP_BASE 
+#define WXZIPFIX WXDLLIMPEXP_BASE
 #else
 #define WXZIPFIX
 #endif
@@ -57,7 +51,7 @@ enum wxZipMethod
 };
 
 // Originating File-System.
-// 
+//
 // These are Pkware's values. Note that Info-zip disagree on some of them,
 // most notably NTFS.
 //
@@ -117,8 +111,8 @@ enum wxZipFlags
 
 // Forward decls
 //
-class WXDLLIMPEXP_BASE wxZipEntry;
-class WXDLLIMPEXP_BASE wxZipInputStream;
+class WXDLLIMPEXP_FWD_BASE wxZipEntry;
+class WXDLLIMPEXP_FWD_BASE wxZipInputStream;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -272,14 +266,17 @@ private:
 
 
 /////////////////////////////////////////////////////////////////////////////
-// wxZipOutputStream 
+// wxZipOutputStream
 
-WX_DECLARE_LIST_WITH_DECL(wxZipEntry, wx__ZipEntryList, class WXDLLIMPEXP_BASE);
+WX_DECLARE_LIST_WITH_DECL(wxZipEntry, wxZipEntryList_, class WXDLLIMPEXP_BASE);
 
 class WXDLLIMPEXP_BASE wxZipOutputStream : public wxArchiveOutputStream
 {
 public:
     wxZipOutputStream(wxOutputStream& stream,
+                      int level = -1,
+                      wxMBConv& conv = wxConvLocal);
+    wxZipOutputStream(wxOutputStream *stream,
                       int level = -1,
                       wxMBConv& conv = wxConvLocal);
     virtual WXZIPFIX ~wxZipOutputStream();
@@ -304,7 +301,7 @@ public:
 
     int  GetLevel() const                       { return m_level; }
     void WXZIPFIX SetLevel(int level);
-    
+
 protected:
     virtual size_t WXZIPFIX OnSysWrite(const void *buffer, size_t size);
     virtual wxFileOffset OnSysTell() const      { return m_entrySize; }
@@ -320,6 +317,8 @@ protected:
         { return m_offsetAdjustment != wxInvalidOffset; }
 
 private:
+    void Init(int level);
+
     bool WXZIPFIX PutNextEntry(wxArchiveEntry *entry);
     bool WXZIPFIX CopyEntry(wxArchiveEntry *entry, wxArchiveInputStream& stream);
     bool WXZIPFIX CopyArchiveMetaData(wxArchiveInputStream& stream);
@@ -333,7 +332,7 @@ private:
     class wxStoredOutputStream *m_store;
     class wxZlibOutputStream2 *m_deflate;
     class wxZipStreamLink *m_backlink;
-    wx__ZipEntryList m_entries;
+    wxZipEntryList_ m_entries;
     char *m_initialData;
     size_t m_initialSize;
     wxZipEntry *m_pending;
@@ -346,13 +345,14 @@ private:
     int m_level;
     wxFileOffset m_offsetAdjustment;
     wxString m_Comment;
+    bool m_endrecWritten;
 
-    DECLARE_NO_COPY_CLASS(wxZipOutputStream)
+    wxDECLARE_NO_COPY_CLASS(wxZipOutputStream);
 };
 
 
 /////////////////////////////////////////////////////////////////////////////
-// wxZipInputStream 
+// wxZipInputStream
 
 class WXDLLIMPEXP_BASE wxZipInputStream : public wxArchiveInputStream
 {
@@ -360,8 +360,9 @@ public:
     typedef wxZipEntry entry_type;
 
     wxZipInputStream(wxInputStream& stream, wxMBConv& conv = wxConvLocal);
+    wxZipInputStream(wxInputStream *stream, wxMBConv& conv = wxConvLocal);
 
-#if 1 //WXWIN_COMPATIBILITY_2_6
+#if WXWIN_COMPATIBILITY_2_6 && wxUSE_FFILE
     wxZipInputStream(const wxString& archive, const wxString& file)
      : wxArchiveInputStream(OpenFile(archive), wxConvLocal) { Init(file); }
 #endif
@@ -382,7 +383,7 @@ protected:
     size_t WXZIPFIX OnSysRead(void *buffer, size_t size);
     wxFileOffset OnSysTell() const { return m_decomp ? m_decomp->TellI() : 0; }
 
-#if 1 //WXWIN_COMPATIBILITY_2_6
+#if WXWIN_COMPATIBILITY_2_6
     wxFileOffset WXZIPFIX OnSysSeek(wxFileOffset seek, wxSeekMode mode);
 #endif
 
@@ -393,7 +394,9 @@ protected:
 private:
     void Init();
     void Init(const wxString& file);
-    wxInputStream& OpenFile(const wxString& archive);
+#if WXWIN_COMPATIBILITY_2_6 && wxUSE_FFILE
+    static wxInputStream *OpenFile(const wxString& archive);
+#endif
 
     wxArchiveEntry *DoGetNextEntry()    { return GetNextEntry(); }
 
@@ -405,7 +408,7 @@ private:
     wxUint32 ReadSignature();
     bool FindEndRecord();
     bool LoadEndRecord();
-    
+
     bool AtHeader() const       { return m_headerSize == 0; }
     bool AfterHeader() const    { return m_headerSize > 0 && !m_decomp; }
     bool IsOpened() const       { return m_decomp != NULL; }
@@ -418,7 +421,6 @@ private:
     class wxStoredInputStream *m_store;
     class wxZlibInputStream2 *m_inflate;
     class wxRawInputStream *m_rawin;
-    class wxFFileInputStream *m_ffile;
     wxZipEntry m_entry;
     bool m_raw;
     size_t m_headerSize;
@@ -438,12 +440,12 @@ private:
     friend bool wxZipOutputStream::CopyArchiveMetaData(
                     wxZipInputStream& inputStream);
 
-#if 1 //WXWIN_COMPATIBILITY_2_6
+#if WXWIN_COMPATIBILITY_2_6
     bool m_allowSeeking;
-    friend class wxZipFSInputStream;
+    friend class wxArchiveFSHandler;
 #endif
 
-    DECLARE_NO_COPY_CLASS(wxZipInputStream)
+    wxDECLARE_NO_COPY_CLASS(wxZipInputStream);
 };
 
 
@@ -472,16 +474,25 @@ public:
     typedef wxZipPairIter     pairiter_type;
 #endif
 
+    wxZipClassFactory();
+
     wxZipEntry *NewEntry() const
         { return new wxZipEntry; }
     wxZipInputStream *NewStream(wxInputStream& stream) const
         { return new wxZipInputStream(stream, GetConv()); }
     wxZipOutputStream *NewStream(wxOutputStream& stream) const
         { return new wxZipOutputStream(stream, -1, GetConv()); }
+    wxZipInputStream *NewStream(wxInputStream *stream) const
+        { return new wxZipInputStream(stream, GetConv()); }
+    wxZipOutputStream *NewStream(wxOutputStream *stream) const
+        { return new wxZipOutputStream(stream, -1, GetConv()); }
 
     wxString GetInternalName(const wxString& name,
                              wxPathFormat format = wxPATH_NATIVE) const
         { return wxZipEntry::GetInternalName(name, format); }
+
+    const wxChar * const *GetProtocols(wxStreamProtocolType type
+                                       = wxSTREAM_PROTOCOL) const;
 
 protected:
     wxArchiveEntry *DoNewEntry() const
@@ -489,6 +500,10 @@ protected:
     wxArchiveInputStream *DoNewStream(wxInputStream& stream) const
         { return NewStream(stream); }
     wxArchiveOutputStream *DoNewStream(wxOutputStream& stream) const
+        { return NewStream(stream); }
+    wxArchiveInputStream *DoNewStream(wxInputStream *stream) const
+        { return NewStream(stream); }
+    wxArchiveOutputStream *DoNewStream(wxOutputStream *stream) const
         { return NewStream(stream); }
 
 private:
@@ -554,6 +569,6 @@ inline void wxZipEntry::SetName(const wxString& name,
 }
 
 
-#endif // wxUSE_ZLIB && wxUSE_STREAMS && wxUSE_ZIPSTREAM
+#endif // wxUSE_ZIPSTREAM
 
 #endif // _WX_WXZIPSTREAM_H__

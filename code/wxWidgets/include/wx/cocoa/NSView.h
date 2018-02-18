@@ -4,7 +4,6 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/02/15
-// RCS-ID:      $Id: 
 // Copyright:   (c) 2003 David Elliott
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -15,7 +14,14 @@
 #include "wx/hashmap.h"
 #include "wx/cocoa/ObjcAssociate.h"
 
+#if defined(__LP64__) || defined(NS_BUILD_32_LIKE_64)
+typedef struct CGRect NSRect;
+#else
 typedef struct _NSRect NSRect;
+#endif
+
+struct objc_object;
+
 class wxWindow;
 
 WX_DECLARE_OBJC_HASHMAP(NSView);
@@ -27,39 +33,48 @@ public:
     void AssociateNSView(WX_NSView cocoaNSView);
     void DisassociateNSView(WX_NSView cocoaNSView);
 protected:
-    static void *sm_cocoaObserver;
+    static struct objc_object *sm_cocoaObserver;
 public:
     virtual wxWindow* GetWxWindow() const
-    {	return NULL;	}
+    {   return NULL; }
     virtual void Cocoa_FrameChanged(void) = 0;
-    virtual bool Cocoa_drawRect(const NSRect &rect)
+    virtual void Cocoa_synthesizeMouseMoved(void) = 0;
+    virtual bool Cocoa_acceptsFirstMouse(bool &WXUNUSED(acceptsFirstMouse), WX_NSEvent WXUNUSED(theEvent))
     {   return false; }
-    virtual bool Cocoa_mouseDown(WX_NSEvent theEvent)
+    virtual bool Cocoa_drawRect(const NSRect &WXUNUSED(rect))
     {   return false; }
-    virtual bool Cocoa_mouseDragged(WX_NSEvent theEvent)
+    virtual bool Cocoa_mouseDown(WX_NSEvent WXUNUSED(theEvent))
     {   return false; }
-    virtual bool Cocoa_mouseUp(WX_NSEvent theEvent)
+    virtual bool Cocoa_mouseDragged(WX_NSEvent WXUNUSED(theEvent))
     {   return false; }
-    virtual bool Cocoa_mouseMoved(WX_NSEvent theEvent)
+    virtual bool Cocoa_mouseUp(WX_NSEvent WXUNUSED(theEvent))
     {   return false; }
-    virtual bool Cocoa_mouseEntered(WX_NSEvent theEvent)
+    virtual bool Cocoa_mouseMoved(WX_NSEvent WXUNUSED(theEvent))
     {   return false; }
-    virtual bool Cocoa_mouseExited(WX_NSEvent theEvent)
+    virtual bool Cocoa_mouseEntered(WX_NSEvent WXUNUSED(theEvent))
     {   return false; }
-    virtual bool Cocoa_rightMouseDown(WX_NSEvent theEvent)
+    virtual bool Cocoa_mouseExited(WX_NSEvent WXUNUSED(theEvent))
     {   return false; }
-    virtual bool Cocoa_rightMouseDragged(WX_NSEvent theEvent)
+    virtual bool Cocoa_rightMouseDown(WX_NSEvent WXUNUSED(theEvent))
     {   return false; }
-    virtual bool Cocoa_rightMouseUp(WX_NSEvent theEvent)
+    virtual bool Cocoa_rightMouseDragged(WX_NSEvent WXUNUSED(theEvent))
     {   return false; }
-    virtual bool Cocoa_otherMouseDown(WX_NSEvent theEvent)
+    virtual bool Cocoa_rightMouseUp(WX_NSEvent WXUNUSED(theEvent))
     {   return false; }
-    virtual bool Cocoa_otherMouseDragged(WX_NSEvent theEvent)
+    virtual bool Cocoa_otherMouseDown(WX_NSEvent WXUNUSED(theEvent))
     {   return false; }
-    virtual bool Cocoa_otherMouseUp(WX_NSEvent theEvent)
+    virtual bool Cocoa_otherMouseDragged(WX_NSEvent WXUNUSED(theEvent))
+    {   return false; }
+    virtual bool Cocoa_otherMouseUp(WX_NSEvent WXUNUSED(theEvent))
     {   return false; }
     virtual bool Cocoa_resetCursorRects()
-    {	return false; }
+    {   return false; }
+    virtual bool Cocoa_viewDidMoveToWindow()
+    {   return false; }
+    virtual bool Cocoa_viewWillMoveToWindow(WX_NSWindow WXUNUSED(newWindow))
+    {   return false; }
+    virtual ~wxCocoaNSView() { }
 };
 
-#endif // _WX_COCOA_NSVIEW_H_
+#endif
+    // __WX_COCOA_NSVIEW_H__

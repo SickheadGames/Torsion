@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     20.09.01
-// RCS-ID:      $Id: toplevel.h,v 1.18 2004/05/23 20:51:53 JS Exp $
 // Copyright:   (c) 2002 Julian Smart
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,15 +11,11 @@
 #ifndef _WX_X11_TOPLEVEL_H_
 #define _WX_X11_TOPLEVEL_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "toplevel.h"
-#endif
-
 // ----------------------------------------------------------------------------
 // wxTopLevelWindowX11
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxTopLevelWindowX11 : public wxTopLevelWindowBase
+class WXDLLIMPEXP_CORE wxTopLevelWindowX11 : public wxTopLevelWindowBase
 {
 public:
     // constructors and such
@@ -50,30 +45,35 @@ public:
     virtual ~wxTopLevelWindowX11();
 
     // implement base class pure virtuals
-    virtual void Maximize(bool maximize = TRUE);
+    virtual void Maximize(bool maximize = true);
     virtual bool IsMaximized() const;
-    virtual void Iconize(bool iconize = TRUE);
+    virtual void Iconize(bool iconize = true);
     virtual bool IsIconized() const;
-    virtual void SetIcon(const wxIcon& icon) { SetIcons( wxIconBundle( icon ) ); }
     virtual void SetIcons(const wxIconBundle& icons);
     virtual void Restore();
 
-    virtual bool Show( bool show = TRUE );
+    virtual bool Show( bool show = true );
 
     virtual bool ShowFullScreen( bool show, long style = wxFULLSCREEN_ALL );
     virtual bool IsFullScreen() const { return m_fsIsShowing; }
 
     virtual void SetTitle( const wxString& title);
     virtual wxString GetTitle() const;
-    
+
     // implementation
-    void SetNeedResizeInIdle( bool set = TRUE )
+    void SetNeedResizeInIdle( bool set = true )
         { m_needResizeInIdle = set; }
     void SetConfigureGeometry( int x, int y, int width, int height )
         { m_x = x; m_y = y; m_width = width; m_height = height; }
 
     virtual bool SetShape(const wxRegion& region);
-    
+
+    // For implementation purposes - sometimes decorations make the
+    // client area smaller
+    virtual wxPoint GetClientAreaOrigin() const;
+
+    virtual void OnInternalIdle();
+
 protected:
     // common part of all ctors
     void Init();
@@ -81,13 +81,8 @@ protected:
     // set the icon for the window
     void DoSetIcon( const wxIcon& icon );
 
-    // For implementation purposes - sometimes decorations make the
-    // client area smaller
-    virtual wxPoint GetClientAreaOrigin() const;
-
     // For implementation of delayed resize events
     bool m_needResizeInIdle;
-    virtual void OnInternalIdle();
 
     virtual void DoGetClientSize( int *width, int *height ) const;
     virtual void DoGetSize( int *width, int *height ) const;
@@ -96,7 +91,7 @@ protected:
         int width, int height,
         int sizeFlags = wxSIZE_AUTO);
     virtual void DoGetPosition( int *x, int *y ) const;
-    
+
     // Is the frame currently iconized?
     bool m_iconized;
 
@@ -110,13 +105,12 @@ protected:
     bool                  m_fsIsMaximized;
     bool                  m_fsIsShowing;
     wxString              m_title;
-    
+
     // Geometry
     int                   m_x,m_y,m_width,m_height;
 };
 
 // list of all frames and modeless dialogs
-//extern WXDLLEXPORT_DATA(wxWindowList) wxModelessWindows;
+//extern WXDLLIMPEXP_DATA_CORE(wxWindowList) wxModelessWindows;
 
 #endif // _WX_X11_TOPLEVEL_H_
-

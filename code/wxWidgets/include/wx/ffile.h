@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     14.07.99
-// RCS-ID:      $Id: ffile.h,v 1.23.2.1 2005/09/25 20:46:17 MW Exp $
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,16 +11,13 @@
 #ifndef   _WX_FFILE_H_
 #define   _WX_FFILE_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "ffile.h"
-#endif
-
 #include "wx/defs.h"        // for wxUSE_FFILE
 
 #if wxUSE_FFILE
 
 #include  "wx/string.h"
 #include  "wx/filefn.h"
+#include  "wx/convauto.h"
 
 #include <stdio.h>
 
@@ -40,37 +36,32 @@ public:
     // def ctor
   wxFFile() { m_fp = NULL; }
     // open specified file (may fail, use IsOpened())
-  wxFFile(const wxChar *filename, const wxChar *mode = _T("r"));
+  wxFFile(const wxString& filename, const wxString& mode = wxT("r"));
     // attach to (already opened) file
   wxFFile(FILE *lfp) { m_fp = lfp; }
 
   // open/close
     // open a file (existing or not - the mode controls what happens)
-  bool Open(const wxChar *filename, const wxChar *mode = _T("r"));
+  bool Open(const wxString& filename, const wxString& mode = wxT("r"));
     // closes the opened file (this is a NOP if not opened)
   bool Close();
 
   // assign an existing file descriptor and get it back from wxFFile object
   void Attach(FILE *lfp, const wxString& name = wxEmptyString)
     { Close(); m_fp = lfp; m_name = name; }
-  void Detach() { m_fp = NULL; }
+  FILE* Detach() { FILE* fpOld = m_fp; m_fp = NULL; return fpOld; }
   FILE *fp() const { return m_fp; }
 
   // read/write (unbuffered)
     // read all data from the file into a string (useful for text files)
-  bool ReadAll(wxString *str, wxMBConv& conv = wxConvUTF8);
+  bool ReadAll(wxString *str, const wxMBConv& conv = wxConvAuto());
     // returns number of bytes read - use Eof() and Error() to see if an error
     // occurred or not
   size_t Read(void *pBuf, size_t nCount);
     // returns the number of bytes written
   size_t Write(const void *pBuf, size_t nCount);
     // returns true on success
-  bool Write(const wxString& s, wxMBConv& conv = wxConvUTF8)
-  {
-      const wxWX2MBbuf buf = s.mb_str(conv);
-      size_t size = strlen(buf);
-      return Write((const char *)buf, size) == size;
-  }
+  bool Write(const wxString& s, const wxMBConv& conv = wxConvAuto());
     // flush data not yet written
   bool Flush();
 

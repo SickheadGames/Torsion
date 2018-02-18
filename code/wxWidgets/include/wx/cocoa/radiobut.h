@@ -4,9 +4,8 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/03/18
-// RCS-ID:      $Id:
 // Copyright:   (c) 2003 David Elliott
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WX_COCOA_RADIOBUT_H__
@@ -14,14 +13,14 @@
 
 #include "wx/cocoa/NSButton.h"
 
-class WXDLLEXPORT wxRadioButton;
+class WXDLLIMPEXP_FWD_CORE wxRadioButton;
 
-WX_DECLARE_LIST(wxRadioButton, wxRadioButtonList);
+WX_DECLARE_EXPORTED_LIST(wxRadioButton, wxRadioButtonList);
 
 // ========================================================================
 // wxRadioButton
 // ========================================================================
-class WXDLLEXPORT wxRadioButton: public wxControl, protected wxCocoaNSButton
+class WXDLLIMPEXP_CORE wxRadioButton: public wxControl, protected wxCocoaNSButton
 {
     DECLARE_DYNAMIC_CLASS(wxRadioButton)
     DECLARE_EVENT_TABLE()
@@ -56,12 +55,16 @@ public:
 // ------------------------------------------------------------------------
 protected:
     virtual void Cocoa_wxNSButtonAction(void);
+private:
+    void Cocoa_DeselectOtherButtonsInTheGroup(void);
 // ------------------------------------------------------------------------
 // Implementation
 // ------------------------------------------------------------------------
 public:
     virtual void SetValue(bool);
     virtual bool GetValue() const;
+    virtual void SetLabel(const wxString& label);
+    virtual wxString GetLabel() const;
 protected:
     wxRadioButtonList m_radioSlaves;
     wxRadioButton *m_radioMaster;

@@ -4,7 +4,6 @@
 // Author:      Wlodzimierz ABX Skiba
 // Modified by:
 // Created:     22.03.2005
-// RCS-ID:      $Id: wrapcdlg.h,v 1.1 2005/03/22 19:39:45 ABX Exp $
 // Copyright:   (c) 2005 Wlodzimierz Skiba
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,6 +20,8 @@
 #if wxUSE_COMMON_DIALOGS && !defined(__SMARTPHONE__) && !defined(__WXMICROWIN__)
     #include <commdlg.h>
 #endif
+
+#include "wx/msw/winundef.h"
 
 #endif // _WX_MSW_WRAPCDLG_H_
 

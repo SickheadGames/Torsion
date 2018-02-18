@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        helpbest.h
+// Name:        wx/msw/helpbest.h
 // Purpose:     Tries to load MS HTML Help, falls back to wxHTML upon failure
 // Author:      Mattia Barbon
 // Modified by:
 // Created:     02/04/2001
-// RCS-ID:      $Id: helpbest.h,v 1.12 2004/08/27 18:59:33 ABX Exp $
 // Copyright:   (c) Mattia Barbon
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,21 +11,21 @@
 #ifndef _WX_HELPBEST_H_
 #define _WX_HELPBEST_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "helpbest.h"
-#endif
-
-#if wxUSE_HELP && wxUSE_MS_HTML_HELP && defined(__WIN95__) \
+#if wxUSE_HELP && wxUSE_MS_HTML_HELP \
     && wxUSE_WXHTML_HELP && !defined(__WXUNIVERSAL__)
 
 #include "wx/helpbase.h"
+#include "wx/html/helpfrm.h"        // for wxHF_DEFAULT_STYLE
 
 class WXDLLIMPEXP_HTML wxBestHelpController: public wxHelpControllerBase
 {
 public:
-    wxBestHelpController()
-        : m_helpControllerType( wxUseNone ),
-          m_helpController( NULL )
+    wxBestHelpController(wxWindow* parentWindow = NULL,
+                         int style = wxHF_DEFAULT_STYLE)
+        : wxHelpControllerBase(parentWindow),
+          m_helpControllerType(wxUseNone),
+          m_helpController(NULL),
+          m_style(style)
     {
     }
 
@@ -102,6 +101,12 @@ public:
                                                      newFrameEachTime );
     }
 
+    /// Set the window that can optionally be used for the help window's parent.
+    virtual void SetParentWindow(wxWindow* win) { m_helpController->SetParentWindow(win); }
+
+    /// Get the window that can optionally be used for the help window's parent.
+    virtual wxWindow* GetParentWindow() const { return m_helpController->GetParentWindow(); }
+
 protected:
     // Append/change extension if necessary.
     wxString GetValidFilename(const wxString& file) const;
@@ -111,12 +116,13 @@ protected:
 
     HelpControllerType m_helpControllerType;
     wxHelpControllerBase* m_helpController;
+    int m_style;
 
     DECLARE_DYNAMIC_CLASS(wxBestHelpController)
-    DECLARE_NO_COPY_CLASS(wxBestHelpController)
+    wxDECLARE_NO_COPY_CLASS(wxBestHelpController);
 };
 
-#endif // wxUSE_HELP && wxUSE_MS_HTML_HELP && defined(__WIN95__) && wxUSE_WXHTML_HELP
+#endif // wxUSE_HELP && wxUSE_MS_HTML_HELP && wxUSE_WXHTML_HELP
 
 #endif
     // _WX_HELPBEST_H_

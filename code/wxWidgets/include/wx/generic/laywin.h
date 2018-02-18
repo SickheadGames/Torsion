@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        laywin.h
+// Name:        wx/generic/laywin.h
 // Purpose:     Implements a simple layout algorithm, plus
 //              wxSashLayoutWindow which is an example of a window with
 //              layout-awareness (via event handlers). This is suited to
@@ -7,7 +7,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id: laywin.h,v 1.27.2.1 2006/01/05 23:16:29 MR Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,20 +14,17 @@
 #ifndef _WX_LAYWIN_H_G_
 #define _WX_LAYWIN_H_G_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "laywin.h"
-#endif
-
 #if wxUSE_SASH
     #include "wx/sashwin.h"
 #endif // wxUSE_SASH
 
 #include "wx/event.h"
 
-BEGIN_DECLARE_EVENT_TYPES()
-    DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_ADV, wxEVT_QUERY_LAYOUT_INFO, 1500)
-    DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_ADV, wxEVT_CALCULATE_LAYOUT, 1501)
-END_DECLARE_EVENT_TYPES()
+class WXDLLIMPEXP_FWD_ADV wxQueryLayoutInfoEvent;
+class WXDLLIMPEXP_FWD_ADV wxCalculateLayoutEvent;
+
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_QUERY_LAYOUT_INFO, wxQueryLayoutInfoEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_CALCULATE_LAYOUT,  wxCalculateLayoutEvent );
 
 enum wxLayoutOrientation
 {
@@ -106,8 +102,11 @@ private:
 
 typedef void (wxEvtHandler::*wxQueryLayoutInfoEventFunction)(wxQueryLayoutInfoEvent&);
 
+#define wxQueryLayoutInfoEventHandler( func ) \
+    wxEVENT_HANDLER_CAST( wxQueryLayoutInfoEventFunction, func )
+
 #define EVT_QUERY_LAYOUT_INFO(func) \
-    DECLARE_EVENT_TABLE_ENTRY( wxEVT_QUERY_LAYOUT_INFO, wxID_ANY, wxID_ANY, (wxObjectEventFunction) (wxEventFunction)  wxStaticCastEvent( wxQueryLayoutInfoEventFunction, & func ), NULL ),
+    wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_QUERY_LAYOUT_INFO, wxID_ANY, wxID_ANY, wxQueryLayoutInfoEventHandler( func ), NULL ),
 
 /*
  * This event is used to take a bite out of the available client area.
@@ -143,8 +142,10 @@ private:
 
 typedef void (wxEvtHandler::*wxCalculateLayoutEventFunction)(wxCalculateLayoutEvent&);
 
+#define wxCalculateLayoutEventHandler( func ) wxEVENT_HANDLER_CAST(wxCalculateLayoutEventFunction, func)
+
 #define EVT_CALCULATE_LAYOUT(func) \
-    DECLARE_EVENT_TABLE_ENTRY( wxEVT_CALCULATE_LAYOUT, wxID_ANY, wxID_ANY, (wxObjectEventFunction) (wxEventFunction)  wxStaticCastEvent( wxCalculateLayoutEventFunction, & func ), NULL ),
+    wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_CALCULATE_LAYOUT, wxID_ANY, wxID_ANY, wxCalculateLayoutEventHandler( func ), NULL ),
 
 #if wxUSE_SASH
 
@@ -169,11 +170,11 @@ public:
         const wxSize& size = wxDefaultSize, long style = wxSW_3D|wxCLIP_CHILDREN, const wxString& name = wxT("layoutWindow"));
 
 // Accessors
-    inline wxLayoutAlignment GetAlignment() const { return m_alignment; };
-    inline wxLayoutOrientation GetOrientation() const { return m_orientation; };
+    inline wxLayoutAlignment GetAlignment() const { return m_alignment; }
+    inline wxLayoutOrientation GetOrientation() const { return m_orientation; }
 
-    inline void SetAlignment(wxLayoutAlignment align) { m_alignment = align; };
-    inline void SetOrientation(wxLayoutOrientation orient) { m_orientation = orient; };
+    inline void SetAlignment(wxLayoutAlignment align) { m_alignment = align; }
+    inline void SetOrientation(wxLayoutOrientation orient) { m_orientation = orient; }
 
     // Give the window default dimensions
     inline void SetDefaultSize(const wxSize& size) { m_defaultSize = size; }
@@ -200,8 +201,8 @@ private:
 
 #endif // wxUSE_SASH
 
-class WXDLLEXPORT wxMDIParentFrame;
-class WXDLLEXPORT wxFrame;
+class WXDLLIMPEXP_FWD_CORE wxMDIParentFrame;
+class WXDLLIMPEXP_FWD_CORE wxFrame;
 
 // This class implements the layout algorithm
 class WXDLLIMPEXP_ADV wxLayoutAlgorithm: public wxObject
@@ -211,15 +212,15 @@ public:
 
 #if wxUSE_MDI_ARCHITECTURE
     // The MDI client window is sized to whatever's left over.
-    bool LayoutMDIFrame(wxMDIParentFrame* frame, wxRect* rect = (wxRect*) NULL);
+    bool LayoutMDIFrame(wxMDIParentFrame* frame, wxRect* rect = NULL);
 #endif // wxUSE_MDI_ARCHITECTURE
 
     // mainWindow is sized to whatever's left over. This function for backward
     // compatibility; use LayoutWindow.
-    bool LayoutFrame(wxFrame* frame, wxWindow* mainWindow = (wxWindow*) NULL);
+    bool LayoutFrame(wxFrame* frame, wxWindow* mainWindow = NULL);
 
     // mainWindow is sized to whatever's left over.
-    bool LayoutWindow(wxWindow* frame, wxWindow* mainWindow = (wxWindow*) NULL);
+    bool LayoutWindow(wxWindow* frame, wxWindow* mainWindow = NULL);
 };
 
 #endif

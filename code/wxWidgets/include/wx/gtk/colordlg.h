@@ -4,33 +4,24 @@
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     2004/06/04
-// RCS-ID:      $Id: colordlg.h,v 1.2 2004/10/16 19:41:18 VZ Exp $
 // Copyright:   (c) Vaclav Slavik, 2004
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef __COLORDLG_H__
-#define __COLORDLG_H__
+#ifndef _WX_GTK_COLORDLG_H_
+#define _WX_GTK_COLORDLG_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "colordlg.h"
-#endif
-
-#include "wx/setup.h"
-#include "wx/gdicmn.h"
 #include "wx/dialog.h"
-#include "wx/cmndata.h"
 
-
-class WXDLLEXPORT wxColourDialog : public wxDialog
+class WXDLLIMPEXP_CORE wxColourDialog : public wxDialog
 {
 public:
     wxColourDialog() {}
     wxColourDialog(wxWindow *parent,
-                   wxColourData *data = (wxColourData *)NULL);
+                   wxColourData *data = NULL);
     virtual ~wxColourDialog() {}
 
-    bool Create(wxWindow *parent, wxColourData *data = (wxColourData *)NULL);
+    bool Create(wxWindow *parent, wxColourData *data = NULL);
 
     wxColourData &GetColourData() { return m_data; }
 
@@ -48,7 +39,7 @@ protected:
     // copy data between the dialog and m_colourData:
     void ColourDataToDialog();
     void DialogToColourData();
-    
+
     wxColourData m_data;
 
     DECLARE_DYNAMIC_CLASS(wxColourDialog)

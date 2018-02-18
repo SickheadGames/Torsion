@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     2003-02-12
-// RCS-ID:      $Id: access.h,v 1.11 2004/10/13 14:03:56 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,13 +11,13 @@
 #ifndef _WX_ACCESSBASE_H_
 #define _WX_ACCESSBASE_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "accessbase.h"
-#endif
-
 // ----------------------------------------------------------------------------
 // headers we have to include here
 // ----------------------------------------------------------------------------
+
+#include "wx/defs.h"
+
+#if wxUSE_ACCESSIBILITY
 
 #include "wx/variant.h"
 
@@ -224,13 +223,13 @@ typedef enum
 // All functions return an indication of success, failure, or not implemented.
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxAccessible;
-class WXDLLEXPORT wxWindow;
-class WXDLLEXPORT wxPoint;
-class WXDLLEXPORT wxRect;
-class WXDLLEXPORT wxAccessibleBase : public wxObject
+class WXDLLIMPEXP_FWD_CORE wxAccessible;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxPoint;
+class WXDLLIMPEXP_FWD_CORE wxRect;
+class WXDLLIMPEXP_CORE wxAccessibleBase : public wxObject
 {
-    DECLARE_NO_COPY_CLASS(wxAccessibleBase)
+    wxDECLARE_NO_COPY_CLASS(wxAccessibleBase);
 
 public:
     wxAccessibleBase(wxWindow* win): m_window(win) {}
@@ -326,6 +325,7 @@ public:
     virtual wxAccStatus GetFocus(int* WXUNUSED(childId), wxAccessible** WXUNUSED(child))
          { return wxACC_NOT_IMPLEMENTED; }
 
+#if wxUSE_VARIANT
         // Gets a variant representing the selected children
         // of this object.
         // Acceptable values:
@@ -336,6 +336,7 @@ public:
         // - a "void*" pointer to a wxAccessible child object
     virtual wxAccStatus GetSelections(wxVariant* WXUNUSED(selections))
          { return wxACC_NOT_IMPLEMENTED; }
+#endif // wxUSE_VARIANT
 
 // Accessors
 
@@ -367,20 +368,9 @@ private:
 
 #if defined(__WXMSW__)
     #include "wx/msw/ole/access.h"
-#elif defined(__WXMOTIF__)
-    #include "wx/generic/access.h"
-#elif defined(__WXMGL__)
-    #include "wx/generic/access.h"
-#elif defined(__WXGTK__)
-    #include "wx/generic/access.h"
-#elif defined(__WXX11__)
-    #include "wx/generic/access.h"
-#elif defined(__WXMAC__)
-    #include "wx/generic/access.h"
-#elif defined(__WXPM__)
-    #include "wx/generic/access.h"
 #endif
 
-#endif
-    // _WX_ACCESSBASE_H_
+#endif // wxUSE_ACCESSIBILITY
+
+#endif // _WX_ACCESSBASE_H_
 

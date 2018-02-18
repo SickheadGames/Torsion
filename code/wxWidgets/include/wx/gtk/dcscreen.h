@@ -1,51 +1,33 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        dcscreen.h
+// Name:        wx/gtk/dcscreen.h
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id: dcscreen.h,v 1.11 2005/08/02 22:57:54 MW Exp $
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef __GTKDCSCREENH__
-#define __GTKDCSCREENH__
+#ifndef _WX_GTKDCSCREEN_H_
+#define _WX_GTKDCSCREEN_H_
 
-#include "wx/dcclient.h"
-
-//-----------------------------------------------------------------------------
-// classes
-//-----------------------------------------------------------------------------
-
-class WXDLLIMPEXP_CORE wxScreenDC;
+#include "wx/dcscreen.h"
+#include "wx/gtk/dcclient.h"
 
 //-----------------------------------------------------------------------------
-// wxScreenDC
+// wxScreenDCImpl
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxScreenDC : public wxPaintDC
+class WXDLLIMPEXP_CORE wxScreenDCImpl : public wxWindowDCImpl
 {
 public:
-    wxScreenDC();
-    virtual ~wxScreenDC();
+    wxScreenDCImpl( wxScreenDC *owner );
+    ~wxScreenDCImpl();
 
-    static bool StartDrawingOnTop( wxWindow *window );
-    static bool StartDrawingOnTop( wxRect *rect = (wxRect *) NULL );
-    static bool EndDrawingOnTop();
-
-    // implementation
-
-    static GdkWindow  *sm_overlayWindow;
-    static int         sm_overlayWindowX;
-    static int         sm_overlayWindowY;
-
-protected:
     virtual void DoGetSize(int *width, int *height) const;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxScreenDC)
+    void Init();
+
+    DECLARE_ABSTRACT_CLASS(wxScreenDCImpl)
 };
 
-#endif
-
-    // __GTKDCSCREENH__
-
+#endif // _WX_GTKDCSCREEN_H_

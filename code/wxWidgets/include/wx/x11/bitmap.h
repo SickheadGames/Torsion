@@ -1,20 +1,15 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        x11/bitmap.h
+// Name:        wx/x11/bitmap.h
 // Purpose:     wxBitmap class
 // Author:      Julian Smart, Robert Roebling
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id: bitmap.h,v 1.14 2005/08/02 18:16:48 MW Exp $
 // Copyright:   (c) Julian Smart, Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_BITMAP_H_
 #define _WX_BITMAP_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "bitmap.h"
-#endif
 
 #include "wx/defs.h"
 #include "wx/object.h"
@@ -26,9 +21,9 @@
 // classes
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxMask;
-class WXDLLIMPEXP_CORE wxBitmap;
-class WXDLLIMPEXP_CORE wxImage;
+class WXDLLIMPEXP_FWD_CORE wxMask;
+class WXDLLIMPEXP_FWD_CORE wxBitmap;
+class WXDLLIMPEXP_FWD_CORE wxImage;
 
 //-----------------------------------------------------------------------------
 // wxMask
@@ -38,10 +33,11 @@ class WXDLLIMPEXP_CORE wxMask: public wxObject
 {
 public:
     wxMask();
+    wxMask(const wxMask& mask);
     wxMask( const wxBitmap& bitmap, const wxColour& colour );
     wxMask( const wxBitmap& bitmap, int paletteIndex );
     wxMask( const wxBitmap& bitmap );
-    ~wxMask();
+    virtual ~wxMask();
 
     bool Create( const wxBitmap& bitmap, const wxColour& colour );
     bool Create( const wxBitmap& bitmap, int paletteIndex );
@@ -57,6 +53,7 @@ public:
 private:
     WXPixmap    m_bitmap;
     WXDisplay  *m_display;
+    wxSize m_size;
 
 private:
     DECLARE_DYNAMIC_CLASS(wxMask)
@@ -66,35 +63,34 @@ private:
 // wxBitmap
 //-----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxBitmapHandler : public wxBitmapHandlerBase
-{
-public:
-    wxBitmapHandler() : wxBitmapHandlerBase() {}
-private:
-    DECLARE_DYNAMIC_CLASS(wxBitmapHandler)
-};
-
 class WXDLLIMPEXP_CORE wxBitmap: public wxBitmapBase
 {
 public:
-    wxBitmap();
-    wxBitmap( int width, int height, int depth = -1 );
-    wxBitmap( const char bits[], int width, int height, int depth = 1 );
-    wxBitmap( const char **bits ) { (void)CreateFromXpm(bits); }
-    wxBitmap( char **bits ) { (void)CreateFromXpm((const char **)bits); }
-    wxBitmap( const wxBitmap& bmp );
-    wxBitmap( const wxString &filename, wxBitmapType type = wxBITMAP_TYPE_XPM );
-    virtual ~wxBitmap();
+    wxBitmap() {}
+    wxBitmap( int width, int height, int depth = -1 ) { Create( width, height, depth ); }
+    wxBitmap( const wxSize& sz, int depth = -1 ) { Create( sz, depth ); }
 
-    wxBitmap& operator = ( const wxBitmap& bmp );
-    bool operator == ( const wxBitmap& bmp ) const;
-    bool operator != ( const wxBitmap& bmp ) const;
-    bool Ok() const;
+    wxBitmap( const char bits[], int width, int height, int depth = 1 );
+    wxBitmap( const char* const* bits );
+#ifdef wxNEEDS_CHARPP
+    // needed for old GCC
+    wxBitmap(char** data)
+    {
+        *this = wxBitmap(const_cast<const char* const*>(data));
+    }
+#endif
+    wxBitmap( const wxString &filename, wxBitmapType type = wxBITMAP_DEFAULT_TYPE );
+    virtual ~wxBitmap();
 
     static void InitStandardHandlers();
 
-    bool Create(int width, int height, int depth = -1);
-    bool Create(void* data, wxBitmapType type,
+    bool Create(int width, int height, int depth = wxBITMAP_SCREEN_DEPTH);
+    bool Create(const wxSize& sz, int depth = wxBITMAP_SCREEN_DEPTH)
+        { return Create(sz.GetWidth(), sz.GetHeight(), depth); }
+    bool Create(int width, int height, const wxDC& WXUNUSED(dc))
+        { return Create(width,height); }
+
+    bool Create(const void* data, wxBitmapType type,
                 int width, int height, int depth = -1);
     // create the wxBitmap using a _copy_ of the pixmap
     bool Create(WXPixmap pixmap);
@@ -117,12 +113,12 @@ public:
 
     wxBitmap GetSubBitmap( const wxRect& rect ) const;
 
-    bool SaveFile( const wxString &name, wxBitmapType type, const wxPalette *palette = (wxPalette *) NULL ) const;
-    bool LoadFile( const wxString &name, wxBitmapType type = wxBITMAP_TYPE_XPM );
+    bool SaveFile( const wxString &name, wxBitmapType type, const wxPalette *palette = NULL ) const;
+    bool LoadFile( const wxString &name, wxBitmapType type = wxBITMAP_DEFAULT_TYPE );
 
     wxPalette *GetPalette() const;
     wxPalette *GetColourMap() const
-        { return GetPalette(); };
+        { return GetPalette(); }
     virtual void SetPalette(const wxPalette& palette);
 
     // implementation
@@ -142,11 +138,11 @@ public:
     WXDisplay *GetDisplay() const;
 
 protected:
-    bool CreateFromXpm(const char **bits);
+    virtual wxGDIRefData *CreateGDIRefData() const;
+    virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *data) const;
 
 private:
     DECLARE_DYNAMIC_CLASS(wxBitmap)
 };
 
-#endif
-// _WX_BITMAP_H_
+#endif // _WX_BITMAP_H_

@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        dialog.h
+// Name:        wx/os2/dialog.h
 // Purpose:     wxDialog class
 // Author:      David Webster
 // Modified by:
 // Created:     10/14/99
-// RCS-ID:      $Id: dialog.h,v 1.16 2005/04/27 01:11:58 DW Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,14 +13,14 @@
 
 #include "wx/panel.h"
 
-WXDLLEXPORT_DATA(extern const wxChar*) wxDialogNameStr;
+WXDLLIMPEXP_DATA_CORE(extern const char) wxDialogNameStr[];
 
-class WXDLLEXPORT wxDialogModalData;
+class WXDLLIMPEXP_FWD_CORE wxDialogModalData;
 
 //
 // Dialog boxes
 //
-class WXDLLEXPORT wxDialog: public wxDialogBase
+class WXDLLIMPEXP_CORE wxDialog: public wxDialogBase
 {
 public:
 
@@ -66,32 +65,13 @@ public:
     virtual bool Show(bool show = true);
 
     //
-    // Event handlers
-    //
-    void OnCharHook(wxKeyEvent& rEvent);
-    void OnCloseWindow(wxCloseEvent& rEvent);
-
-    //
-    // Standard buttons
-    //
-    void     OnOK(wxCommandEvent& rEvent);
-    void     OnApply(wxCommandEvent& rEvent);
-    void     OnCancel(wxCommandEvent& rEvent);
-
-    //
-    // Responds to colour changes
-    //
-    void     OnSysColourChanged(wxSysColourChangedEvent& rEvent);
-
-    //
     // Callbacks
     //
     virtual MRESULT OS2WindowProc( WXUINT   uMessage
                                   ,WXWPARAM wParam
                                   ,WXLPARAM lParam
                                  );
-    // obsolete methods
-    // ----------------
+#if WXWIN_COMPATIBILITY_2_6
 
     // Constructor with a modal flag, but no window id - the old convention
     wxDEPRECATED( wxDialog( wxWindow*       pParent
@@ -111,22 +91,13 @@ public:
     // use IsModal()
     wxDEPRECATED( bool IsModalShowing() const );
 
-protected:
-    //
-    // find the window to use as parent for this dialog if none has been
-    // specified explicitly by the user
-    //
-    // may return NULL
-    //
-    wxWindow *FindSuitableParent() const;
+#endif // WXWIN_COMPATIBILITY_2_6
 
+protected:
     //
     // Common part of all ctors
     //
     void Init(void);
-
-    // end either modal or modeless dialog
-    void EndDialog(int rc);
 
 private:
     wxWindow*                       m_pOldFocus;
@@ -142,9 +113,7 @@ private:
     class wxWindowDisabler*         m_pWindowDisabler;
 
     DECLARE_DYNAMIC_CLASS(wxDialog)
-    DECLARE_EVENT_TABLE()
-    DECLARE_NO_COPY_CLASS(wxDialog)
+    wxDECLARE_NO_COPY_CLASS(wxDialog);
 }; // end of CLASS wxDialog
 
 #endif // _WX_DIALOG_H_
-

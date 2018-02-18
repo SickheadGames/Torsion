@@ -4,9 +4,8 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/02/15
-// RCS-ID:      $Id: 
 // Copyright:   (c) 2003 David Elliott
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WX_COCOA_STATTEXT_H__
@@ -17,7 +16,7 @@
 // ========================================================================
 // wxStaticText
 // ========================================================================
-class WXDLLEXPORT wxStaticText : public wxStaticTextBase, protected wxCocoaNSTextField
+class WXDLLIMPEXP_CORE wxStaticText : public wxStaticTextBase, protected wxCocoaNSTextField
 {
     DECLARE_DYNAMIC_CLASS(wxStaticText)
     DECLARE_EVENT_TABLE()
@@ -52,7 +51,8 @@ protected:
 // Implementation
 // ------------------------------------------------------------------------
 public:
-    void SetLabel(const wxString& label);
+    virtual void SetLabel(const wxString& label);
+    virtual wxString GetLabel() const;
 };
 
 #endif // __WX_COCOA_STATTEXT_H__

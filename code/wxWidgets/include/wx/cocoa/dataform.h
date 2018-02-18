@@ -4,7 +4,6 @@
 // Author:      David Elliott <dfe@cox.net>
 // Modified by:
 // Created:     2003/07/23
-// RCS-ID:      $Id: dataform.h,v 1.4 2004/05/23 20:50:42 JS Exp $
 // Copyright:   (c) 2003 David Elliott
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,7 +15,7 @@ class wxDataFormat
 {
 public:
     wxDataFormat(unsigned int uFormat = wxDF_INVALID) { m_uFormat = uFormat; }
-    wxDataFormat(const wxChar* zFormat) { SetId(zFormat); }
+    wxDataFormat(const wxString& zFormat) { SetId(zFormat); }
 
     wxDataFormat& operator=(unsigned int uFormat) { m_uFormat = uFormat; return(*this); }
     wxDataFormat& operator=(const wxDataFormat& rFormat) {m_uFormat = rFormat.m_uFormat; return(*this); }
@@ -42,7 +41,7 @@ public:
     // application-specific formats
     //
     wxString GetId(void) const;
-    void     SetId(const wxChar* WXUNUSED(pId)) { /* TODO */ }
+    void     SetId(const wxString& WXUNUSED(pId)) { /* TODO */ }
 
 private:
     unsigned int                    m_uFormat;

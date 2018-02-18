@@ -4,7 +4,6 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2002/12/09
-// RCS-ID:      $Id: 
 // Copyright:   (c) 2002 David Elliott
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -22,7 +21,7 @@
 // wxMenu
 // ========================================================================
 
-class WXDLLEXPORT wxMenu : public wxMenuBase, public wxCocoaNSMenu
+class WXDLLIMPEXP_CORE wxMenu : public wxMenuBase, public wxCocoaNSMenu
 {
 public:
     // ctors and dtor
@@ -73,7 +72,7 @@ private:
 // ========================================================================
 // wxMenuBar
 // ========================================================================
-class WXDLLEXPORT wxMenuBar : public wxMenuBarBase, public wxCocoaNSMenu
+class WXDLLIMPEXP_CORE wxMenuBar : public wxMenuBarBase
 {
 public:
     // ctors and dtor
@@ -102,8 +101,8 @@ public:
     virtual void EnableTop(size_t pos, bool enable);
     virtual bool IsEnabledTop(size_t pos) const;
 
-    virtual void SetLabelTop(size_t pos, const wxString& label);
-    virtual wxString GetLabelTop(size_t pos) const;
+    virtual void SetMenuLabel(size_t pos, const wxString& label);
+    virtual wxString GetMenuLabel(size_t pos) const;
 
     virtual void Attach(wxFrame *frame);
     virtual void Detach();
