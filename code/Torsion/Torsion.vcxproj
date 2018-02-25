@@ -53,7 +53,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\wxWidgets\include\msvc;..\wxWidgets\include;..\tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WXUSINGDLL;wxMSVC_VERSION_AUTO;_UNICODE;UNICODE;WIN32;_DEBUG;_WINDOWS;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -64,7 +64,7 @@
     <Link>
       <AdditionalDependencies>tinyxml2d_stc.lib;comctl32.lib;wxbase26d.lib;wxmsw26d_core.lib;wxmsw26d_adv.lib;wxbase26d_net.lib;wxmsw26d_stc.lib;wxmsw27d_propgrid.lib;wxregexd.lib;wxjpegd.lib;Ws2_32.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)torsion_d.exe</OutputFile>
-      <AdditionalLibraryDirectories>..\wxWidgets\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\wxWidgets\lib\vc140_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)torsion_d.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
