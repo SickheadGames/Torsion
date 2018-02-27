@@ -282,7 +282,7 @@ int shNotebook::HitTest( const wxPoint& pt, long *flags )
       *flags = shNB_HITTEST_NOWHERE;
 
    // Are we outside the tabs?
-   if ( !m_TabArea.Inside( pt ) || pt.x < m_TabSpacer.GetX() ) {
+   if ( !m_TabArea.Contains( pt ) || pt.x < m_TabSpacer.GetX() ) {
       return wxNOT_FOUND;
    }
 

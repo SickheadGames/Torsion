@@ -41,6 +41,8 @@ public:
    static wxString IntToString( int value );
    static wxString PointToString( const wxPoint& value );
 
+   static char * convertToAscii(const wxChar* buffer);
+
    int GetArrayStringElems( wxArrayString& output, const wxString& name, const wxString& elemName );
    void AddArrayStringElems( const wxString& name, const wxString& elemName, const wxArrayString& strings );
 
@@ -57,12 +59,12 @@ protected:
 
 inline bool XmlFile::StringToBool( const wxChar* boolean )
 {
-   return stricmp( boolean, "true" ) == 0 || atoi( boolean );
+   return wcscmp( boolean, L"true" ) == 0 || _wtoi( boolean );
 }
 
 inline int XmlFile::StringToInt( const wxChar* integer )
 {
-   return atoi( integer );
+   return _wtoi( integer );
 }
 
 inline wxString XmlFile::BoolToString( bool value )
@@ -72,7 +74,7 @@ inline wxString XmlFile::BoolToString( bool value )
 
 inline wxString XmlFile::IntToString( int value )
 {
-   return itoa( value, s_Temp, 10 ); 
+	return std::to_wstring(value);
 }
 
 #endif // TORSION_XMLFILE_H
