@@ -19,6 +19,7 @@
 #include "wx/version.h"
 #include "wx/cpp.h"
 
+
 // notice that wxSUFFIX_DEBUG is a string but wxSUFFIX itself must be an
 // identifier as string concatenation is not done inside #include where we
 // need it

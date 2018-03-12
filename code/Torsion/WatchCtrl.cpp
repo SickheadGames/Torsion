@@ -496,7 +496,6 @@ void ListCtrl::OnChar( wxKeyEvent& Event )
             break;
 
 		case WXK_PAGEUP:
-		case WXK_PRIOR:
             if ( m_WatchCtrl->m_Vars.GetCount() > 0 ) {
                 m_Selected = 0;
 				Refresh();
@@ -504,7 +503,6 @@ void ListCtrl::OnChar( wxKeyEvent& Event )
             break;
 
 		case WXK_PAGEDOWN:
-		case WXK_NEXT:
             m_Selected = (int)m_WatchCtrl->m_Vars.GetCount() - 1;
 			Refresh();
             break;
@@ -931,7 +929,7 @@ bool ListCtrlEdit::MSWShouldPreProcessMessage( WXMSG* pMsg )
       return false;
 
    // Cut, copy, paste...
-   if ( wxIsCtrlDown() && ( vkey == 'C' || vkey == 'X' || vkey == 'V' ) )
+   if (GetKeyState(VK_CONTROL) < 0 && ( vkey == 'C' || vkey == 'X' || vkey == 'V' ) )
       return false;
 
    return true;
