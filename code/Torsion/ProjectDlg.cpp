@@ -178,7 +178,7 @@ void ProjectDlg::CreateControls()
    m_PropGrid->GetGrid()->SetMarginColour( active );
    m_PropGrid->GetGrid()->SetLineColour( active );
    m_PropGrid->GetGrid()->SetCaptionBackgroundColour( active );
-   m_PropGrid->GetGrid()->SetCaptionForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_APPWORKSPACE ) );
+  // m_PropGrid->GetGrid()->SetCaptionForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_APPWORKSPACE ) );
    m_PropGrid->SetDescBoxHeight( 60 );
 
    //m_PropGrid->SetOwnBackgroundColour( itemNotebook4->GetThemeBackgroundColour() );
@@ -231,40 +231,43 @@ int ProjectDlg::ShowModal( ProjectDoc* projectDoc )
 
    // Fill all the controls.
    wxASSERT( m_PropGrid );
-   m_PropGrid->AddPage();
+
+
+   wxPropertyGridPage* page;
+   page = m_PropGrid->AddPage();
 
    // Add the general properties.
-   m_PropGrid->Append( wxPropertyCategory(wxT("General")) );
-   wxPGId id = m_PropGrid->Append( wxStringProperty(wxT("Name"), wxPG_LABEL, m_Project->GetName()) );
+   page->Append( new wxPropertyCategory(wxT("General")) ); //see http://docs.wxwidgets.org/trunk/classwx_property_grid_manager.html
+   wxPGProperty* id = m_PropGrid->Append(new wxStringProperty(wxT("Name"), wxPG_LABEL, m_Project->GetName()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The defaul internal project name and default project file name.") );
 
-   id = m_PropGrid->Append( wxDirProperty(wxT("Base Directory"), wxPG_LABEL, m_Project->GetWorkingDir()) );
+   id = m_PropGrid->Append(new wxDirProperty(wxT("Base Directory"), wxPG_LABEL, m_Project->GetWorkingDir()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("Typically the folder where the executable and entry script are located.") );
-   id = m_PropGrid->Append( wxStringProperty(wxT("Entry Script"), wxPG_LABEL, m_Project->GetEntryScript()) );
+   id = m_PropGrid->Append(new wxStringProperty(wxT("Entry Script"), wxPG_LABEL, m_Project->GetEntryScript()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The first script loaded by the executable.  Normally this is main.cs.") );
-   id = m_PropGrid->Append( wxStringProperty(wxT("Script Scanner Extensions"), wxPG_LABEL, m_Project->GetScannerExtsString()) );
+   id = m_PropGrid->Append(new wxStringProperty(wxT("Script Scanner Extensions"), wxPG_LABEL, m_Project->GetScannerExtsString()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("A semicolon separated list of script file extensions the code completion scanner should process when generating the ScriptSense database.") );
-   id = m_PropGrid->Append( wxStringProperty(wxT("Mods"), wxPG_LABEL, m_Project->GetModsString()) );
+   id = m_PropGrid->Append(new wxStringProperty(wxT("Mods"), wxPG_LABEL, m_Project->GetModsString()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("An optional semicolon separated list of mods to include in the project tree and scan for inclusion in the ScriptSense database.") );
 
-   m_PropGrid->Append( wxPropertyCategory(wxT("Debugging")) );
-   id = m_PropGrid->Append( wxStringProperty(wxT("Address"), wxPG_LABEL, m_Project->GetAddress()) );
+   m_PropGrid->Append(new wxPropertyCategory(wxT("Debugging")) );
+   id = m_PropGrid->Append(new wxStringProperty(wxT("Address"), wxPG_LABEL, m_Project->GetAddress()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The IP address or DNS name of the debug target machine.  You normally use 127.0.0.1 for debugging on the local machine.") );
-   id = m_PropGrid->Append( wxStringProperty(wxT("Password"), wxPG_LABEL, m_Project->GetPassword()) );
+   id = m_PropGrid->Append(new wxStringProperty(wxT("Password"), wxPG_LABEL, m_Project->GetPassword()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The password to use when connecting to the debug target.") );
-   id = m_PropGrid->Append( wxIntProperty(wxT("Port"), wxPG_LABEL, m_Project->GetPort()) );
+   id = m_PropGrid->Append(new wxIntProperty(wxT("Port"), wxPG_LABEL, m_Project->GetPort()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The port on the debug target machine (6060 is the default).") );
-   id = m_PropGrid->Append( wxBoolProperty(wxT("Reload Modified Scripts"), wxPG_LABEL, m_Project->ExecModifiedScripts()) );
+   id = m_PropGrid->Append(new wxBoolProperty(wxT("Reload Modified Scripts"), wxPG_LABEL, m_Project->ExecModifiedScripts()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("When enabled and supported by the engine you will be automatically prompted to reload changed scripts after continuing from a breakpoint.") );
-   id = m_PropGrid->Append( wxStringProperty(wxT("Hook Code"), wxPG_LABEL, m_Project->GetDebugHook()) );
+   id = m_PropGrid->Append(new wxStringProperty(wxT("Hook Code"), wxPG_LABEL, m_Project->GetDebugHook()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The debugger startup hook code that will be injected into the entry script.  The strings #port# and #password# will be replaced with the correct values from the connection dialog.") );
 
-   m_PropGrid->Append( wxPropertyCategory(wxT("Elixir")) );
-   id = m_PropGrid->Append( wxStringProperty(wxT("Search URL"), wxPG_LABEL, m_Project->GetSearchUrl()) );
+   m_PropGrid->Append(new wxPropertyCategory(wxT("Elixir")) );
+   id = m_PropGrid->Append(new wxStringProperty(wxT("Search URL"), wxPG_LABEL, m_Project->GetSearchUrl()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The url to the Elixir search script.") );
-   id = m_PropGrid->Append( wxStringProperty(wxT("Product"), wxPG_LABEL, m_Project->GetSearchProduct()) );
+   id = m_PropGrid->Append(new wxStringProperty(wxT("Product"), wxPG_LABEL, m_Project->GetSearchProduct()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The Elixir product string.  This is typically TGE, TGEA, or TGB.") );
-   id = m_PropGrid->Append( wxStringProperty(wxT("Version"), wxPG_LABEL, m_Project->GetSearchVersion()) );
+   id = m_PropGrid->Append(new wxStringProperty(wxT("Version"), wxPG_LABEL, m_Project->GetSearchVersion()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The product version.  Use HEAD for the latest product documentation.") );
    
    // Let's use checkboxes instead of a choice list.
@@ -371,7 +374,9 @@ void ProjectDlg::OnOkClick( wxCommandEvent& event )
    m_Project->SetSearchVersion( m_PropGrid->GetPropertyValue( "Elixir.Version" ) );
    m_Project->SetConfigs( m_Configs );
 
-   wxDialog::OnOK( event );
+   //wxDialog::OnOK( event );  //deprecation https://wiki.wxwidgets.org/Updating_to_the_Latest_Version_of_wxWidgets#wxDialog::OnOk.28.29
+
+   event.Skip();
 }
 
 
