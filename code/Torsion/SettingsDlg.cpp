@@ -23,9 +23,9 @@
 #include "SettingsDlg.h"
 #include "TorsionApp.h"
 
-#include <wx/propgrid/propdev.h>
+//#include <wx/propgrid/propdev.h>
 #include <wx/propgrid/advprops.h>
-WX_PG_DECLARE_CUSTOM_COLOUR_PROPERTY_USES_WXCOLOUR(TSColourProperty)
+//WX_PG_DECLARE_CUSTOM_COLOUR_PROPERTY_USES_WXCOLOUR(TSColourProperty)
 
 // Colour labels. Last (before NULL, if any) must be Custom.
 static const wxChar* mycolprop_labels[] = {
@@ -69,10 +69,12 @@ static unsigned long mycolprop_colours[] = {
 // Implement property class. Third argument is optional values array,
 // but in this example we are only interested in creating a shortcut
 // for user to access the colour values.
-WX_PG_IMPLEMENT_CUSTOM_COLOUR_PROPERTY_USES_WXCOLOUR(TSColourProperty,
+/*WX_PG_IMPLEMENT_CUSTOM_COLOUR_PROPERTY_USES_WXCOLOUR(TSColourProperty,
                                                       mycolprop_labels,
                                                       (long*)NULL,
                                                       mycolprop_colours)
+
+													  */
 
 ////@begin XPM images
 ////@end XPM images
@@ -169,7 +171,7 @@ void SettingsDlg::CreateControls()
    m_PropGrid->GetGrid()->SetMarginColour( active );
    m_PropGrid->GetGrid()->SetLineColour( active );
    m_PropGrid->GetGrid()->SetCaptionBackgroundColour( active );
-   m_PropGrid->GetGrid()->SetCaptionForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_APPWORKSPACE ) );
+   //m_PropGrid->GetGrid()->SetCaptionForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_APPWORKSPACE ) );
    m_PropGrid->SetDescBoxHeight( 60 );
 
 
@@ -177,21 +179,21 @@ void SettingsDlg::CreateControls()
    wxASSERT( m_PropGrid );
    m_PropGrid->AddPage();
 
-   m_PropGrid->Append( wxPropertyCategory(wxT("File System")) );
-   wxPGId id = m_PropGrid->Append( wxStringProperty(wxT("Script Extensions"), wxPG_LABEL, tsGetPrefs().GetScriptExtsString()) );
+   m_PropGrid->Append( new wxPropertyCategory(wxT("File System")) );
+   wxPGProperty* id = m_PropGrid->Append(new wxStringProperty(wxT("Script Extensions"), wxPG_LABEL, tsGetPrefs().GetScriptExtsString()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("A semicolon seperated list of extensions of TorqueScript files to associate and open with Torsion.") );
-   id = m_PropGrid->Append( wxStringProperty(wxT("DSO Extensions"), wxPG_LABEL, tsGetPrefs().GetDSOExtsString()) );
+   id = m_PropGrid->Append(new wxStringProperty(wxT("DSO Extensions"), wxPG_LABEL, tsGetPrefs().GetDSOExtsString()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("Set the extensions used for compiled script files.") );
-   id = m_PropGrid->Append( wxStringProperty(wxT("Excluded Files"), wxPG_LABEL, tsGetPrefs().GetExcludedFilesString()) );
+   id = m_PropGrid->Append(new wxStringProperty(wxT("Excluded Files"), wxPG_LABEL, tsGetPrefs().GetExcludedFilesString()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("A semicolon separated list of the files and file extensions which are always excluded from the project tree view.") );
-   id = m_PropGrid->Append( wxStringProperty(wxT("Excluded Folders"), wxPG_LABEL, tsGetPrefs().GetExcludedFoldersString()) );
+   id = m_PropGrid->Append(new wxStringProperty(wxT("Excluded Folders"), wxPG_LABEL, tsGetPrefs().GetExcludedFoldersString()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("A semicolon separated list of the folders which are always excluded from the project tree view.") );
 
-   m_PropGrid->Append( wxPropertyCategory(wxT("Syntax Highlighting"),wxT("Editor")) );
-   id = m_PropGrid->Append( wxFontProperty(wxT("Font"), wxPG_LABEL, tsGetPrefs().GetDefaultFont()) );
+   m_PropGrid->Append(new wxPropertyCategory(wxT("Syntax Highlighting"),wxT("Editor")) );
+   id = m_PropGrid->Append(new wxFontProperty(wxT("Font"), wxPG_LABEL, tsGetPrefs().GetDefaultFont()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The font used for all text in the script editor window.") );
    m_PropGrid->Collapse( id );
-   id = m_PropGrid->Append( TSColourProperty(wxT("Background Color"), wxPG_LABEL, tsGetPrefs().GetBgColor()) );
+  /* id = m_PropGrid->Append( TSColourProperty(wxT("Background Color"), wxPG_LABEL, tsGetPrefs().GetBgColor()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The background color of the script editor window.") );
    id = m_PropGrid->Append( TSColourProperty(wxT("Text Color"), wxPG_LABEL, tsGetPrefs().GetDefaultColor()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The default color for text in the script editor window.") );
@@ -229,39 +231,39 @@ void SettingsDlg::CreateControls()
    m_PropGrid->SetPropertyHelpString( id, wxT("The text color for calltips.") );
    id = m_PropGrid->Append( TSColourProperty(wxT("Calltip Background Color"), wxPG_LABEL, tsGetPrefs().GetCalltipBgColor() ) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The background color for calltips.") );
-   id = m_PropGrid->Append( TSColourProperty(wxT("Calltip Highlight Color"), wxPG_LABEL, tsGetPrefs().GetCalltipHiColor() ) );
+   id = m_PropGrid->Append( TSColourProperty(wxT("Calltip Highlight Color"), wxPG_LABEL, tsGetPrefs().GetCalltipHiColor() ) );*/
    m_PropGrid->SetPropertyHelpString( id, wxT("The text highlight color for calltips") );
 
-   m_PropGrid->Append( wxPropertyCategory(wxT("Tabs")) );
-   id = m_PropGrid->Append( wxIntProperty(wxT("Size"), wxPG_LABEL, tsGetPrefs().GetTabWidth()) );
+   m_PropGrid->Append(new wxPropertyCategory(wxT("Tabs")) );
+   id = m_PropGrid->Append(new  wxIntProperty(wxT("Size"), wxPG_LABEL, tsGetPrefs().GetTabWidth()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("Specifies the number of spaces represented by a TAB character.") );
-   id = m_PropGrid->Append( wxBoolProperty(wxT("Insert Spaces"), wxPG_LABEL, !tsGetPrefs().GetUseTabs()) );
+   id = m_PropGrid->Append(new  wxBoolProperty(wxT("Insert Spaces"), wxPG_LABEL, !tsGetPrefs().GetUseTabs()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("Insert spaces instead of TAB characters when editing.") );
 
-   m_PropGrid->Append( wxPropertyCategory(wxT("Edge Marker")) );
-   id = m_PropGrid->Append( wxBoolProperty(wxT("Enabled"), wxPG_LABEL, tsGetPrefs().GetEdgeMarker()) );
+   m_PropGrid->Append(new  wxPropertyCategory(wxT("Edge Marker")) );
+   id = m_PropGrid->Append(new  wxBoolProperty(wxT("Enabled"), wxPG_LABEL, tsGetPrefs().GetEdgeMarker()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("Toggles the visibility of column edge marker in the editor.") );
-   id = m_PropGrid->Append( wxIntProperty(wxT("Column"), wxPG_LABEL, tsGetPrefs().GetEdgeMarkerCol()) );
+   id = m_PropGrid->Append(new  wxIntProperty(wxT("Column"), wxPG_LABEL, tsGetPrefs().GetEdgeMarkerCol()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("Specifies the column where the edge marker will be drawn.") );
-   id = m_PropGrid->Append( TSColourProperty(wxT("Color"), wxPG_LABEL, tsGetPrefs().GetEdgeMarkerColor()) );
+  // id = m_PropGrid->Append( TSColourProperty(wxT("Color"), wxPG_LABEL, tsGetPrefs().GetEdgeMarkerColor()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The color used for the column edge marker.") );
 
-   m_PropGrid->Append( wxPropertyCategory(wxT("Code Folding")) );
-   id = m_PropGrid->Append( wxBoolProperty(wxT("Enabled"), wxPG_LABEL, tsGetPrefs().GetCodeFolding()) );
+   m_PropGrid->Append(new  wxPropertyCategory(wxT("Code Folding")) );
+   id = m_PropGrid->Append(new  wxBoolProperty(wxT("Enabled"), wxPG_LABEL, tsGetPrefs().GetCodeFolding()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("Toggles the UI elements which allow you to collapse and expand sections of code.") );
-   id = m_PropGrid->Append( TSColourProperty(wxT("Color"), wxPG_LABEL, tsGetPrefs().GetFoldingColor()) );
+ //  id = m_PropGrid->Append( TSColourProperty(wxT("Color"), wxPG_LABEL, tsGetPrefs().GetFoldingColor()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The color used for all the code folding elements in the script editor window.") );
 
-   m_PropGrid->Append( wxPropertyCategory(wxT("Code Completion")) );
-   id = m_PropGrid->Append( wxBoolProperty(wxT("Enabled"), wxPG_LABEL, tsGetPrefs().GetCodeCompletion()) );
+   m_PropGrid->Append(new  wxPropertyCategory(wxT("Code Completion")) );
+   id = m_PropGrid->Append(new  wxBoolProperty(wxT("Enabled"), wxPG_LABEL, tsGetPrefs().GetCodeCompletion()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("Toggle the generation and display of code completion data including completion lists, informational tool tips, and the code browser.") );
-   id = m_PropGrid->Append( wxBoolProperty(wxT("Enhanced Completion Keys"), wxPG_LABEL, tsGetPrefs().GetEnhancedCompletion()) );
+   id = m_PropGrid->Append(new  wxBoolProperty(wxT("Enhanced Completion Keys"), wxPG_LABEL, tsGetPrefs().GetEnhancedCompletion()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("Enables statement completion when any non-underscore non-alphanumeric character is entered.") );
 
-   m_PropGrid->Append( wxPropertyCategory(wxT("Misc")) );
-   id = m_PropGrid->Append( wxBoolProperty(wxT("Load Last Project"), wxPG_LABEL, tsGetPrefs().GetLoadLastProject()) );
+   m_PropGrid->Append(new  wxPropertyCategory(wxT("Misc")) );
+   id = m_PropGrid->Append(new  wxBoolProperty(wxT("Load Last Project"), wxPG_LABEL, tsGetPrefs().GetLoadLastProject()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("Open the last loaded project on Torsion startup.") );
-   id = m_PropGrid->Append( wxBoolProperty(wxT("Check For Updates"), wxPG_LABEL, tsGetPrefs().GetCheckForUpdates()) );
+   id = m_PropGrid->Append(new  wxBoolProperty(wxT("Check For Updates"), wxPG_LABEL, tsGetPrefs().GetCheckForUpdates()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("Disable startup checking for new releases of Torsion.") );
 
    /*
@@ -334,40 +336,40 @@ void SettingsDlg::OnOkClick( wxCommandEvent& event )
    // generic way to access and change prefs.  Look
    // at using wxVariant in some way.
    //
-   tsGetPrefs().SetDefaultFont( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Font" ), wxFont ) );
+   tsGetPrefs().SetDefaultFont( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Font" ), wxFont ) );
 
    tsGetPrefs().SetTabWidth( m_PropGrid->GetPropertyValue( "Tabs.Size" ).GetLong() );
    tsGetPrefs().SetUseTabs( !m_PropGrid->GetPropertyValue( "Tabs.Insert Spaces" ).GetBool() );
 
-   tsGetPrefs().SetBgColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Background Color" ), wxColour ) );
-   tsGetPrefs().SetBgColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Background Color" ), wxColour ) );
-   tsGetPrefs().SetDefaultColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Text Color" ), wxColour ) );
-   tsGetPrefs().SetReservedColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Reserved Words Color" ), wxColour ) );
-   tsGetPrefs().SetCommentColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Comment Color" ), wxColour ) );
-   tsGetPrefs().SetMarginColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Margin Color" ), wxColour ) );
-   tsGetPrefs().SetMarginTextColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Margin Text Color" ), wxColour ) );
-   tsGetPrefs().SetExportsColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Exported Color" ), wxColour ) );
-   tsGetPrefs().SetNumberColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Number Color" ), wxColour ) );
-   tsGetPrefs().SetStringColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.String Color" ), wxColour ) );
-   tsGetPrefs().SetLocalsColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Variable Color" ), wxColour ) );
-   tsGetPrefs().SetGlobalsColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Global Variable Color" ), wxColour ) );
-   tsGetPrefs().SetOperatorsColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Operators Color" ), wxColour ) );
-   tsGetPrefs().SetSelColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Selection Color" ), wxColour ) );
-   tsGetPrefs().SetSelBgColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Selection Background Color" ), wxColour ) );
-   tsGetPrefs().SetBraceMatchColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Brace Match Color" ), wxColour ) );
-   tsGetPrefs().SetBraceMatchBgColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Brace Match Background Color" ), wxColour ) );
-   tsGetPrefs().SetBraceMatchErrColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Brace Match Error Color" ), wxColour ) );
+   tsGetPrefs().SetBgColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Background Color" ), wxColour ) );
+   tsGetPrefs().SetBgColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Background Color" ), wxColour ) );
+   tsGetPrefs().SetDefaultColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Text Color" ), wxColour ) );
+   tsGetPrefs().SetReservedColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Reserved Words Color" ), wxColour ) );
+   tsGetPrefs().SetCommentColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Comment Color" ), wxColour ) );
+   tsGetPrefs().SetMarginColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Margin Color" ), wxColour ) );
+   tsGetPrefs().SetMarginTextColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Margin Text Color" ), wxColour ) );
+   tsGetPrefs().SetExportsColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Exported Color" ), wxColour ) );
+   tsGetPrefs().SetNumberColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Number Color" ), wxColour ) );
+   tsGetPrefs().SetStringColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.String Color" ), wxColour ) );
+   tsGetPrefs().SetLocalsColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Variable Color" ), wxColour ) );
+   tsGetPrefs().SetGlobalsColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Global Variable Color" ), wxColour ) );
+   tsGetPrefs().SetOperatorsColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Operators Color" ), wxColour ) );
+   tsGetPrefs().SetSelColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Selection Color" ), wxColour ) );
+   tsGetPrefs().SetSelBgColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Selection Background Color" ), wxColour ) );
+   tsGetPrefs().SetBraceMatchColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Brace Match Color" ), wxColour ) );
+   tsGetPrefs().SetBraceMatchBgColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Brace Match Background Color" ), wxColour ) );
+   tsGetPrefs().SetBraceMatchErrColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Brace Match Error Color" ), wxColour ) );
 
-   tsGetPrefs().SetCalltipColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Calltip Text Color" ), wxColour ) );
-   tsGetPrefs().SetCalltipBgColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Calltip Background Color" ), wxColour ) );
-   tsGetPrefs().SetCalltipHiColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Editor.Calltip Highlight Color" ), wxColour ) );
+   tsGetPrefs().SetCalltipColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Calltip Text Color" ), wxColour ) );
+   tsGetPrefs().SetCalltipBgColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Calltip Background Color" ), wxColour ) );
+   tsGetPrefs().SetCalltipHiColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Editor.Calltip Highlight Color" ), wxColour ) );
 
    tsGetPrefs().SetEdgeMarker( m_PropGrid->GetPropertyValue( "Edge Marker.Enabled" ).GetBool() );
    tsGetPrefs().SetEdgeMarkerCol( m_PropGrid->GetPropertyValue( "Edge Marker.Column" ).GetLong() );
-   tsGetPrefs().SetEdgeMarkerColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Edge Marker.Color" ), wxColour ) );
+   tsGetPrefs().SetEdgeMarkerColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Edge Marker.Color" ), wxColour ) );
 
    tsGetPrefs().SetCodeFolding( m_PropGrid->GetPropertyValue( "Code Folding.Enabled" ).GetBool() );
-   tsGetPrefs().SetFoldingColor( *wxGetVariantCast( m_PropGrid->GetPropertyValue( "Code Folding.Color" ), wxColour ) );
+   tsGetPrefs().SetFoldingColor( *wxGetVariantCast2( m_PropGrid->GetPropertyValue( "Code Folding.Color" ), wxColour ) );
 
    tsGetPrefs().SetCodeCompletion( m_PropGrid->GetPropertyValue( "Code Completion.Enabled" ).GetBool() );
    tsGetPrefs().SetEnhancedCompletion( m_PropGrid->GetPropertyValue( "Code Completion.Enhanced Completion Keys" ).GetBool() ); 
@@ -380,7 +382,7 @@ void SettingsDlg::OnOkClick( wxCommandEvent& event )
    tsGetPrefs().SetExcludedFiles( m_PropGrid->GetPropertyValue( "File System.Excluded Files" ) );
    tsGetPrefs().SetExcludedFolders( m_PropGrid->GetPropertyValue( "File System.Excluded Folders" ) );
 
-   wxDialog::OnOK( event );
+ //  wxDialog::OnOK( event );
 }
 
 

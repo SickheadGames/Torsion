@@ -115,7 +115,8 @@ bool ShellMenu::PopulateMenu()
 WXLRESULT ShellMenu::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
    UINT uItem;
-   TCHAR szBuf[MAX_PATH];
+   //TCHAR szBuf[MAX_PATH];
+   CHAR szBuf[MAX_PATH];
 
    if (  !m_ContextHandler &&
          ( nMsg == WM_INITMENUPOPUP ) &&
@@ -194,7 +195,7 @@ WXLRESULT ShellMenu::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam
          ZeroMemory(&ici, sizeof(ici));
          ici.hwnd = NULL;
          ici.cbSize = sizeof(CMINVOKECOMMANDINFO);
-         ici.lpVerb = MAKEINTRESOURCE(uItem-tsID_SHELL_MIN);
+         ici.lpVerbW = MAKEINTRESOURCE(uItem-tsID_SHELL_MIN);
          ici.lpDirectory = dir.c_str();
          ici.nShow = SW_SHOWNORMAL;
          m_ContextHandler->InvokeCommand((CMINVOKECOMMANDINFO*)&ici);

@@ -176,7 +176,7 @@ bool ScriptCtrl::LoadFile( const wxString& filename )
    if ( TextBuffer )
    {
       TextBuffer->Lock();
-      GetTextRangeRaw( TextBuffer->GetWriteBuf( GetTextLength() ), 0, -1 );
+      GetTextRangeRaw(  0, GetTextLength());
       TextBuffer->Unlock();
    }
 
@@ -278,7 +278,7 @@ bool ScriptCtrl::SaveFile( const wxString& filename )
    if ( TextBuffer )
    {
       TextBuffer->Lock();
-      GetTextRangeRaw( TextBuffer->GetWriteBuf( GetTextLength() ), 0, -1 );
+	  GetTextRangeRaw(0, GetTextLength());
       TextBuffer->Unlock();
    }
 

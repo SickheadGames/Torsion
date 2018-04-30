@@ -437,29 +437,14 @@ public:
 private:
 };
 
-#define DECLARE_WXANY_CONVERSION() \
-virtual bool GetAsAny(wxAny* any) const; \
+#define DECLARE_WXANY_CONVERSION() virtual bool GetAsAny(wxAny* any) const; 
 static wxVariantData* VariantDataFactory(const wxAny& any);
 
-#define _REGISTER_WXANY_CONVERSION(T, CLASSNAME, FUNC) \
-static wxAnyToVariantRegistrationImpl<T> \
-    gs_##CLASSNAME##AnyToVariantRegistration = \
-    wxAnyToVariantRegistrationImpl<T>(&FUNC);
+#define _REGISTER_WXANY_CONVERSION(T, CLASSNAME, FUNC) static wxAnyToVariantRegistrationImpl<T> gs_##CLASSNAME##AnyToVariantRegistration = wxAnyToVariantRegistrationImpl<T>(&FUNC);
 
-#define REGISTER_WXANY_CONVERSION(T, CLASSNAME) \
-_REGISTER_WXANY_CONVERSION(T, CLASSNAME, CLASSNAME::VariantDataFactory)
+#define REGISTER_WXANY_CONVERSION(T, CLASSNAME) _REGISTER_WXANY_CONVERSION(T, CLASSNAME, CLASSNAME::VariantDataFactory)
 
-#define IMPLEMENT_TRIVIAL_WXANY_CONVERSION(T, CLASSNAME) \
-bool CLASSNAME::GetAsAny(wxAny* any) const \
-{ \
-    *any = m_value; \
-    return true; \
-} \
-wxVariantData* CLASSNAME::VariantDataFactory(const wxAny& any) \
-{ \
-    return new CLASSNAME(wxANY_AS(any, T)); \
-} \
-REGISTER_WXANY_CONVERSION(T, CLASSNAME)
+#define IMPLEMENT_TRIVIAL_WXANY_CONVERSION(T, CLASSNAME) bool CLASSNAME::GetAsAny(wxAny* any) const { *any = m_value;  return true; } wxVariantData* CLASSNAME::VariantDataFactory(const wxAny& any) {  return new CLASSNAME(wxANY_AS(any, T)); } REGISTER_WXANY_CONVERSION(T, CLASSNAME)
 
 #else // if !wxUSE_ANY
 
@@ -470,103 +455,28 @@ REGISTER_WXANY_CONVERSION(T, CLASSNAME)
 #endif // wxUSE_ANY/!wxUSE_ANY
 
 
-#define DECLARE_VARIANT_OBJECT(classname) \
-    DECLARE_VARIANT_OBJECT_EXPORTED(classname, wxEMPTY_PARAMETER_VALUE)
+#define DECLARE_VARIANT_OBJECT(classname) DECLARE_VARIANT_OBJECT_EXPORTED(classname, wxEMPTY_PARAMETER_VALUE)
 
-#define DECLARE_VARIANT_OBJECT_EXPORTED(classname,expdecl) \
-expdecl classname& operator << ( classname &object, const wxVariant &variant ); \
-expdecl wxVariant& operator << ( wxVariant &variant, const classname &object );
+#define DECLARE_VARIANT_OBJECT_EXPORTED(classname,expdecl) expdecl classname& operator << ( classname &object, const wxVariant &variant ); expdecl wxVariant& operator << ( wxVariant &variant, const classname &object );
 
-#define IMPLEMENT_VARIANT_OBJECT(classname) \
-    IMPLEMENT_VARIANT_OBJECT_EXPORTED(classname, wxEMPTY_PARAMETER_VALUE)
+#define IMPLEMENT_VARIANT_OBJECT(classname)  IMPLEMENT_VARIANT_OBJECT_EXPORTED(classname, wxEMPTY_PARAMETER_VALUE)
 
-#define IMPLEMENT_VARIANT_OBJECT_EXPORTED_NO_EQ(classname,expdecl) \
-class classname##VariantData: public wxVariantData \
-{ \
-public:\
-    classname##VariantData() {} \
-    classname##VariantData( const classname &value ) { m_value = value; } \
-\
-    classname &GetValue() { return m_value; } \
-\
-    virtual bool Eq(wxVariantData& data) const; \
-\
-    virtual wxString GetType() const; \
-    virtual wxClassInfo* GetValueClassInfo(); \
-\
-    virtual wxVariantData* Clone() const { return new classname##VariantData(m_value); } \
-\
-    DECLARE_WXANY_CONVERSION() \
-protected:\
-    classname m_value; \
-};\
-\
-wxString classname##VariantData::GetType() const\
-{\
-    return m_value.GetClassInfo()->GetClassName();\
-}\
-\
-wxClassInfo* classname##VariantData::GetValueClassInfo()\
-{\
-    return m_value.GetClassInfo();\
-}\
-\
-expdecl classname& operator << ( classname &value, const wxVariant &variant )\
-{\
-    wxASSERT( variant.GetType() == #classname );\
-    \
-    classname##VariantData *data = (classname##VariantData*) variant.GetData();\
-    value = data->GetValue();\
-    return value;\
-}\
-\
-expdecl wxVariant& operator << ( wxVariant &variant, const classname &value )\
-{\
-    classname##VariantData *data = new classname##VariantData( value );\
-    variant.SetData( data );\
-    return variant;\
-} \
-IMPLEMENT_TRIVIAL_WXANY_CONVERSION(classname, classname##VariantData)
+#define IMPLEMENT_VARIANT_OBJECT_EXPORTED_NO_EQ(classname,expdecl) class classname##VariantData: public wxVariantData { public: classname##VariantData() {}  classname##VariantData( const classname &value ) { m_value = value; } classname &GetValue() { return m_value; } virtual bool Eq(wxVariantData& data) const; virtual wxString GetType() const; virtual wxClassInfo* GetValueClassInfo(); virtual wxVariantData* Clone() const { return new classname##VariantData(m_value); } DECLARE_WXANY_CONVERSION() protected: classname m_value; }; wxString classname##VariantData::GetType() const { return m_value.GetClassInfo()->GetClassName(); } wxClassInfo* classname##VariantData::GetValueClassInfo() { return m_value.GetClassInfo(); } expdecl classname& operator << ( classname &value, const wxVariant &variant ) { wxASSERT( variant.GetType() == #classname ); classname##VariantData *data = (classname##VariantData*) variant.GetData(); value = data->GetValue(); return value; } expdecl wxVariant& operator << ( wxVariant &variant, const classname &value ){ classname##VariantData *data = new classname##VariantData( value ); variant.SetData( data ); return variant;} IMPLEMENT_TRIVIAL_WXANY_CONVERSION(classname, classname##VariantData)
+
 
 // implements a wxVariantData-derived class using for the Eq() method the
 // operator== which must have been provided by "classname"
-#define IMPLEMENT_VARIANT_OBJECT_EXPORTED(classname,expdecl) \
-IMPLEMENT_VARIANT_OBJECT_EXPORTED_NO_EQ(classname,wxEMPTY_PARAMETER_VALUE expdecl) \
-\
-bool classname##VariantData::Eq(wxVariantData& data) const \
-{\
-    wxASSERT( GetType() == data.GetType() );\
-\
-    classname##VariantData & otherData = (classname##VariantData &) data;\
-\
-    return otherData.m_value == m_value;\
-}\
-
-
+#define IMPLEMENT_VARIANT_OBJECT_EXPORTED(classname,expdecl) IMPLEMENT_VARIANT_OBJECT_EXPORTED_NO_EQ(classname,wxEMPTY_PARAMETER_VALUE expdecl) bool classname##VariantData::Eq(wxVariantData& data) const {  wxASSERT( GetType() == data.GetType() ); classname##VariantData & otherData = (classname##VariantData &) data; return otherData.m_value == m_value; }
 // implements a wxVariantData-derived class using for the Eq() method a shallow
 // comparison (through wxObject::IsSameAs function)
-#define IMPLEMENT_VARIANT_OBJECT_SHALLOWCMP(classname) \
-    IMPLEMENT_VARIANT_OBJECT_EXPORTED_SHALLOWCMP(classname, wxEMPTY_PARAMETER_VALUE)
-#define IMPLEMENT_VARIANT_OBJECT_EXPORTED_SHALLOWCMP(classname,expdecl) \
-IMPLEMENT_VARIANT_OBJECT_EXPORTED_NO_EQ(classname,wxEMPTY_PARAMETER_VALUE expdecl) \
-\
-bool classname##VariantData::Eq(wxVariantData& data) const \
-{\
-    wxASSERT( GetType() == data.GetType() );\
-\
-    classname##VariantData & otherData = (classname##VariantData &) data;\
-\
-    return (otherData.m_value.IsSameAs(m_value));\
-}\
-
-
+#define IMPLEMENT_VARIANT_OBJECT_SHALLOWCMP(classname) IMPLEMENT_VARIANT_OBJECT_EXPORTED_SHALLOWCMP(classname, wxEMPTY_PARAMETER_VALUE) 
+#define IMPLEMENT_VARIANT_OBJECT_EXPORTED_SHALLOWCMP(classname,expdecl) IMPLEMENT_VARIANT_OBJECT_EXPORTED_NO_EQ(classname,wxEMPTY_PARAMETER_VALUE expdecl) bool classname##VariantData::Eq(wxVariantData& data) const { wxASSERT( GetType() == data.GetType() ); classname##VariantData & otherData = (classname##VariantData &) data; return (otherData.m_value.IsSameAs(m_value));}
 // Since we want type safety wxVariant we need to fetch and dynamic_cast
 // in a seemingly safe way so the compiler can check, so we define
 // a dynamic_cast /wxDynamicCast analogue.
 
-#define wxGetVariantCast(var,classname) \
-    ((classname*)(var.IsValueKindOf(&classname::ms_classInfo) ?\
-                  var.GetWxObjectPtr() : NULL));
+#define wxGetVariantCast(var,classname) ((classname*)(var.IsValueKindOf(&classname::ms_classInfo) ? var.GetWxObjectPtr() : NULL));
+#define wxGetVariantCast2(var,classname) ((classname*)(var.IsValueKindOf(&classname::ms_classInfo) ? var.GetWxObjectPtr() : NULL))
 
 // Replacement for using wxDynamicCast on a wxVariantData object
 #ifndef wxNO_RTTI

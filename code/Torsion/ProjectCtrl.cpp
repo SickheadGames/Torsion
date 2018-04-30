@@ -94,10 +94,10 @@ ProjectCtrl::ProjectCtrl( wxWindow* parent )
 
       // We need to have an extra pixel space between items
       // because icons are 16x16.
-      DWORD style = ::GetWindowLong( GetHwnd(), GWL_STYLE );
+      DWORD style = ::GetWindowLong( GetHWND(), GWL_STYLE );
       style |= TVS_NONEVENHEIGHT; 
-      ::SetWindowLong( GetHwnd(), GWL_STYLE, style );
-      ::SendMessage( GetHwnd(), TVM_SETITEMHEIGHT, 17, 0 );
+      ::SetWindowLong(GetHWND(), GWL_STYLE, style );
+      ::SendMessage(GetHWND(), TVM_SETITEMHEIGHT, 17, 0 );
    #endif // __WXMSW__
 
    // Create the drag cursor.
@@ -146,7 +146,7 @@ ProjectCtrl::~ProjectCtrl()
       // Unhook ourselves from message handling for a sec
       // and let the native control render to our buffered dc.
       SetEvtHandlerEnabled( false );
-      ::SendMessage( GetHwnd(), WM_PAINT, (WPARAM)GetHdcOf( dc ), 0 );
+      ::SendMessage(GetHWND(), WM_PAINT, (WPARAM) dc.GetHDC() , 0 );
       SetEvtHandlerEnabled( true );
    }
 
