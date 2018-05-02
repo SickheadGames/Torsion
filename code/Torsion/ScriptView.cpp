@@ -204,7 +204,7 @@ bool ScriptView::ProcessEvent( wxEvent& event )
             event.GetEventType() == EVT_COMMAND_BREAKPOINT ) )
    {
       wxPropagationDisabler disable( event );
-      if ( m_ScriptCtrl->ProcessEvent( event ) )
+      if ( m_ScriptCtrl->GetEventHandler()->ProcessEvent( event ) )
          return true;
    }
 
@@ -543,7 +543,7 @@ void ScriptView::OnBreakpointEvent( BreakpointEvent& event )
    // TODO: Should we just make BreakpointEvent a wxCommandEvent
    // which would then be forwarded by ScriptView::ProcessEvent?
    wxASSERT( m_ScriptCtrl );
-   m_ScriptCtrl->ProcessEvent( event );
+   m_ScriptCtrl->GetEventHandler()->ProcessEvent( event );
 }
 
 bool ScriptView::OnClose( bool deleteWindow )

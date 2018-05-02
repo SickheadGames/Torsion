@@ -550,7 +550,7 @@ void ScriptCtrl::OnTextChanged( wxStyledTextEvent& event )
                      ( last->GetPosition() + last->GetText().Len() ) == event.GetPosition() ) 
          {
             //last->SetPosition( event.GetPosition() );
-            last->GetTextRef() << event.GetText();
+            last->SetText(event.GetText());
             add = false;
          }
       }

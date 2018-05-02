@@ -60,6 +60,28 @@ class WXDLLIMPEXP_FWD_CORE wxScrollBar;
 
 #define wxSTC_INVALID_POSITION -1
 
+
+//Torsion custom defines
+#define wxSTC_LEX_TCS 78
+#define wxSTC_TCS_DEFAULT 0
+#define wxSTC_TCS_COMMENT 1
+#define wxSTC_TCS_COMMENTLINE 2
+#define wxSTC_TCS_COMMENTDOC 3
+#define wxSTC_TCS_STRING 6
+#define wxSTC_TCS_STRINGEOL 12
+#define wxSTC_TCS_COMMENTLINEDOC 15
+#define wxSTC_TCS_NUMBER 4
+#define wxSTC_TCS_CHARACTER 7
+#define wxSTC_TCS_IDENTIFIER 11
+#define wxSTC_TCS_OPERATOR 10
+#define wxSTC_TCS_VAR 20
+#define wxSTC_TCS_GLOBALVAR 21
+#define wxSTC_TCS_FOLDED 22
+#define wxSTC_TCS_WORD 5
+#define wxSTC_TCS_WORD2 16
+#define wxSTC_TCS_GLOBALCLASS 19
+//end torsion custom defines
+
 /// Define start of Scintilla messages to be greater than all Windows edit (EM_*) messages
 /// as many EM_ messages can be used although that use is deprecated.
 #define wxSTC_START 2000
