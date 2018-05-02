@@ -41,6 +41,8 @@ public:
    static wxString IntToString( int value );
    static wxString PointToString( const wxPoint& value );
 
+   static wxChar * convertToUnicode(const char * str);
+
    static char * convertToAscii(const wxChar* buffer);
 
    int GetArrayStringElems( wxArrayString& output, const wxString& name, const wxString& elemName );

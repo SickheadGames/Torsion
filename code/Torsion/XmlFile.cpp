@@ -185,15 +185,25 @@ wxString XmlFile::PointToString(const wxPoint& value)
 	return result;
 }
 
+wxChar *  XmlFile::convertToUnicode(const char * c)
+{
+
+	const size_t cSize = strlen(c) + 1;
+	wchar_t* wc = new wchar_t[cSize];
+	mbstowcs(wc, c, cSize);
+
+	return wc;
+}
+
 char * XmlFile::convertToAscii(const wxChar * str)
 {
 
-	char * buffer = new char[sizeof(str)+1];
+	char * buffer = new char[sizeof(str) + 1];
 	int ret;
 
 	ret = wcstombs(buffer, str, sizeof(buffer));
 	buffer[sizeof(buffer)] = '\0';
-	
+
 	return buffer;
 }
 

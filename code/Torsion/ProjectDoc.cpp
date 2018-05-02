@@ -647,7 +647,7 @@ void ProjectDoc::LoadOptions()
                               atoi(pOpenFile->Attribute( "ScrollY" ) ) );
 
             // Store the active view!
-            if ( XmlFile::StringToBool(pOpenFile->Attribute( "Active" ) ) )
+            if ( XmlFile::StringToBool(XmlFile::convertToUnicode(pOpenFile->Attribute( "Active" ) ) ))
                activeView = view;
 
             doc->SetViewScrollOffset( scroll );

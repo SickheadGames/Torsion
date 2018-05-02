@@ -719,6 +719,7 @@ void MainFrame::OnCloseWindow( wxCloseEvent& event )
 
    // Now let the base clear the rest of the docs.
    wxDocMDIParentFrame::OnCloseWindow( event );
+   
 }
 
 void MainFrame::OnNewProject( wxCommandEvent& event )
