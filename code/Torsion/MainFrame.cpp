@@ -718,7 +718,7 @@ void MainFrame::OnCloseWindow( wxCloseEvent& event )
    tsGetAutoComp()->SetEnable( false );
 
    // Now let the base clear the rest of the docs.
-   wxDocMDIParentFrame::OnCloseWindow( event );
+  // wxDocMDIParentFrame::OnCloseWindow( event ); <- this should be handled by destructor now
    
 }
 
@@ -811,7 +811,7 @@ bool MainFrame::OpenProject( const wxString& path )
    wxASSERT( docMan );
 
    // Is this project already open?
-   wxDocument* currentDoc = docMan->FindDocument( path );
+   wxDocument* currentDoc = docMan->FindDocumentByPath( path );
    if (currentDoc) {
       wxASSERT( m_ProjectDoc == currentDoc );
       return true;
@@ -1154,7 +1154,9 @@ void MainFrame::UpdatePrecompileMenu()
 
    // Now update the accel table.
    GetMenuBar()->RebuildAccelTable();
-   SetAcceleratorTable( GetMenuBar()->GetAccelTable() );
+
+   wxAcceleratorTable * accel = GetMenuBar()->GetAcceleratorTable();
+   SetAcceleratorTable(*accel);
 }
 
 void MainFrame::OnProjectPrecompile( wxCommandEvent& event )
@@ -1874,7 +1876,7 @@ ScriptDoc* MainFrame::GetOpenDoc( const wxString& FullPath )
    // Check to see if we already have it open.
    wxDocManager* docMan = GetDocumentManager();
    wxASSERT( docMan );
-   wxDocument* doc = docMan->FindDocument( absolutePath );
+   wxDocument* doc = docMan->FindDocumentByPath( absolutePath );
    if ( !doc ) 
    {
       // Do a title search!
@@ -2286,7 +2288,8 @@ void MainFrame::UpdateDebugMenu()
 
    // Now update the accel table.
    GetMenuBar()->RebuildAccelTable();
-   SetAcceleratorTable( GetMenuBar()->GetAccelTable() );
+   wxAcceleratorTable * accel = GetMenuBar()->GetAcceleratorTable();
+   SetAcceleratorTable(*accel);
 }
 
 void MainFrame::OnDebugStartBreak( wxCommandEvent& event )
