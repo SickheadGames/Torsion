@@ -4,6 +4,7 @@
 
 #include "PreCompiled.h"
 #include "FileWatcher.h"
+#include "wx\msw\private.h"
 
 
 #ifdef _DEBUG 
@@ -47,6 +48,7 @@ bool FileWatcher::SetWatch( const wxString& file, int flags )
    m_Flags = flags;
 
    wxZeroMemory( m_LastStatus );
+
    return wxStat( m_File.GetFullPath(), &m_LastStatus ) == 0;
 }
 

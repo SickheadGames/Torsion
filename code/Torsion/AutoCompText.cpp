@@ -68,8 +68,8 @@ wxChar* AutoCompText::GetWriteBuf( size_t len )
 {
 	wxStringBuffer buf(m_Data, len + 1);
    wxChar* result = buf; // never allow zero!
-   m_Data.UngetWriteBuf( len );
-
+  // m_Data.UngetWriteBuf( len ); //deprecated
+   delete buf;
    wxCriticalSectionLocker lock( m_SignalLock );
    m_Signaled = true;
 

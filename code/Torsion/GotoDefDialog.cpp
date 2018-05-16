@@ -238,7 +238,8 @@ wxIcon GotoDefDialog::GetIconResource( const wxString& name )
 void GotoDefDialog::OnSymbolDoubleClicked( wxListEvent& event )
 {
    m_Selected = event.GetIndex();
-   wxDialog::OnOK( wxCommandEvent() );
+  // wxDialog::OnOK( wxCommandEvent() );
+   event.Skip();
 }
 
 
@@ -251,7 +252,8 @@ void GotoDefDialog::OnOkClick( wxCommandEvent& event )
    wxASSERT( m_SymbolList );
    wxASSERT( m_SymbolList->GetSelectedItemCount() == 1 );
    m_Selected = m_SymbolList->GetFirstSelected();
-   wxDialog::OnOK( event );
+  // wxDialog::OnOK( event );
+   event.Skip();
 }
 
 

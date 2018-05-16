@@ -312,7 +312,8 @@ void BreakpointPropertyDlg::OnOkClick( wxCommandEvent& event )
    }
 
    *m_Breakpoint = newBp;
-   wxDialog::OnOK( event );
+  // wxDialog::OnOK( event );
+   event.Skip();
 }
 
 
