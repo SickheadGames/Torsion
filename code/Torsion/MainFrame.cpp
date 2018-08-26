@@ -2095,9 +2095,12 @@ bool MainFrame::ProcessEvent(wxEvent& event)
    // or output control has focus.
    if ( event.GetId() == wxID_COPY )
    {
+	   OutputCtrl* out1 =  GetOutputPanel()->m_Output;
+	   wxEvtHandler* eve1 =  out1->GetEventHandler();
+
       if (  GetOutputPanel() && 
             GetOutputPanel()->m_Output == wxWindow::FindFocus() &&
-            GetOutputPanel()->m_Output->ProcessEvent( event ) )
+		    eve1->ProcessEvent(event) )
          return true;
 
       if (  GetFindWindow() && 
