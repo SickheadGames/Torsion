@@ -993,8 +993,10 @@ void Debugger::EscapeTorqueML( wxString& text )
    // markup hints.  Other than CR, LF, and TAB replace
    // the rest with the correct /cXX string.
 	const wxStdWideString chr1 = text.ToStdWstring();
+	const wchar_t* dd = chr1.data();
 
-	wxUChar* chr = &chr1.data;
+	//wxUChar* chr = &chr1.data;
+	wxUChar* chr = (wxUChar*)dd;
 
    wxString escape;
    size_t insert;
@@ -1023,7 +1025,9 @@ void Debugger::EscapeTorqueML( wxString& text )
 
 	  const wxStdWideString chr2 = text.ToStdWstring();
 
-	  wxUChar* chr3 = &chr2.data;
+	 // wxUChar* chr3 = &chr2.data;
+	  const wchar_t* chr3 = chr2.data();
+
       insert = chr - chr3;
       text.replace( insert, 1, escape );
       chr = (wxUChar*)(&text.char_str().data + insert + escape.Len());

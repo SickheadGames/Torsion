@@ -2101,11 +2101,14 @@ bool MainFrame::ProcessEvent(wxEvent& event)
       if (  GetOutputPanel() && 
             GetOutputPanel()->m_Output == wxWindow::FindFocus() &&
 		    eve1->ProcessEvent(event) )
-         return true;
+         return true; 
+
+	  wxEvtHandler* eventHandler =  GetFindWindow()->GetEventHandler();
+	  eventHandler->ProcessEvent(event);
 
       if (  GetFindWindow() && 
             GetFindWindow() == wxWindow::FindFocus() &&
-            GetFindWindow()->ProcessEvent( event ) )
+		  eventHandler->ProcessEvent(event))
          return true;
    }
 
