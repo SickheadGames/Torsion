@@ -17,14 +17,14 @@ class AutoCompData
    friend class AutoCompThread;
    friend class AutoCompManager;
 
-protected:
+public:
 
    AutoCompData();
    ~AutoCompData();
 
    void Build( const AutoCompPageArray& pages, AutoCompExports* exports );
 
-public:
+
 
    // These are used to define what icon to use
    // for the string list identifier.

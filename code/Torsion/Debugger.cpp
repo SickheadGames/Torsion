@@ -1030,7 +1030,7 @@ void Debugger::EscapeTorqueML( wxString& text )
 
       insert = chr - chr3;
       text.replace( insert, 1, escape );
-      chr = (wxUChar*)(&text.char_str().data + insert + escape.Len());
+      chr = (wxUChar*)(text.char_str().data() + insert + escape.Len());
    }
 }
 
