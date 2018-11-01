@@ -14,6 +14,7 @@
     <ProjectGuid>{6A1EC3A9-9AB3-4F16-B983-0145510FD809}</ProjectGuid>
     <RootNamespace>Torsion</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -40,10 +41,11 @@
     <_ProjectFileVersion>14.0.25431.1</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\Media\</OutDir>
+    <OutDir>C:\Projects\Torsion\media\</OutDir>
     <IntDir>Debug\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
+    <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>..\..\Media\</OutDir>
@@ -63,9 +65,8 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>tinyxml2d_stc.lib;comctl32.lib;wxbase26d.lib;wxmsw26d_core.lib;wxmsw26d_adv.lib;wxbase26d_net.lib;wxmsw26d_stc.lib;wxmsw27d_propgrid.lib;wxregexd.lib;wxjpegd.lib;Ws2_32.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)torsion_d.exe</OutputFile>
-      <AdditionalLibraryDirectories>..\wxWidgets\lib\vc140_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>tinyxml2d_stc.lib;comctl32.lib;wxbase30ud.lib;wxmsw30ud_core.lib;wxmsw30ud_adv.lib;wxbase30ud_net.lib;wxmsw30ud_stc.lib;wxmsw30ud_propgrid.lib;wxjpegd.lib;Ws2_32.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\wxWidgets\lib\vc140_dll;..\wxWidgets\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)torsion_d.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
@@ -73,6 +74,7 @@
       <MapExports>true</MapExports>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
     <PreBuildEvent>
       <Message>Updating Build Number</Message>
