@@ -46,12 +46,12 @@ class ScriptView : public wxView
       void UpdateTypeList();
 
    public:
+	  
 
       static const ScriptViewList& GetList() { return s_ScriptViews; }
          
       ScriptView();
       virtual ~ScriptView();
-
       virtual bool ProcessEvent( wxEvent& event );
 
       bool OnSaveFile( const wxString& filename );

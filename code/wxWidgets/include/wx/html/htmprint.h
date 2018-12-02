@@ -1,19 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        htmprint.h
+// Name:        wx/html/htmprint.h
 // Purpose:     html printing classes
 // Author:      Vaclav Slavik
 // Created:     25/09/99
-// RCS-ID:      $Id: htmprint.h,v 1.28 2005/05/04 18:52:47 JS Exp $
 // Copyright:   (c) Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_HTMPRINT_H_
 #define _WX_HTMPRINT_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "htmprint.h"
-#endif
 
 #include "wx/defs.h"
 
@@ -38,12 +33,14 @@ class WXDLLIMPEXP_HTML wxHtmlDCRenderer : public wxObject
 {
 public:
     wxHtmlDCRenderer();
-    ~wxHtmlDCRenderer();
+    virtual ~wxHtmlDCRenderer();
 
     // Following 3 methods *must* be called before any call to Render:
 
     // Assign DC to this render
-    void SetDC(wxDC *dc, double pixel_scale = 1.0);
+    void SetDC(wxDC *dc, double pixel_scale = 1.0)
+        { SetDC(dc, pixel_scale, pixel_scale); }
+    void SetDC(wxDC *dc, double pixel_scale, double font_scale);
 
     // Sets size of output rectangle, in pixels. Note that you *can't* change
     // width of the rectangle between calls to Render! (You can freely change height.)
@@ -57,7 +54,7 @@ public:
     void SetHtmlText(const wxString& html, const wxString& basepath = wxEmptyString, bool isdir = true);
 
     // Sets fonts to be used when displaying HTML page. (if size null then default sizes used).
-    void SetFonts(wxString normal_face, wxString fixed_face, const int *sizes = NULL);
+    void SetFonts(const wxString& normal_face, const wxString& fixed_face, const int *sizes = NULL);
 
     // Sets font sizes to be relative to the given size or the system
     // default size; use either specified or default font
@@ -81,13 +78,15 @@ public:
     // set the same pagebreak twice.
     //
     // CAUTION! Render() changes DC's user scale and does NOT restore it!
-    int Render(int x, int y, int from = 0, int dont_render = FALSE,
-               int maxHeight = INT_MAX,
-               int *known_pagebreaks = NULL, int number_of_pages = 0);
+    int Render(int x, int y, wxArrayInt& known_pagebreaks, int from = 0,
+               int dont_render = false, int to = INT_MAX);
+
+    // returns total width of the html document
+    int GetTotalWidth() const;
 
     // returns total height of the html document
     // (compare Render's return value with this)
-    int GetTotalHeight();
+    int GetTotalHeight() const;
 
 private:
     wxDC *m_DC;
@@ -96,7 +95,7 @@ private:
     wxHtmlContainerCell *m_Cells;
     int m_MaxWidth, m_Width, m_Height;
 
-    DECLARE_NO_COPY_CLASS(wxHtmlDCRenderer)
+    wxDECLARE_NO_COPY_CLASS(wxHtmlDCRenderer);
 };
 
 
@@ -122,7 +121,7 @@ class WXDLLIMPEXP_HTML wxHtmlPrintout : public wxPrintout
 {
 public:
     wxHtmlPrintout(const wxString& title = wxT("Printout"));
-    ~wxHtmlPrintout();
+    virtual ~wxHtmlPrintout();
 
     void SetHtmlText(const wxString& html, const wxString &basepath = wxEmptyString, bool isdir = true);
             // prepares the class for printing this html document.
@@ -147,7 +146,7 @@ public:
             // You can set different header/footer for odd and even pages
 
     // Sets fonts to be used when displaying HTML page. (if size null then default sizes used).
-    void SetFonts(wxString normal_face, wxString fixed_face, const int *sizes = NULL);
+    void SetFonts(const wxString& normal_face, const wxString& fixed_face, const int *sizes = NULL);
 
     // Sets font sizes to be relative to the given size or the system
     // default size; use either specified or default font
@@ -155,7 +154,7 @@ public:
                           const wxString& normal_face = wxEmptyString,
                           const wxString& fixed_face = wxEmptyString);
 
-    void SetMargins(float top = 25.2, float bottom = 25.2, float left = 25.2, float right = 25.2,
+    void SetMargins(float top = 25.2f, float bottom = 25.2f, float left = 25.2f, float right = 25.2f,
                     float spaces = 5);
             // sets margins in milimeters. Defaults to 1 inch for margins and 0.5cm for space
             // between text and header and/or footer
@@ -174,6 +173,20 @@ public:
     static void CleanUpStatics();
 
 private:
+    // this function is called by the base class OnPreparePrinting()
+    // implementation and by default checks whether the document fits into
+    // pageArea horizontally and warns the user if it does not and, if we're
+    // going to print and not just to preview the document, giving him the
+    // possibility to cancel printing
+    //
+    // you may override it to either suppress this check if truncation of the
+    // HTML being printed is acceptable or, on the contrary, add more checks to
+    // it, e.g. for the fit in the vertical direction if the document should
+    // always appear on a single page
+    //
+    // return true if printing should go ahead or false to cancel it (the
+    // return value is ignored when previewing)
+    virtual bool CheckFit(const wxSize& pageArea, const wxSize& docArea) const;
 
     void RenderPage(wxDC *dc, int page);
             // renders one page into dc
@@ -185,7 +198,7 @@ private:
 
 private:
     int m_NumPages;
-    int m_PageBreaks[wxHTML_PRINT_MAX_PAGES];
+    wxArrayInt m_PageBreaks;
 
     wxString m_Document, m_BasePath;
     bool m_BasePathIsDir;
@@ -198,7 +211,7 @@ private:
     // list of HTML filters
     static wxList m_Filters;
 
-    DECLARE_NO_COPY_CLASS(wxHtmlPrintout)
+    wxDECLARE_NO_COPY_CLASS(wxHtmlPrintout);
 };
 
 
@@ -221,7 +234,7 @@ class WXDLLIMPEXP_HTML wxHtmlEasyPrinting : public wxObject
 {
 public:
     wxHtmlEasyPrinting(const wxString& name = wxT("Printing"), wxWindow *parentWindow = NULL);
-    ~wxHtmlEasyPrinting();
+    virtual ~wxHtmlEasyPrinting();
 
     bool PreviewFile(const wxString &htmlfile);
     bool PreviewText(const wxString &htmltext, const wxString& basepath = wxEmptyString);
@@ -246,7 +259,7 @@ public:
             // pg is one of wxPAGE_ODD, wxPAGE_EVEN and wx_PAGE_ALL constants.
             // You can set different header/footer for odd and even pages
 
-    void SetFonts(wxString normal_face, wxString fixed_face, const int *sizes = 0);
+    void SetFonts(const wxString& normal_face, const wxString& fixed_face, const int *sizes = 0);
     // Sets fonts to be used when displaying HTML page. (if size null then default sizes used)
 
     // Sets font sizes to be relative to the given size or the system
@@ -259,6 +272,16 @@ public:
     wxPageSetupDialogData *GetPageSetupData() {return m_PageSetupData;}
             // return page setting data objects.
             // (You can set their parameters.)
+
+    wxWindow* GetParentWindow() const { return m_ParentWindow; }
+            // get the parent window
+    void SetParentWindow(wxWindow* window) { m_ParentWindow = window; }
+            // set the parent window
+
+    const wxString& GetName() const { return m_Name; }
+            // get the printout name
+    void SetName(const wxString& name) { m_Name = name; }
+            // set the printout name
 
 protected:
     virtual wxHtmlPrintout *CreatePrintout();
@@ -283,7 +306,7 @@ private:
     wxString m_Headers[2], m_Footers[2];
     wxWindow *m_ParentWindow;
 
-    DECLARE_NO_COPY_CLASS(wxHtmlEasyPrinting)
+    wxDECLARE_NO_COPY_CLASS(wxHtmlEasyPrinting);
 };
 
 

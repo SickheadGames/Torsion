@@ -1,178 +1,103 @@
-/*-*- c++ -*-********************************************************
- * helpext.h - an external help controller for wxWidgets            *
- *                                                                  *
- * (C) 1998 by Karsten Ballüder (Ballueder@usa.net)                 *
- * License: wxWindows licence                                       *
- *                                                                  *
- * $Id: helpext.h,v 1.18 2004/11/22 20:28:28 JS Exp $
- *******************************************************************/
+/////////////////////////////////////////////////////////////////////////////
+// Name:        wx/generic/helpext.h
+// Purpose:     an external help controller for wxWidgets
+// Author:      Karsten Ballueder (Ballueder@usa.net)
+// Modified by:
+// Copyright:   (c) Karsten Ballueder 1998
+// Licence:     wxWindows licence
+/////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WX_HELPEXT_H_
 #define __WX_HELPEXT_H_
 
 #if wxUSE_HELP
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#   pragma interface "wxexthlp.h"
-#endif
+
+// ----------------------------------------------------------------------------
+// headers
+// ----------------------------------------------------------------------------
 
 #include "wx/helpbase.h"
 
-/// Path separator.
-#ifdef __WXMSW__
-#define WXEXTHELP_SEPARATOR _T('\\')
-#elif defined(__WXMAC__)
-#define WXEXTHELP_SEPARATOR _T(':')
-#else
-#define WXEXTHELP_SEPARATOR _T('/')
-#endif
 
-class WXDLLIMPEXP_ADV wxExtHelpMapList;
+// ----------------------------------------------------------------------------
+// wxExtHelpController
+// ----------------------------------------------------------------------------
 
-#ifndef WXEXTHELP_DEFAULTBROWSER
-/// Default browser name.
-#   define WXEXTHELP_DEFAULTBROWSER _T("netscape")
-/// Is default browse a variant of netscape?
-#   define WXEXTHELP_DEFAULTBROWSER_IS_NETSCAPE true
-#endif
-
-/**
-   This class implements help via an external browser.
-   It requires the name of a directory containing the documentation
-   and a file mapping numerical Section numbers to relative URLS.
-
-   The map file contains two or three fields per line:
-   numeric_id  relative_URL  [; comment/documentation]
-
-   The numeric_id is the id used to look up the entry in
-   DisplaySection()/DisplayBlock(). The relative_URL is a filename of
-   an html file, relative to the help directory. The optional
-   comment/documentation field (after a ';') is used for keyword
-   searches, so some meaningful text here does not hurt.
-   If the documentation itself contains a ';', only the part before
-   that will be displayed in the listbox, but all of it used for search.
-
-   Lines starting with ';' will be ignored.
-*/
-
+// This class implements help via an external browser.
 class WXDLLIMPEXP_ADV wxExtHelpController : public wxHelpControllerBase
 {
-DECLARE_CLASS(wxExtHelpController)
-   public:
-   wxExtHelpController();
-   ~wxExtHelpController();
+public:
+    wxExtHelpController(wxWindow* parentWindow = NULL);
+    virtual ~wxExtHelpController();
 
-   /** Tell it which browser to use.
-       The Netscape support will check whether Netscape is already
-       running (by looking at the .netscape/lock file in the user's
-       home directory) and tell it to load the page into the existing
-       window.
-       @param browsername The command to call a browser/html viewer.
-       @param isNetscape Set this to true if the browser is some variant of Netscape.
-   */
-   // Obsolete form
-   void SetBrowser(const wxString & browsername = WXEXTHELP_DEFAULTBROWSER,
-                   bool isNetscape = WXEXTHELP_DEFAULTBROWSER_IS_NETSCAPE);
+#if WXWIN_COMPATIBILITY_2_8
+    wxDEPRECATED(void SetBrowser(const wxString& browsername = wxEmptyString, bool isNetscape = false) );
+#endif
 
-  // Set viewer: new name for SetBrowser
-  virtual void SetViewer(const wxString& viewer = WXEXTHELP_DEFAULTBROWSER, long flags = wxHELP_NETSCAPE);
+    // Set viewer: new name for SetBrowser
+    virtual void SetViewer(const wxString& viewer = wxEmptyString,
+                            long flags = wxHELP_NETSCAPE);
 
-   /** This must be called to tell the controller where to find the
-       documentation.
-       If a locale is set, look in file/localename, i.e.
-       If passed "/usr/local/myapp/help" and the current wxLocale is
-       set to be "de", then look in "/usr/local/myapp/help/de/"
-       first and fall back to "/usr/local/myapp/help" if that
-       doesn't exist.
+    virtual bool Initialize(const wxString& dir, int WXUNUSED(server))
+        { return Initialize(dir); }
 
-       @param file - NOT a filename, but a directory name.
-       @return true on success
-   */
-   virtual bool Initialize(const wxString& dir, int WXUNUSED(server))
-      { return Initialize(dir); }
+    virtual bool Initialize(const wxString& dir);
+    virtual bool LoadFile(const wxString& file = wxEmptyString);
+    virtual bool DisplayContents(void);
+    virtual bool DisplaySection(int sectionNo);
+    virtual bool DisplaySection(const wxString& section);
+    virtual bool DisplayBlock(long blockNo);
+    virtual bool KeywordSearch(const wxString& k,
+                                wxHelpSearchMode mode = wxHELP_SEARCH_ALL);
 
-   /** This must be called to tell the controller where to find the
-       documentation.
-       If a locale is set, look in file/localename, i.e.
-       If passed "/usr/local/myapp/help" and the current wxLocale is
-       set to be "de", then look in "/usr/local/myapp/help/de/"
-       first and fall back to "/usr/local/myapp/help" if that
-       doesn't exist.
-       @param dir - directory name where to fine the help files
-       @return true on success
-   */
-   virtual bool Initialize(const wxString& dir);
+    virtual bool Quit(void);
+    virtual void OnQuit(void);
 
-   /** If file is "", reloads file given in Initialize.
-       @file Name of help directory.
-       @return true on success
-   */
-   virtual bool LoadFile(const wxString& file = wxEmptyString);
+    virtual bool DisplayHelp(const wxString &) ;
 
-   /** Display list of all help entries.
-       @return true on success
-   */
-   virtual bool DisplayContents(void);
-   /** Display help for id sectionNo.
-       @return true on success
-   */
-   virtual bool DisplaySection(int sectionNo);
-   /** Display help for id sectionNo -- identical with DisplaySection().
-       @return true on success
-   */
-   virtual bool DisplaySection(const wxString& section);
-   /** Display help for URL (using DisplayHelp) or keyword (using KeywordSearch)
-       @return true on success
-   */
-   virtual bool DisplayBlock(long blockNo);
-   /** Search comment/documentation fields in map file and present a
-       list to chose from.
-       @key k string to search for, empty string will list all entries
-       @return true on success
-   */
-   virtual bool KeywordSearch(const wxString& k,
-                              wxHelpSearchMode mode = wxHELP_SEARCH_ALL);
+    virtual void SetFrameParameters(const wxString& WXUNUSED(title),
+                                    const wxSize& WXUNUSED(size),
+                                    const wxPoint& WXUNUSED(pos) = wxDefaultPosition,
+                                    bool WXUNUSED(newFrameEachTime) = false)
+        {
+            // does nothing by default
+        }
 
-   /// does nothing
-   virtual bool Quit(void);
-   /// does nothing
-   virtual void OnQuit(void);
+    virtual wxFrame *GetFrameParameters(wxSize *WXUNUSED(size) = NULL,
+                                    wxPoint *WXUNUSED(pos) = NULL,
+                                    bool *WXUNUSED(newFrameEachTime) = NULL)
+        {
+            return NULL; // does nothing by default
+        }
 
-   /// Call the browser using a relative URL.
-   virtual bool DisplayHelp(const wxString &) ;
+protected:
+    // Filename of currently active map file.
+    wxString         m_helpDir;
 
-   /// Allows one to override the default settings for the help frame.
-   virtual void SetFrameParameters(const wxString& WXUNUSED(title),
-                                   const wxSize& WXUNUSED(size),
-                                   const wxPoint& WXUNUSED(pos) = wxDefaultPosition,
-                                   bool WXUNUSED(newFrameEachTime) = false)
-      {
-         // does nothing by default
-      }
-   /// Obtains the latest settings used by the help frame and the help
-   /// frame.
-   virtual wxFrame *GetFrameParameters(wxSize *WXUNUSED(size) = NULL,
-                                   wxPoint *WXUNUSED(pos) = NULL,
-                                   bool *WXUNUSED(newFrameEachTime) = NULL)
-      {
-         return (wxFrame*) NULL;// does nothing by default
-      }
+    // How many entries do we have in the map file?
+    int              m_NumOfEntries;
 
- protected:
-   /// Filename of currently active map file.
-   wxString         m_MapFile;
-   /// How many entries do we have in the map file?
-   int              m_NumOfEntries;
-   /// A list containing all id,url,documentation triples.
-   wxList          *m_MapList;
-   /// Deletes the list and all objects.
-   void DeleteList(void);
+    // A list containing all id,url,documentation triples.
+    wxList          *m_MapList;
 
- private:
-   /// How to call the html viewer.
-   wxString         m_BrowserName;
-   /// Is the viewer a variant of netscape?
-   bool             m_BrowserIsNetscape;
+private:
+    // parse a single line of the map file (called by LoadFile())
+    //
+    // return true if the line was valid or false otherwise
+    bool ParseMapFileLine(const wxString& line);
+
+    // Deletes the list and all objects.
+    void DeleteList(void);
+
+
+    // How to call the html viewer.
+    wxString         m_BrowserName;
+
+    // Is the viewer a variant of netscape?
+    bool             m_BrowserIsNetscape;
+
+    DECLARE_CLASS(wxExtHelpController)
 };
 
 #endif // wxUSE_HELP

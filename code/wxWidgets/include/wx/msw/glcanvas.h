@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id: glcanvas.h,v 1.15 2005/02/21 01:52:19 VZ Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,153 +11,148 @@
 #ifndef _WX_GLCANVAS_H_
 #define _WX_GLCANVAS_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "glcanvas.h"
-#endif
-
 #include "wx/palette.h"
-#include "wx/scrolwin.h"
 
-#include <windows.h>
-#include "wx/msw/winundef.h"
+#include "wx/msw/wrapwin.h"
 
 #include <GL/gl.h>
 
-//---------------------------------------------------------------------------
-// Constants for attriblist
-//---------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// wxGLContext: OpenGL rendering context
+// ----------------------------------------------------------------------------
 
-// The generic GL implementation doesn't support most of these options,
-// such as stereo, auxiliary buffers, alpha channel, and accum buffer.
-// Other implementations may actually support them.
-
-enum
-{
-    WX_GL_RGBA=1,          /* use true color palette */
-    WX_GL_BUFFER_SIZE,     /* bits for buffer if not WX_GL_RGBA */
-    WX_GL_LEVEL,           /* 0 for main buffer, >0 for overlay, <0 for underlay */
-    WX_GL_DOUBLEBUFFER,    /* use doublebuffer */
-    WX_GL_STEREO,          /* use stereoscopic display */
-    WX_GL_AUX_BUFFERS,     /* number of auxiliary buffers */
-    WX_GL_MIN_RED,         /* use red buffer with most bits (> MIN_RED bits) */
-    WX_GL_MIN_GREEN,       /* use green buffer with most bits (> MIN_GREEN bits) */
-    WX_GL_MIN_BLUE,        /* use blue buffer with most bits (> MIN_BLUE bits) */
-    WX_GL_MIN_ALPHA,       /* use blue buffer with most bits (> MIN_ALPHA bits) */
-    WX_GL_DEPTH_SIZE,      /* bits for Z-buffer (0,16,32) */
-    WX_GL_STENCIL_SIZE,    /* bits for stencil buffer */
-    WX_GL_MIN_ACCUM_RED,   /* use red accum buffer with most bits (> MIN_ACCUM_RED bits) */
-    WX_GL_MIN_ACCUM_GREEN, /* use green buffer with most bits (> MIN_ACCUM_GREEN bits) */
-    WX_GL_MIN_ACCUM_BLUE,  /* use blue buffer with most bits (> MIN_ACCUM_BLUE bits) */
-    WX_GL_MIN_ACCUM_ALPHA  /* use blue buffer with most bits (> MIN_ACCUM_ALPHA bits) */
-};
-
-class WXDLLIMPEXP_GL wxGLCanvas;     /* forward reference */
-
-class WXDLLIMPEXP_GL wxGLContext: public wxObject
+class WXDLLIMPEXP_GL wxGLContext : public wxGLContextBase
 {
 public:
-    wxGLContext(bool isRGB, wxGLCanvas *win, const wxPalette& palette = wxNullPalette);
+    wxGLContext(wxGLCanvas *win, const wxGLContext* other = NULL);
+    virtual ~wxGLContext();
 
-    wxGLContext( bool isRGB, wxGLCanvas *win,
-        const wxPalette& WXUNUSED(palette),
-        const wxGLContext *other /* for sharing display lists */ );
+    virtual bool SetCurrent(const wxGLCanvas& win) const;
 
-    ~wxGLContext();
-
-
-    void SetCurrent();
-
-    void SetColour(const wxChar *colour);
-
-    void SwapBuffers();
-
-
-    inline wxWindow* GetWindow() const { return m_window; }
-
-    inline WXHDC GetHDC() const { return m_hDC; }
-
-    inline HGLRC GetGLRC() const { return m_glContext; }
-
-public:
-    HGLRC            m_glContext;
-    WXHDC            m_hDC;
-    wxWindow*        m_window;
-};
-
-class WXDLLIMPEXP_GL wxGLCanvas: public wxWindow
-{
-    DECLARE_CLASS(wxGLCanvas)
-public:
-    wxGLCanvas(wxWindow *parent, wxWindowID id = wxID_ANY,
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = 0,
-        const wxString& name = wxGLCanvasName, int *attribList = 0,
-        const wxPalette& palette = wxNullPalette);
-
-    wxGLCanvas(wxWindow *parent,
-        const wxGLContext *shared,
-        wxWindowID id = wxID_ANY,
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize,
-        long style = 0,
-        const wxString& name = wxGLCanvasName,
-        int *attribList = (int *) NULL,
-        const wxPalette& palette = wxNullPalette);
-
-    wxGLCanvas(wxWindow *parent,
-        const wxGLCanvas *shared,
-        wxWindowID id = wxID_ANY,
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize,
-        long style = 0,
-        const wxString& name = wxGLCanvasName,
-        int *attribList = 0,
-        const wxPalette& palette = wxNullPalette);
-
-    ~wxGLCanvas();
-
-    // Replaces wxWindow::Create functionality, since
-    // we need to use a different window class
-    bool Create(wxWindow *parent, wxWindowID id,
-        const wxPoint& pos, const wxSize& size,
-        long style, const wxString& name);
-
-    void SetCurrent();
-
-#ifdef __WXUNIVERSAL__
-    virtual bool SetCurrent(bool doit) { return wxWindow::SetCurrent(doit); };
-#endif
-
-    void SetColour(const wxChar *colour);
-
-    void SwapBuffers();
-
-    void OnSize(wxSizeEvent& event);
-
-    void OnQueryNewPalette(wxQueryNewPaletteEvent& event);
-
-    void OnPaletteChanged(wxPaletteChangedEvent& event);
-
-    inline wxGLContext* GetContext() const { return m_glContext; }
-
-    inline WXHDC GetHDC() const { return m_hDC; }
-
-    void SetupPixelFormat(int *attribList = (int *) NULL);
-
-    void SetupPalette(const wxPalette& palette);
-
-    wxPalette CreateDefaultPalette();
-
-    inline wxPalette* GetPalette() const { return (wxPalette *) &m_palette; }
+    HGLRC GetGLRC() const { return m_glContext; }
 
 protected:
-    wxGLContext*   m_glContext;  // this is typedef-ed ptr, in fact
-    wxPalette      m_palette;
-    WXHDC          m_hDC;
+    HGLRC m_glContext;
 
-    DECLARE_EVENT_TABLE()
+private:
+    DECLARE_CLASS(wxGLContext)
 };
 
-#endif
-    // _WX_GLCANVAS_H_
+// ----------------------------------------------------------------------------
+// wxGLCanvas: OpenGL output window
+// ----------------------------------------------------------------------------
 
+class WXDLLIMPEXP_GL wxGLCanvas : public wxGLCanvasBase
+{
+public:
+    wxEXPLICIT // avoid implicitly converting a wxWindow* to wxGLCanvas
+    wxGLCanvas(wxWindow *parent,
+               wxWindowID id = wxID_ANY,
+               const int *attribList = NULL,
+               const wxPoint& pos = wxDefaultPosition,
+               const wxSize& size = wxDefaultSize,
+               long style = 0,
+               const wxString& name = wxGLCanvasName,
+               const wxPalette& palette = wxNullPalette);
+
+    bool Create(wxWindow *parent,
+                wxWindowID id = wxID_ANY,
+                const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize,
+                long style = 0,
+                const wxString& name = wxGLCanvasName,
+                const int *attribList = NULL,
+                const wxPalette& palette = wxNullPalette);
+
+    virtual ~wxGLCanvas();
+
+    // implement wxGLCanvasBase methods
+    virtual bool SwapBuffers();
+
+
+    // MSW-specific helpers
+    // --------------------
+
+    // get the HDC used for OpenGL rendering
+    HDC GetHDC() const { return m_hDC; }
+
+    // try to find pixel format matching the given attributes list for the
+    // specified HDC, return 0 on error, otherwise pfd is filled in with the
+    // information from attribList if non-NULL
+    static int ChooseMatchingPixelFormat(HDC hdc, const int *attribList,
+                                         PIXELFORMATDESCRIPTOR *pfd = NULL);
+
+#if wxUSE_PALETTE
+    // palette stuff
+    bool SetupPalette(const wxPalette& palette);
+    virtual wxPalette CreateDefaultPalette();
+    void OnQueryNewPalette(wxQueryNewPaletteEvent& event);
+    void OnPaletteChanged(wxPaletteChangedEvent& event);
+#endif // wxUSE_PALETTE
+
+    // deprecated methods using the implicit wxGLContext, associate the context
+    // explicitly with the window instead
+#if WXWIN_COMPATIBILITY_2_8
+    wxDEPRECATED(
+    wxGLCanvas(wxWindow *parent,
+               wxWindowID id = wxID_ANY,
+               const wxPoint& pos = wxDefaultPosition,
+               const wxSize& size = wxDefaultSize,
+               long style = 0,
+               const wxString& name = wxGLCanvasName,
+               const int *attribList = NULL,
+               const wxPalette& palette = wxNullPalette)
+    );
+
+    wxDEPRECATED(
+    wxGLCanvas(wxWindow *parent,
+               const wxGLContext *shared,
+               wxWindowID id = wxID_ANY,
+               const wxPoint& pos = wxDefaultPosition,
+               const wxSize& size = wxDefaultSize,
+               long style = 0,
+               const wxString& name = wxGLCanvasName,
+               const int *attribList = NULL,
+               const wxPalette& palette = wxNullPalette)
+    );
+
+    wxDEPRECATED(
+    wxGLCanvas(wxWindow *parent,
+               const wxGLCanvas *shared,
+               wxWindowID id = wxID_ANY,
+               const wxPoint& pos = wxDefaultPosition,
+               const wxSize& size = wxDefaultSize,
+               long style = 0,
+               const wxString& name = wxGLCanvasName,
+               const int *attribList = NULL,
+               const wxPalette& palette = wxNullPalette)
+    );
+#endif // WXWIN_COMPATIBILITY_2_8
+
+protected:
+    // common part of all ctors
+    void Init();
+
+    // the real window creation function, Create() may reuse it twice as we may
+    // need to create an OpenGL window to query the available extensions and
+    // then potentially delete and recreate it with another pixel format
+    bool CreateWindow(wxWindow *parent,
+                      wxWindowID id = wxID_ANY,
+                      const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxDefaultSize,
+                      long style = 0,
+                      const wxString& name = wxGLCanvasName);
+
+    // set up the pixel format using the given attributes and palette
+    int DoSetup(PIXELFORMATDESCRIPTOR &pfd, const int *attribList);
+
+
+    // HDC for this window, we keep it all the time
+    HDC m_hDC;
+
+private:
+    DECLARE_EVENT_TABLE()
+    DECLARE_CLASS(wxGLCanvas)
+};
+
+#endif // _WX_GLCANVAS_H_

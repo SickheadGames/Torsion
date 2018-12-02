@@ -4,9 +4,8 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/08/11
-// RCS-ID:      $Id: icon.h,v 1.6 2004/05/23 20:50:42 JS Exp $
 // Copyright:   (c) 2003 David Elliott
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_COCOA_ICON_H__
@@ -18,34 +17,24 @@
 // ========================================================================
 // wxIcon
 // ========================================================================
-class WXDLLEXPORT wxIcon: public wxGDIObject
+class WXDLLIMPEXP_CORE wxIcon : public wxGDIObject
 {
-    DECLARE_DYNAMIC_CLASS(wxIcon)
 public:
     wxIcon();
 
-    // Copy constructors
-    wxIcon(const wxIcon& icon)
-    {   Ref(icon); }
-
-    wxIcon(const char **data) { CreateFromXpm(data); }
-    wxIcon(char **data) { CreateFromXpm((const char**)data); }
+    wxIcon(const char* const* data) { CreateFromXpm(data); }
     wxIcon(const char bits[], int width , int height );
-    wxIcon(const wxString& name, int flags = wxBITMAP_TYPE_ICON_RESOURCE,
-        int desiredWidth = -1, int desiredHeight = -1);
+    wxIcon(const wxString& name, int flags = wxICON_DEFAULT_TYPE,
+           int desiredWidth = -1, int desiredHeight = -1);
     wxIcon(const wxIconLocation& loc)
     {
         LoadFile(loc.GetFileName(), wxBITMAP_TYPE_ICON);
     }
-    ~wxIcon();
+    virtual ~wxIcon();
 
-    bool LoadFile(const wxString& name, wxBitmapType flags /* = wxBITMAP_TYPE_ICON_RESOURCE */ ,
-        int desiredWidth /* = -1 */ , int desiredHeight = -1);
-    bool LoadFile(const wxString& name, wxBitmapType flags = wxBITMAP_TYPE_ICON_RESOURCE )
-    {   return LoadFile( name , flags , -1 , -1 ) ; }
+    bool LoadFile(const wxString& name, wxBitmapType flags = wxICON_DEFAULT_TYPE,
+                  int desiredWidth=-1, int desiredHeight=-1);
 
-    wxIcon& operator=(const wxIcon& icon)
-    {   if (this != &icon) Ref(icon); return *this; }
     bool operator==(const wxIcon& icon) const
     {   return m_refData == icon.m_refData; }
     bool operator!=(const wxIcon& icon) const { return !(*this == icon); }
@@ -55,12 +44,20 @@ public:
     // ctors, assignment operators...), but it's ok to have such function
     void CopyFromBitmap(const wxBitmap& bmp);
 
-    bool Ok() const;
     int GetWidth() const;
     int GetHeight() const;
 
+    wxSize GetSize() const { return wxSize(GetWidth(), GetHeight()); }
+
     WX_NSImage GetNSImage() const;
-    bool CreateFromXpm(const char **bits);
+    bool CreateFromXpm(const char* const* bits);
+
+protected:
+    virtual wxGDIRefData *CreateGDIRefData() const;
+    virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *data) const;
+
+private:
+    DECLARE_DYNAMIC_CLASS(wxIcon)
 };
 
 #endif // _WX_COCOA_ICON_H__

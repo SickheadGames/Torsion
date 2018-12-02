@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     22.10.99
-// RCS-ID:      $Id: listbox.h,v 1.27 2005/04/08 14:33:56 MW Exp $
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,10 +15,6 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "listboxbase.h"
-#endif
-
 #include "wx/defs.h"
 
 #if wxUSE_LISTBOX
@@ -27,45 +22,33 @@
 #include "wx/ctrlsub.h"         // base class
 
 // forward declarations are enough here
-class WXDLLIMPEXP_BASE wxArrayInt;
-class WXDLLIMPEXP_BASE wxArrayString;
+class WXDLLIMPEXP_FWD_BASE wxArrayInt;
+class WXDLLIMPEXP_FWD_BASE wxArrayString;
 
 // ----------------------------------------------------------------------------
 // global data
 // ----------------------------------------------------------------------------
 
-extern WXDLLEXPORT_DATA(const wxChar*) wxListBoxNameStr;
+extern WXDLLIMPEXP_DATA_CORE(const char) wxListBoxNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxListBox interface is defined by the class wxListBoxBase
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxListBoxBase : public wxControlWithItems
+class WXDLLIMPEXP_CORE wxListBoxBase : public wxControlWithItems
 {
 public:
     wxListBoxBase() { }
     virtual ~wxListBoxBase();
 
-    // all generic methods are in wxControlWithItems, except for the following
-    // ones which are not yet implemented by wxChoice/wxComboBox
-    void Insert(const wxString& item, int pos)
-        { DoInsert(item, pos); }
-    void Insert(const wxString& item, int pos, void *clientData)
-        { DoInsert(item, pos); SetClientData(pos, clientData); }
-    void Insert(const wxString& item, int pos, wxClientData *clientData)
-        { DoInsert(item, pos); SetClientObject(pos, clientData); }
-
-    void InsertItems(int nItems, const wxString *items, int pos);
-    void InsertItems(const wxArrayString& items, int pos)
-        { DoInsertItems(items, pos); }
-
-    void Set(int n, const wxString* items, void **clientData = NULL);
-    void Set(const wxArrayString& items, void **clientData = NULL)
-        { DoSetItems(items, clientData); }
+    void InsertItems(unsigned int nItems, const wxString *items, unsigned int pos)
+        { Insert(nItems, items, pos); }
+    void InsertItems(const wxArrayString& items, unsigned int pos)
+        { Insert(items, pos); }
 
     // multiple selection logic
     virtual bool IsSelected(int n) const = 0;
-    virtual void SetSelection(int n) { DoSetSelection(n, true); }
+    virtual void SetSelection(int n);
     void SetSelection(int n, bool select) { DoSetSelection(n, select); }
     void Deselect(int n) { DoSetSelection(n, false); }
     void DeselectAll(int itemToLeaveSelected = -1);
@@ -100,33 +83,58 @@ public:
                (m_windowStyle & wxLB_EXTENDED);
     }
 
-    // return true if this listbox is sorted
-    bool IsSorted() const { return (m_windowStyle & wxLB_SORT) != 0; }
+    // override wxItemContainer::IsSorted
+    virtual bool IsSorted() const { return HasFlag( wxLB_SORT ); }
 
     // emulate selecting or deselecting the item event.GetInt() (depending on
     // event.GetExtraLong())
     void Command(wxCommandEvent& event);
 
-    // compatibility - these functions are deprecated, use the new ones
-    // instead
-    bool Selected(int n) const { return IsSelected(n); }
+    // return the index of the item at this position or wxNOT_FOUND
+    int HitTest(const wxPoint& point) const { return DoListHitTest(point); }
+    int HitTest(int x, int y) const { return DoListHitTest(wxPoint(x, y)); }
+
 
 protected:
-    // NB: due to wxGTK implementation details, DoInsert() is implemented
-    //     using DoInsertItems() and not the other way round
-    virtual int DoInsert(const wxString& item, int pos)
-        { InsertItems(1, &item, pos); return pos; }
-
-    // to be implemented in derived classes
-    virtual void DoInsertItems(const wxArrayString& items, int pos) = 0;
-    virtual void DoSetItems(const wxArrayString& items, void **clientData) = 0;
-
     virtual void DoSetFirstItem(int n) = 0;
 
     virtual void DoSetSelection(int n, bool select) = 0;
 
+    // there is already wxWindow::DoHitTest() so call this one differently
+    virtual int DoListHitTest(const wxPoint& WXUNUSED(point)) const
+        { return wxNOT_FOUND; }
 
-    DECLARE_NO_COPY_CLASS(wxListBoxBase)
+    // Helper for the code generating events in single selection mode: updates
+    // m_oldSelections and return true if the selection really changed.
+    // Otherwise just returns false.
+    bool DoChangeSingleSelection(int item);
+
+    // Helper for generating events in multiple and extended mode: compare the
+    // current selections with the previously recorded ones (in
+    // m_oldSelections) and send the appropriate event if they differ,
+    // otherwise just return false.
+    bool CalcAndSendEvent();
+
+    // Send a listbox (de)selection or double click event.
+    //
+    // Returns true if the event was processed.
+    bool SendEvent(wxEventType evtType, int item, bool selected);
+
+    // Array storing the indices of all selected items that we already notified
+    // the user code about for multi selection list boxes.
+    //
+    // For single selection list boxes, we reuse this array to store the single
+    // currently selected item, this is used by DoChangeSingleSelection().
+    //
+    // TODO-OPT: wxSelectionStore would be more efficient for big list boxes.
+    wxArrayInt m_oldSelections;
+
+    // Update m_oldSelections with currently selected items (does nothing in
+    // single selection mode on platforms other than MSW).
+    void UpdateOldSelections();
+
+private:
+    wxDECLARE_NO_COPY_CLASS(wxListBoxBase);
 };
 
 // ----------------------------------------------------------------------------
@@ -139,10 +147,12 @@ protected:
     #include "wx/msw/listbox.h"
 #elif defined(__WXMOTIF__)
     #include "wx/motif/listbox.h"
-#elif defined(__WXGTK__)
+#elif defined(__WXGTK20__)
     #include "wx/gtk/listbox.h"
+#elif defined(__WXGTK__)
+  #include "wx/gtk1/listbox.h"
 #elif defined(__WXMAC__)
-    #include "wx/mac/listbox.h"
+    #include "wx/osx/listbox.h"
 #elif defined(__WXPM__)
     #include "wx/os2/listbox.h"
 #elif defined(__WXCOCOA__)

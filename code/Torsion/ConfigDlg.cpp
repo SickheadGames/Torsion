@@ -121,7 +121,7 @@ void ConfigDlg::CreateControls()
    m_PropGrid->GetGrid()->SetMarginColour( active );
    m_PropGrid->GetGrid()->SetLineColour( active );
    m_PropGrid->GetGrid()->SetCaptionBackgroundColour( active );
-   m_PropGrid->GetGrid()->SetCaptionForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_APPWORKSPACE ) );
+//   m_PropGrid->GetGrid()->SetCaptionForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_APPWORKSPACE ) );
    m_PropGrid->SetDescBoxHeight( 60 );
 }
 
@@ -136,28 +136,28 @@ int ConfigDlg::ShowModal( ProjectConfig* config, ProjectConfigArray* configs, co
    m_PropGrid->AddPage();
 
    // Add the general properties.
-   m_PropGrid->Append( wxPropertyCategory(wxT("General")) );
-   wxPGId id = m_PropGrid->Append( wxStringProperty(wxT("Name"), wxPG_LABEL, m_Config->GetName()) );
+   m_PropGrid->Append( new wxPropertyCategory(wxT("General")) );
+   wxPGProperty* id = m_PropGrid->Append(new wxStringProperty(wxT("Name"), wxPG_LABEL, m_Config->GetName()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The unique configuration name.") );
    
    wxString exe = m_Config->GetExe();
-   id = m_PropGrid->Append( wxFileProperty(wxT("Executable"), wxPG_LABEL, exe ) );
+   id = m_PropGrid->Append(new wxFileProperty(wxT("Executable"), wxPG_LABEL, exe ) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The game executable for this configuration.") );
    m_PropGrid->SetPropertyAttribute(wxT("Executable"), wxPG_FILE_INITIAL_PATH, m_BaseDir );
    m_PropGrid->SetPropertyAttribute(wxT("Executable"), wxPG_FILE_WILDCARD,
                                  wxT("Executable files (*.exe)|*.exe"));
 
-   id = m_PropGrid->Append( wxStringProperty(wxT("Arguments"), wxPG_LABEL, m_Config->GetArgs()) );
+   id = m_PropGrid->Append(new wxStringProperty(wxT("Arguments"), wxPG_LABEL, m_Config->GetArgs()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("The optional arguments to pass to the executable on launch.") );
-   m_PropGrid->Append( wxPropertyCategory(wxT("Debugging")) );
-   id = m_PropGrid->Append( wxBoolProperty(wxT("Enable Precompile"), wxPG_LABEL, m_Config->Precompile()) );
+   m_PropGrid->Append(new  wxPropertyCategory(wxT("Debugging")) );
+   id = m_PropGrid->Append(new  wxBoolProperty(wxT("Enable Precompile"), wxPG_LABEL, m_Config->Precompile()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("This toggles the precompile step before execution of the configuration.") );
-   id = m_PropGrid->Append( wxBoolProperty(wxT("Enable setModPaths"), wxPG_LABEL, m_Config->UseSetModPaths()) );
+   id = m_PropGrid->Append(new  wxBoolProperty(wxT("Enable setModPaths"), wxPG_LABEL, m_Config->UseSetModPaths()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("This will slow down the precompile step, but it is needed for some versions of Torque or when TORQUE_SHIPPING is defined.") );
-   id = m_PropGrid->Append( wxBoolProperty(wxT("OneClick Debugging"), wxPG_LABEL, m_Config->InjectDebugger()) );
+   id = m_PropGrid->Append(new  wxBoolProperty(wxT("OneClick Debugging"), wxPG_LABEL, m_Config->InjectDebugger()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("Enables automatic injection of the debugger startup hook in to the main entry script.") );
-   m_PropGrid->Append( wxPropertyCategory(wxT("ScriptSense")) );
-   id = m_PropGrid->Append( wxBoolProperty(wxT("Build Exports"), wxPG_LABEL, m_Config->HasExports()) );
+   m_PropGrid->Append(new  wxPropertyCategory(wxT("ScriptSense")) );
+   id = m_PropGrid->Append(new  wxBoolProperty(wxT("Build Exports"), wxPG_LABEL, m_Config->HasExports()) );
    m_PropGrid->SetPropertyHelpString( id, wxT("This enables extraction of the engine exports from this executable.") );
 
    // Let's use checkboxes instead of a choice list.
@@ -306,7 +306,8 @@ void ConfigDlg::OnOkClick( wxCommandEvent& event )
    m_Config->SetInjectDebugger( m_PropGrid->GetPropertyValueAsBool( "Debugging.OneClick Debugging" ) );
    m_Config->SetExports( m_PropGrid->GetPropertyValueAsBool( "ScriptSense.Build Exports" ) );
 
-   wxDialog::OnOK( event );
+   //wxDialog::OnOK( event );
+   event.Skip();
 }
 
 

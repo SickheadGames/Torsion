@@ -260,7 +260,7 @@ void FindReplaceDlg::OnFindClick( wxCommandEvent& event )
                      ( m_WholeWordCtrl->GetValue() ? wxFR_WHOLEWORD : 0 ) );
 
    wxASSERT( GetParent() );
-   GetParent()->ProcessEvent( fevent );
+   GetParent()->GetEventHandler()->ProcessEvent( fevent );
 }
 
 /*!
@@ -323,7 +323,7 @@ void FindReplaceDlg::OnReplaceClick( wxCommandEvent& event )
                      ( m_WholeWordCtrl->GetValue() ? wxFR_WHOLEWORD : 0 ) );
 
    wxASSERT( GetParent() );
-   GetParent()->ProcessEvent( fevent );
+   GetParent()->GetEventHandler()->ProcessEvent( fevent );
 }
 
 
@@ -344,7 +344,7 @@ void FindReplaceDlg::OnReplaceAllClick( wxCommandEvent& event )
                      ( m_WholeWordCtrl->GetValue() ? wxFR_WHOLEWORD : 0 ) );
 
    wxASSERT( GetParent() );
-   GetParent()->ProcessEvent( fevent );
+   GetParent()->GetEventHandler()->ProcessEvent( fevent );
 }
 
 
@@ -357,7 +357,7 @@ void FindReplaceDlg::OnCloseClick( wxCommandEvent& event )
    // Let the frame deal with closing us!
    wxFindDialogEvent fevent( wxEVT_COMMAND_FIND_CLOSE );
    wxASSERT( GetParent() );
-   GetParent()->AddPendingEvent( fevent );
+   GetParent()->GetEventHandler()->AddPendingEvent( fevent );
 }
 
 
@@ -372,5 +372,5 @@ void FindReplaceDlg::OnCloseWindow( wxCloseEvent& event )
    // Let the frame deal with closing us!
    wxFindDialogEvent fevent( wxEVT_COMMAND_FIND_CLOSE );
    wxASSERT( GetParent() );
-   GetParent()->AddPendingEvent( fevent );
+   GetParent()->GetEventHandler()->AddPendingEvent( fevent );
 }

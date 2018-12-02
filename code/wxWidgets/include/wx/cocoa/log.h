@@ -4,7 +4,6 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2004/02/07
-// RCS-ID:      $Id: log.h,v 1.3 2004/05/23 20:50:42 JS Exp $
 // Copyright:   (c) 2004 David Elliott
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////

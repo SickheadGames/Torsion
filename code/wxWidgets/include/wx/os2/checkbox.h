@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        checkbox.h
+// Name:        wx/os2/checkbox.h
 // Purpose:     wxCheckBox class
 // Author:      David Webster
 // Modified by:
 // Created:     10/13/99
-// RCS-ID:      $Id: checkbox.h,v 1.12 2004/05/23 20:51:38 JS Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,8 +14,8 @@
 #include "wx/control.h"
 
 // Checkbox item (single checkbox)
-class WXDLLEXPORT wxBitmap;
-class WXDLLEXPORT wxCheckBox : public wxCheckBoxBase
+class WXDLLIMPEXP_FWD_CORE wxBitmap;
+class WXDLLIMPEXP_CORE wxCheckBox : public wxCheckBoxBase
 {
  public:
     inline wxCheckBox() { }
@@ -66,7 +65,7 @@ private:
   DECLARE_DYNAMIC_CLASS(wxCheckBox)
 };
 
-class WXDLLEXPORT wxBitmapCheckBox: public wxCheckBox
+class WXDLLIMPEXP_CORE wxBitmapCheckBox: public wxCheckBox
 {
  public:
 
@@ -110,7 +109,7 @@ class WXDLLEXPORT wxBitmapCheckBox: public wxCheckBox
 private:
 
     virtual void SetLabel(const wxString& rsString)
-    { wxCheckBox::SetLabel(rsString); };
+    { wxCheckBox::SetLabel(rsString); }
     DECLARE_DYNAMIC_CLASS(wxBitmapCheckBox)
 };
 #endif

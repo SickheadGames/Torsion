@@ -1,30 +1,24 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        helpchm.h
+// Name:        wx/msw/helpchm.h
 // Purpose:     Help system: MS HTML Help implementation
 // Author:      Julian Smart
 // Modified by:
 // Created:     16/04/2000
-// RCS-ID:      $Id: helpchm.h,v 1.10 2004/08/27 18:59:33 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_HELPCHM_H_
-#define _WX_HELPCHM_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "helpchm.h"
-#endif
+#ifndef _WX_MSW_HELPCHM_H_
+#define _WX_MSW_HELPCHM_H_
 
 #if wxUSE_MS_HTML_HELP
 
 #include "wx/helpbase.h"
 
-class WXDLLEXPORT wxCHMHelpController : public wxHelpControllerBase
+class WXDLLIMPEXP_CORE wxCHMHelpController : public wxHelpControllerBase
 {
 public:
-    wxCHMHelpController() { }
-    virtual ~wxCHMHelpController();
+    wxCHMHelpController(wxWindow* parentWindow = NULL): wxHelpControllerBase(parentWindow) { }
 
     // Must call this to set the filename
     virtual bool Initialize(const wxString& file);
@@ -44,17 +38,52 @@ public:
 
     wxString GetHelpFile() const { return m_helpFile; }
 
-protected:
-    // Append extension if necessary.
-    wxString GetValidFilename(const wxString& file) const;
+    // helper of DisplayTextPopup(), also used in wxSimpleHelpProvider::ShowHelp
+    static bool ShowContextHelpPopup(const wxString& text,
+                                     const wxPoint& pos,
+                                     wxWindow *window);
 
 protected:
+    // get the name of the CHM file we use from our m_helpFile
+    wxString GetValidFilename() const;
+
+    // Call HtmlHelp() with the provided parameters (both overloads do the same
+    // thing but allow to avoid casts in the calling code) and return false
+    // (but don't crash) if HTML help is unavailable
+    static bool CallHtmlHelp(wxWindow *win, const wxChar *str,
+                             unsigned cmd, WXWPARAM param);
+    static bool CallHtmlHelp(wxWindow *win, const wxChar *str,
+                             unsigned cmd, const void *param = NULL)
+    {
+        return CallHtmlHelp(win, str, cmd, reinterpret_cast<WXWPARAM>(param));
+    }
+
+    // even simpler wrappers using GetParentWindow() and GetValidFilename() as
+    // the first 2 HtmlHelp() parameters
+    bool CallHtmlHelp(unsigned cmd, WXWPARAM param)
+    {
+        return CallHtmlHelp(GetParentWindow(), GetValidFilename().t_str(),
+                            cmd, param);
+    }
+
+    bool CallHtmlHelp(unsigned cmd, const void *param = NULL)
+    {
+        return CallHtmlHelp(cmd, reinterpret_cast<WXWPARAM>(param));
+    }
+
+    // wrapper around CallHtmlHelp(HH_DISPLAY_TEXT_POPUP): only one of text and
+    // contextId parameters can be non-NULL/non-zero
+    static bool DoDisplayTextPopup(const wxChar *text,
+                                   const wxPoint& pos,
+                                   int contextId,
+                                   wxWindow *window);
+
+
     wxString m_helpFile;
 
-    DECLARE_CLASS(wxCHMHelpController)
+    DECLARE_DYNAMIC_CLASS(wxCHMHelpController)
 };
 
 #endif // wxUSE_MS_HTML_HELP
 
-#endif
-// _WX_HELPCHM_H_
+#endif // _WX_MSW_HELPCHM_H_

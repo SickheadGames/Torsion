@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        textctrl.h
+// Name:        wx/os2/textctrl.h
 // Purpose:     wxTextCtrl class
 // Author:      David Webster
 // Modified by:
 // Created:     10/17/99
-// RCS-ID:      $Id: textctrl.h,v 1.20 2005/01/19 16:25:10 ABX Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,7 +13,7 @@
 
 typedef int (wxCALLBACK *wxTreeCtrlCompare)(long lItem1, long lItem2, long lSortData);
 
-class WXDLLEXPORT wxTextCtrl : public wxTextCtrlBase
+class WXDLLIMPEXP_CORE wxTextCtrl : public wxTextCtrlBase
 {
 public:
     wxTextCtrl();
@@ -30,7 +29,7 @@ public:
     {
         Create(pParent, vId, rsValue, rPos, rSize, lStyle, rValidator, rsName);
     }
-    ~wxTextCtrl();
+    virtual ~wxTextCtrl();
 
     bool Create( wxWindow*          pParent
                 ,wxWindowID         vId
@@ -47,7 +46,6 @@ public:
     // ----------------------------------
     //
     virtual      wxString GetValue(void) const;
-    virtual void SetValue(const wxString& rsValue);
 
     virtual int      GetLineLength(long nLineNo) const;
     virtual wxString GetLineText(long nLineNo) const;
@@ -72,7 +70,7 @@ public:
                         ,long lTo
                        );
 
-    virtual bool LoadFile(const wxString& rsFile);
+    virtual bool DoLoadFile(const wxString& rsFile, int fileType);
 
     virtual void MarkDirty();
     virtual void DiscardEdits(void);
@@ -180,7 +178,16 @@ protected:
     virtual WXDWORD OS2GetStyle( long     lStyle
                                 ,WXDWORD* dwExstyle
                                ) const;
+
+    virtual void DoSetValue(const wxString &value, int flags = 0);
+
+    bool m_bSkipUpdate;
+
 private:
+    // implement wxTextEntry pure virtual: it implements all the operations for
+    // the simple EDIT controls
+    virtual WXHWND GetEditHWND() const { return m_hWnd; }
+
     bool                            m_bIsMLE;
     DECLARE_EVENT_TABLE()
     DECLARE_DYNAMIC_CLASS(wxTextCtrl)

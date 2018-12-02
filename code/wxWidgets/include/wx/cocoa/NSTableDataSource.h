@@ -4,13 +4,14 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/08/05
-// RCS-ID:      $Id: NSTableDataSource.h,v 1.3 2004/05/23 20:50:42 JS Exp $
 // Copyright:   (c) 2003 David Elliott
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WX_COCOA_NSTABLEDATASOURCE_H__
 #define __WX_COCOA_NSTABLEDATASOURCE_H__
+
+#include "wx/cocoa/objc/objc_uniquifying.h"
 
 #import <Foundation/NSObject.h>
 
@@ -28,5 +29,6 @@
     objectValueForTableColumn: (NSTableColumn *)tableColumn
     row: (int)rowIndex;
 @end // wxCocoaNSTableDataSource
+WX_DECLARE_GET_OBJC_CLASS(wxCocoaNSTableDataSource,NSObject)
 
 #endif // _WX_COCOA_NSTABLEDATASOURCE_H_

@@ -1,12 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        sound.h
+// Name:        wx/unix/sound.h
 // Purpose:     wxSound class
 // Author:      Julian Smart, Vaclav Slavik
 // Modified by:
 // Created:     25/10/98
-// RCS-ID:      $Id: sound.h,v 1.6 2005/08/02 18:16:42 MW Exp $
 // Copyright:   (c) Julian Smart, Vaclav Slavik
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_SOUND_H_
@@ -16,19 +15,15 @@
 
 #if wxUSE_SOUND
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "sound.h"
-#endif
-
 #include "wx/object.h"
 
 // ----------------------------------------------------------------------------
 // wxSound: simple audio playback class
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxSoundBackend;
-class WXDLLIMPEXP_ADV wxSound;
-class WXDLLIMPEXP_BASE wxDynamicLibrary;
+class WXDLLIMPEXP_FWD_ADV wxSoundBackend;
+class WXDLLIMPEXP_FWD_ADV wxSound;
+class WXDLLIMPEXP_FWD_BASE wxDynamicLibrary;
 
 /// Sound data, as loaded from .wav file:
 class WXDLLIMPEXP_ADV wxSoundData
@@ -37,7 +32,7 @@ public:
     wxSoundData() : m_refCnt(1) {}
     void IncRef();
     void DecRef();
-    
+
     // .wav header information:
     unsigned m_channels;       // num of channels (mono:1, stereo:2)
     unsigned m_samplingRate;
@@ -45,7 +40,7 @@ public:
                                // samples (wxUint8), if 16 then signed 16bit
                                // (wxInt16)
     unsigned m_samples;        // length in samples:
-    
+
     // wave data:
     size_t   m_dataBytes;
     wxUint8 *m_data;           // m_dataBytes bytes of data
@@ -64,32 +59,32 @@ class WXDLLIMPEXP_ADV wxSound : public wxSoundBase
 public:
     wxSound();
     wxSound(const wxString& fileName, bool isResource = false);
-    wxSound(int size, const wxByte* data);
-    ~wxSound();
+    wxSound(size_t size, const void* data);
+    virtual ~wxSound();
 
     // Create from resource or file
     bool Create(const wxString& fileName, bool isResource = false);
     // Create from data
-    bool Create(int size, const wxByte* data);
+    bool Create(size_t size, const void* data);
 
     bool IsOk() const { return m_data != NULL; }
-   
+
     // Stop playing any sound
     static void Stop();
 
     // Returns true if a sound is being played
     static bool IsPlaying();
-    
+
     // for internal use
     static void UnloadBackend();
-    
+
 protected:
     bool DoPlay(unsigned flags) const;
 
     static void EnsureBackend();
     void Free();
-    bool LoadWAV(const wxUint8 *data, size_t length, bool copyData);
-    
+    bool LoadWAV(const void* data, size_t length, bool copyData);
+
     static wxSoundBackend *ms_backend;
 #if wxUSE_LIBSDL && wxUSE_PLUGINS
     // FIXME - temporary, until we have plugins architecture
@@ -102,7 +97,7 @@ private:
 
 
 // ----------------------------------------------------------------------------
-// wxSoundBackend: 
+// wxSoundBackend:
 // ----------------------------------------------------------------------------
 
 // This is interface to sound playing implementation. There are multiple
@@ -125,7 +120,7 @@ class WXDLLIMPEXP_ADV wxSoundBackend
 {
 public:
     virtual ~wxSoundBackend() {}
-    
+
     // Returns the name of the backend (e.g. "Open Sound System")
     virtual wxString GetName() const = 0;
 
@@ -141,7 +136,7 @@ public:
     // playback, otherwise it is left up to the backend (will usually be more
     // effective).
     virtual bool HasNativeAsyncPlayback() const = 0;
-    
+
     // Plays the sound. flags are same flags as those passed to wxSound::Play.
     // The function should periodically check the value of
     // status->m_stopRequested and terminate if it is set to true (it may
@@ -161,4 +156,5 @@ public:
 
 #endif // wxUSE_SOUND
 
-#endif
+#endif // _WX_SOUND_H_
+

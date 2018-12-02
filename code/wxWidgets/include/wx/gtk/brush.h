@@ -1,31 +1,16 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        brush.h
+// Name:        wx/gtk/brush.h
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id: brush.h,v 1.20 2005/08/02 22:57:51 MW Exp $
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef _WX_GTK_BRUSH_H_
+#define _WX_GTK_BRUSH_H_
 
-#ifndef __GTKBRUSHH__
-#define __GTKBRUSHH__
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface
-#endif
-
-#include "wx/defs.h"
-#include "wx/object.h"
-#include "wx/string.h"
-#include "wx/gdiobj.h"
-#include "wx/bitmap.h"
-
-//-----------------------------------------------------------------------------
-// classes
-//-----------------------------------------------------------------------------
-
-class WXDLLIMPEXP_CORE wxBrush;
+class WXDLLIMPEXP_FWD_CORE wxBitmap;
+class WXDLLIMPEXP_FWD_CORE wxColour;
 
 //-----------------------------------------------------------------------------
 // wxBrush
@@ -36,35 +21,35 @@ class WXDLLIMPEXP_CORE wxBrush: public wxBrushBase
 public:
     wxBrush() { }
 
-    wxBrush( const wxColour &colour, int style = wxSOLID );
+    wxBrush( const wxColour &colour, wxBrushStyle style = wxBRUSHSTYLE_SOLID );
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
+    wxDEPRECATED_FUTURE( wxBrush(const wxColour& col, int style) );
+#endif
     wxBrush( const wxBitmap &stippleBitmap );
-    ~wxBrush();
+    virtual ~wxBrush();
 
-    wxBrush( const wxBrush &brush )
-        : wxBrushBase()
-        { Ref(brush); }
-    wxBrush& operator = ( const wxBrush& brush ) { Ref(brush); return *this; }
+    bool operator==(const wxBrush& brush) const;
+    bool operator!=(const wxBrush& brush) const { return !(*this == brush); }
 
-    bool Ok() const { return m_refData != NULL; }
-
-    bool operator == ( const wxBrush& brush ) const;
-    bool operator != (const wxBrush& brush) const { return !(*this == brush); }
-
-    virtual int GetStyle() const;
-    wxColour &GetColour() const;
+    wxBrushStyle GetStyle() const;
+    wxColour GetColour() const;
     wxBitmap *GetStipple() const;
 
     void SetColour( const wxColour& col );
     void SetColour( unsigned char r, unsigned char g, unsigned char b );
-    void SetStyle( int style );
+    void SetStyle( wxBrushStyle style );
     void SetStipple( const wxBitmap& stipple );
 
-private:
-    // ref counting code
-    virtual wxObjectRefData *CreateRefData() const;
-    virtual wxObjectRefData *CloneRefData(const wxObjectRefData *data) const;
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
+    wxDEPRECATED_FUTURE( void SetStyle(int style) )
+        { SetStyle((wxBrushStyle)style); }
+#endif
+
+protected:
+    virtual wxGDIRefData *CreateGDIRefData() const;
+    virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *data) const;
 
     DECLARE_DYNAMIC_CLASS(wxBrush)
 };
 
-#endif // __GTKBRUSHH__
+#endif // _WX_GTK_BRUSH_H_

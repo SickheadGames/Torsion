@@ -1,26 +1,21 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        checkbox.h
+// Name:        wx/motif/checkbox.h
 // Purpose:     wxCheckBox class
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id: checkbox.h,v 1.18 2004/06/05 21:01:00 MBN Exp $
 // Copyright:   (c) Julian Smart
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_CHECKBOX_H_
 #define _WX_CHECKBOX_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "checkbox.h"
-#endif
-
 // Checkbox item (single checkbox)
-class WXDLLEXPORT wxCheckBox: public wxCheckBoxBase
+class WXDLLIMPEXP_CORE wxCheckBox: public wxCheckBoxBase
 {
     DECLARE_DYNAMIC_CLASS(wxCheckBox)
-        
+
 public:
     inline wxCheckBox() { Init(); }
     inline wxCheckBox(wxWindow *parent, wxWindowID id, const wxString& label,
@@ -33,7 +28,7 @@ public:
 
         Create(parent, id, label, pos, size, style, validator, name);
     }
-    
+
     bool Create(wxWindow *parent, wxWindowID id, const wxString& label,
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize, long style = 0,
@@ -42,14 +37,14 @@ public:
     virtual void SetValue(bool);
     virtual bool GetValue() const ;
     virtual void Command(wxCommandEvent& event);
-    
+
     // Implementation
     virtual void ChangeBackgroundColour();
 private:
     // common part of all constructors
     void Init()
     {
-        m_evtType = wxEVT_COMMAND_CHECKBOX_CLICKED;
+        m_evtType = wxEVT_CHECKBOX;
     }
 
     virtual void DoSet3StateValue(wxCheckBoxState state);
@@ -58,7 +53,7 @@ private:
 
     // public for the callback
 public:
-    // either exEVT_COMMAND_CHECKBOX_CLICKED or ..._TOGGLEBUTTON_CLICKED
+    // either wxEVT_CHECKBOX or ..._TOGGLEBUTTON
     wxEventType m_evtType;
 };
 

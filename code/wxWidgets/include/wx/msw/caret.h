@@ -1,10 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Name:        msw/caret.h
+// Name:        wx/msw/caret.h
 // Purpose:     wxCaret class - the MSW implementation of wxCaret
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     23.05.99
-// RCS-ID:      $Id: caret.h,v 1.8 2004/08/20 12:03:03 ABX Exp $
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,11 +11,7 @@
 #ifndef _WX_CARET_H_
 #define _WX_CARET_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "caret.h"
-#endif
-
-class WXDLLEXPORT wxCaret : public wxCaretBase
+class WXDLLIMPEXP_CORE wxCaret : public wxCaretBase
 {
 public:
     wxCaret() { Init(); }
@@ -60,7 +55,7 @@ protected:
 private:
     bool m_hasCaret;
 
-    DECLARE_NO_COPY_CLASS(wxCaret)
+    wxDECLARE_NO_COPY_CLASS(wxCaret);
 };
 
 #endif // _WX_CARET_H_

@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        font.h
+// Name:        wx/cocoa/font.h
 // Purpose:     wxFont class
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: font.h,v 1.6 2004/05/23 20:50:42 JS Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,101 +11,49 @@
 #ifndef _WX_FONT_H_
 #define _WX_FONT_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "font.h"
-#endif
-
-class WXDLLEXPORT wxFontRefData: public wxGDIRefData
-{
-    friend class WXDLLEXPORT wxFont;
-public:
-    wxFontRefData()
-        : m_fontId(0)
-        , m_pointSize(10)
-        , m_family(wxDEFAULT)
-        , m_style(wxNORMAL)
-        , m_weight(wxNORMAL)
-        , m_underlined(FALSE)
-        , m_faceName(wxT("Geneva"))
-        , m_encoding(wxFONTENCODING_DEFAULT)
-    {
-        Init(10, wxDEFAULT, wxNORMAL, wxNORMAL, FALSE,
-             wxT("Geneva"), wxFONTENCODING_DEFAULT);
-    }
-
-    wxFontRefData(const wxFontRefData& data)
-        : wxGDIRefData()
-        , m_fontId(data.m_fontId)
-        , m_pointSize(data.m_pointSize)
-        , m_family(data.m_family)
-        , m_style(data.m_style)
-        , m_weight(data.m_weight)
-        , m_underlined(data.m_underlined)
-        , m_faceName(data.m_faceName)
-        , m_encoding(data.m_encoding)
-    {
-        Init(data.m_pointSize, data.m_family, data.m_style, data.m_weight,
-             data.m_underlined, data.m_faceName, data.m_encoding);
-    }
-
-    wxFontRefData(int size,
-                  int family,
-                  int style,
-                  int weight,
-                  bool underlined,
-                  const wxString& faceName,
-                  wxFontEncoding encoding)
-        : m_fontId(0)
-        , m_pointSize(size)
-        , m_family(family)
-        , m_style(style)
-        , m_weight(weight)
-        , m_underlined(underlined)
-        , m_faceName(faceName)
-        , m_encoding(encoding)
-    {
-        Init(size, family, style, weight, underlined, faceName, encoding);
-    }
-
-    virtual ~wxFontRefData();
-protected:
-    // common part of all ctors
-    void Init(int size,
-              int family,
-              int style,
-              int weight,
-              bool underlined,
-              const wxString& faceName,
-              wxFontEncoding encoding);
-
-    // font characterstics
-    int            m_fontId;
-    int            m_pointSize;
-    int            m_family;
-    int            m_style;
-    int            m_weight;
-    bool           m_underlined;
-    wxString       m_faceName;
-    wxFontEncoding m_encoding;
-    
-public:
-};
 // ----------------------------------------------------------------------------
 // wxFont
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxFont : public wxFontBase
+DECLARE_WXCOCOA_OBJC_CLASS(NSFont);
+
+// Internal class that bridges us with code like wxSystemSettings
+class wxCocoaFontFactory;
+// We have c-tors/methods taking pointers of these
+class wxFontRefData;
+
+/*! @discussion
+    wxCocoa's implementation of wxFont is very incomplete.  In particular,
+    a lot of work needs to be done on wxNativeFontInfo which is currently
+    using the totally generic implementation.
+
+    See the documentation in src/cocoa/font.mm for more implementatoin details.
+ */
+class WXDLLIMPEXP_CORE wxFont : public wxFontBase
 {
+    friend class wxCocoaFontFactory;
 public:
-    // ctors and such
-    wxFont() { Init(); }
-    wxFont(const wxFont& font)
-        : wxFontBase()
+    /*! @abstract   Default construction of invalid font for 2-step construct then Create process.
+     */
+    wxFont() { }
+
+    wxFont(const wxFontInfo& info)
     {
-        Init();
-        Ref(font);
+        Create(info.GetPointSize(),
+               info.GetFamily(),
+               info.GetStyle(),
+               info.GetWeight(),
+               info.IsUnderlined(),
+               info.GetFaceName(),
+               info.GetEncoding());
+
+        if ( info.IsUsingSizeInPixels() )
+            SetPixelSize(info.GetPixelSize());
     }
 
+    /*! @abstract   Platform-independent construction with individual properties
+     */
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
     wxFont(int size,
            int family,
            int style,
@@ -115,24 +62,50 @@ public:
            const wxString& face = wxEmptyString,
            wxFontEncoding encoding = wxFONTENCODING_DEFAULT)
     {
-        Init();
-
+        (void)Create(size, (wxFontFamily)family, (wxFontStyle)style, (wxFontWeight)weight, underlined, face, encoding);
+    }
+#endif
+    wxFont(int size,
+           wxFontFamily family,
+           wxFontStyle style,
+           wxFontWeight weight,
+           bool underlined = FALSE,
+           const wxString& face = wxEmptyString,
+           wxFontEncoding encoding = wxFONTENCODING_DEFAULT)
+    {
         (void)Create(size, family, style, weight, underlined, face, encoding);
     }
 
+    wxFont(const wxSize& pixelSize,
+           wxFontFamily family,
+           wxFontStyle style,
+           wxFontWeight weight,
+           bool underlined = false,
+           const wxString& face = wxEmptyString,
+           wxFontEncoding encoding = wxFONTENCODING_DEFAULT)
+    {
+        Create(10, family, style, weight, underlined, face, encoding);
+        SetPixelSize(pixelSize);
+    }
+
+    /*! @abstract   Construction with opaque wxNativeFontInfo
+     */
     wxFont(const wxNativeFontInfo& info)
     {
-        Init();
-
         (void)Create(info);
     }
 
+    /*! @abstract   Construction with platform-dependent font descriptor string.
+        @param  fontDesc        Usually the result of wxNativeFontInfo::ToUserString()
+     */
     wxFont(const wxString& fontDesc);
 
+    // NOTE: Copy c-tor and assignment from wxObject is fine
+
     bool Create(int size,
-                int family,
-                int style,
-                int weight,
+                wxFontFamily family,
+                wxFontStyle style,
+                wxFontWeight weight,
                 bool underlined = FALSE,
                 const wxString& face = wxEmptyString,
                 wxFontEncoding encoding = wxFONTENCODING_DEFAULT);
@@ -141,37 +114,54 @@ public:
 
     virtual ~wxFont();
 
-    // assignment
-    wxFont& operator=(const wxFont& font);
-
     // implement base class pure virtuals
     virtual int GetPointSize() const;
-    virtual int GetFamily() const;
-    virtual int GetStyle() const;
-    virtual int GetWeight() const;
+    virtual wxFontStyle GetStyle() const;
+    virtual wxFontWeight GetWeight() const;
     virtual bool GetUnderlined() const;
     virtual wxString GetFaceName() const;
     virtual wxFontEncoding GetEncoding() const;
     virtual const wxNativeFontInfo *GetNativeFontInfo() const;
 
     virtual void SetPointSize(int pointSize);
-    virtual void SetFamily(int family);
-    virtual void SetStyle(int style);
-    virtual void SetWeight(int weight);
-    virtual void SetFaceName(const wxString& faceName);
+    virtual void SetFamily(wxFontFamily family);
+    virtual void SetStyle(wxFontStyle style);
+    virtual void SetWeight(wxFontWeight weight);
+    virtual bool SetFaceName(const wxString& faceName);
     virtual void SetUnderlined(bool underlined);
     virtual void SetEncoding(wxFontEncoding encoding);
+
+    wxDECLARE_COMMON_FONT_METHODS();
 
     // implementation only from now on
     // -------------------------------
 
+    /*! @abstract   Defined on some ports (not including this one) in wxGDIObject
+        @discussion
+        The intention here I suppose is to allow one to create a wxFont without yet
+        creating the underlying native object.  There's no point not to create the
+        NSFont immediately in wxCocoa so this is useless.
+        This method came from the stub code copied in the early days of wxCocoa.
+        FIXME(1): Remove this in trunk.  FIXME(2): Is it really a good idea for this to
+        be part of the public API for wxGDIObject?
+     */
     virtual bool RealizeResource();
 
 protected:
-    // common part of all ctors
-    void Init();
+    /*! @abstract   Internal constructor with ref data
+        @discussion
+        Takes ownership of @a refData.  That is, it is assumed that refData has either just been
+        created using new (which initializes its m_refCount to 1) or if you are sharing a ref that
+        you have called IncRef on it before passing it to this method.
+     */
+    explicit wxFont(wxFontRefData *refData)
+    {   Create(refData); }
+    bool Create(wxFontRefData *refData);
 
-    void Unshare();
+    virtual wxGDIRefData *CreateGDIRefData() const;
+    virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *data) const;
+
+    virtual wxFontFamily DoGetFamily() const;
 
 private:
     DECLARE_DYNAMIC_CLASS(wxFont)

@@ -1,19 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        htmlwin.h
+// Name:        wx/html/htmlwin.h
 // Purpose:     wxHtmlWindow class for parsing & displaying HTML
 // Author:      Vaclav Slavik
-// RCS-ID:      $Id: htmlwin.h,v 1.66 2005/05/31 09:18:24 JS Exp $
 // Copyright:   (c) 1999 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-
 #ifndef _WX_HTMLWIN_H_
 #define _WX_HTMLWIN_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "htmlwin.h"
-#endif
 
 #include "wx/defs.h"
 #if wxUSE_HTML
@@ -21,6 +15,7 @@
 #include "wx/window.h"
 #include "wx/scrolwin.h"
 #include "wx/config.h"
+#include "wx/stopwatch.h"
 #include "wx/html/winpars.h"
 #include "wx/html/htmlcell.h"
 #include "wx/filesys.h"
@@ -32,8 +27,10 @@ class wxHtmlProcessor;
 class wxHtmlWinModule;
 class wxHtmlHistoryArray;
 class wxHtmlProcessorList;
-class WXDLLIMPEXP_HTML wxHtmlWinAutoScrollTimer;
-
+class WXDLLIMPEXP_FWD_HTML wxHtmlWinAutoScrollTimer;
+class WXDLLIMPEXP_FWD_HTML wxHtmlCellEvent;
+class WXDLLIMPEXP_FWD_HTML wxHtmlLinkEvent;
+class WXDLLIMPEXP_FWD_CORE wxStatusBar;
 
 // wxHtmlWindow flags:
 #define wxHW_SCROLLBAR_NEVER    0x0002
@@ -42,13 +39,185 @@ class WXDLLIMPEXP_HTML wxHtmlWinAutoScrollTimer;
 
 #define wxHW_DEFAULT_STYLE      wxHW_SCROLLBAR_AUTO
 
-
-// enums for wxHtmlWindow::OnOpeningURL
+/// Enum for wxHtmlWindow::OnOpeningURL and wxHtmlWindowInterface::OnOpeningURL
 enum wxHtmlOpeningStatus
 {
+    /// Open the requested URL
     wxHTML_OPEN,
+    /// Do not open the URL
     wxHTML_BLOCK,
+    /// Redirect to another URL (returned from OnOpeningURL)
     wxHTML_REDIRECT
+};
+
+/**
+    Abstract interface to a HTML rendering window (such as wxHtmlWindow or
+    wxHtmlListBox) that is passed to wxHtmlWinParser. It encapsulates all
+    communication from the parser to the window.
+ */
+class WXDLLIMPEXP_HTML wxHtmlWindowInterface
+{
+public:
+    /// Ctor
+    wxHtmlWindowInterface() {}
+    virtual ~wxHtmlWindowInterface() {}
+
+    /**
+        Called by the parser to set window's title to given text.
+     */
+    virtual void SetHTMLWindowTitle(const wxString& title) = 0;
+
+    /**
+        Called when a link is clicked.
+
+        @param link information about the clicked link
+     */
+    virtual void OnHTMLLinkClicked(const wxHtmlLinkInfo& link) = 0;
+
+    /**
+        Called when the parser needs to open another URL (e.g. an image).
+
+        @param type     Type of the URL request (e.g. image)
+        @param url      URL the parser wants to open
+        @param redirect If the return value is wxHTML_REDIRECT, then the
+                        URL to redirect to will be stored in this variable
+                        (the pointer must never be NULL)
+
+        @return indicator of how to treat the request
+     */
+    virtual wxHtmlOpeningStatus OnHTMLOpeningURL(wxHtmlURLType type,
+                                                 const wxString& url,
+                                                 wxString *redirect) const = 0;
+
+    /**
+        Converts coordinates @a pos relative to given @a cell to
+        physical coordinates in the window.
+     */
+    virtual wxPoint HTMLCoordsToWindow(wxHtmlCell *cell,
+                                       const wxPoint& pos) const = 0;
+
+    /// Returns the window used for rendering (may be NULL).
+    virtual wxWindow* GetHTMLWindow() = 0;
+
+    /// Returns background colour to use by default.
+    virtual wxColour GetHTMLBackgroundColour() const = 0;
+
+    /// Sets window's background to colour @a clr.
+    virtual void SetHTMLBackgroundColour(const wxColour& clr) = 0;
+
+    /// Sets window's background to given bitmap.
+    virtual void SetHTMLBackgroundImage(const wxBitmap& bmpBg) = 0;
+
+    /// Sets status bar text.
+    virtual void SetHTMLStatusText(const wxString& text) = 0;
+
+    /// Type of mouse cursor
+    enum HTMLCursor
+    {
+        /// Standard mouse cursor (typically an arrow)
+        HTMLCursor_Default,
+        /// Cursor shown over links
+        HTMLCursor_Link,
+        /// Cursor shown over selectable text
+        HTMLCursor_Text
+    };
+
+    /**
+        Returns mouse cursor of given @a type.
+     */
+    virtual wxCursor GetHTMLCursor(HTMLCursor type) const = 0;
+};
+
+/**
+    Helper class that implements part of mouse handling for wxHtmlWindow and
+    wxHtmlListBox. Cursor changes and clicking on links are handled, text
+    selection is not.
+ */
+class WXDLLIMPEXP_HTML wxHtmlWindowMouseHelper
+{
+protected:
+    /**
+        Ctor.
+
+        @param iface Interface to the owner window.
+     */
+    wxHtmlWindowMouseHelper(wxHtmlWindowInterface *iface);
+
+    /**
+        Virtual dtor.
+
+        It is not really needed in this case but at leats it prevents gcc from
+        complaining about its absence.
+     */
+    virtual ~wxHtmlWindowMouseHelper() { }
+
+    /// Returns true if the mouse moved since the last call to HandleIdle
+    bool DidMouseMove() const { return m_tmpMouseMoved; }
+
+    /// Call this from EVT_MOTION event handler
+    void HandleMouseMoved();
+
+    /**
+        Call this from EVT_LEFT_UP handler (or, alternatively, EVT_LEFT_DOWN).
+
+        @param rootCell HTML cell inside which the click occured. This doesn't
+                        have to be the leaf cell, it can be e.g. toplevel
+                        container, but the mouse must be inside the container's
+                        area, otherwise the event would be ignored.
+        @param pos      Mouse position in coordinates relative to @a cell
+        @param event    The event that triggered the call
+     */
+    bool HandleMouseClick(wxHtmlCell *rootCell,
+                          const wxPoint& pos, const wxMouseEvent& event);
+
+    /**
+        Call this from OnInternalIdle of the HTML displaying window. Handles
+        mouse movements and must be used together with HandleMouseMoved.
+
+        @param rootCell HTML cell inside which the click occured. This doesn't
+                        have to be the leaf cell, it can be e.g. toplevel
+                        container, but the mouse must be inside the container's
+                        area, otherwise the event would be ignored.
+        @param pos      Current mouse position in coordinates relative to
+                        @a cell
+     */
+    void HandleIdle(wxHtmlCell *rootCell, const wxPoint& pos);
+
+    /**
+        Called by HandleIdle when the mouse hovers over a cell. Default
+        behaviour is to do nothing.
+
+        @param cell   the cell the mouse is over
+        @param x, y   coordinates of mouse relative to the cell
+     */
+    virtual void OnCellMouseHover(wxHtmlCell *cell, wxCoord x, wxCoord y);
+
+    /**
+        Called by HandleMouseClick when the user clicks on a cell.
+        Default behaviour is to call wxHtmlWindowInterface::OnLinkClicked()
+        if this cell corresponds to a hypertext link.
+
+        @param cell   the cell the mouse is over
+        @param x, y   coordinates of mouse relative to the cell
+        @param event    The event that triggered the call
+
+
+        @return true if a link was clicked, false otherwise.
+     */
+    virtual bool OnCellClicked(wxHtmlCell *cell,
+                               wxCoord x, wxCoord y,
+                               const wxMouseEvent& event);
+
+protected:
+    // this flag indicates if the mouse moved (used by HandleIdle)
+    bool m_tmpMouseMoved;
+    // contains last link name
+    wxHtmlLinkInfo *m_tmpLastLink;
+    // contains the last (terminal) cell which contained the mouse
+    wxHtmlCell *m_tmpLastCell;
+
+private:
+    wxHtmlWindowInterface *m_interface;
 };
 
 // ----------------------------------------------------------------------------
@@ -57,28 +226,31 @@ enum wxHtmlOpeningStatus
 //                  Purpose of this class is to display HTML page (either local
 //                  file or downloaded via HTTP protocol) in a window. Width of
 //                  window is constant - given in constructor - virtual height
-//                  is changed dynamicly depending on page size.  Once the
-//                  window is created you can set it's content by calling
+//                  is changed dynamically depending on page size.  Once the
+//                  window is created you can set its content by calling
 //                  SetPage(text) or LoadPage(filename).
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_HTML wxHtmlWindow : public wxScrolledWindow
+class WXDLLIMPEXP_HTML wxHtmlWindow : public wxScrolledWindow,
+                                      public wxHtmlWindowInterface,
+                                      public wxHtmlWindowMouseHelper
 {
     DECLARE_DYNAMIC_CLASS(wxHtmlWindow)
     friend class wxHtmlWinModule;
 
 public:
-    wxHtmlWindow() { Init(); }
+    wxHtmlWindow() : wxHtmlWindowMouseHelper(this) { Init(); }
     wxHtmlWindow(wxWindow *parent, wxWindowID id = wxID_ANY,
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize,
                  long style = wxHW_DEFAULT_STYLE,
                  const wxString& name = wxT("htmlWindow"))
+        : wxHtmlWindowMouseHelper(this)
     {
         Init();
         Create(parent, id, pos, size, style, name);
     }
-    ~wxHtmlWindow();
+    virtual ~wxHtmlWindow();
 
     bool Create(wxWindow *parent, wxWindowID id = wxID_ANY,
                 const wxPoint& pos = wxDefaultPosition,
@@ -90,7 +262,7 @@ public:
     // it is NOT address/filename of HTML document. If you want to
     // specify document location, use LoadPage() istead
     // Return value : false if an error occurred, true otherwise
-    bool SetPage(const wxString& source);
+    virtual bool SetPage(const wxString& source);
 
     // Append to current page
     bool AppendToPage(const wxString& source);
@@ -124,11 +296,12 @@ public:
 #if wxUSE_STATUSBAR
     // After(!) calling SetRelatedFrame, this sets statusbar slot where messages
     // will be displayed. Default is -1 = no messages.
-    void SetRelatedStatusBar(int bar);
+    void SetRelatedStatusBar(int index);
+    void SetRelatedStatusBar(wxStatusBar*, int index = 0);
 #endif // wxUSE_STATUSBAR
 
     // Sets fonts to be used when displaying HTML page.
-    void SetFonts(wxString normal_face, wxString fixed_face,
+    void SetFonts(const wxString& normal_face, const wxString& fixed_face,
                   const int *sizes = NULL);
 
     // Sets font sizes to be relative to the given size or the system
@@ -144,12 +317,14 @@ public:
     // when/if we have CSS support we could add other possibilities...)
     void SetBackgroundImage(const wxBitmap& bmpBg) { m_bmpBg = bmpBg; }
 
+#if wxUSE_CONFIG
     // Saves custom settings into cfg config. it will use the path 'path'
     // if given, otherwise it will save info into currently selected path.
     // saved values : things set by SetFonts, SetBorders.
     virtual void ReadCustomization(wxConfigBase *cfg, wxString path = wxEmptyString);
     // ...
     virtual void WriteCustomization(wxConfigBase *cfg, wxString path = wxEmptyString);
+#endif // wxUSE_CONFIG
 
     // Goes to previous/next page (in browsing history)
     // Returns true if successful, false otherwise
@@ -182,17 +357,7 @@ public:
     // (depending on the information passed to SetRelatedFrame() method)
     virtual void OnSetTitle(const wxString& title);
 
-    // Called when the mouse hovers over a cell: (x, y) are logical coords
-    // Default behaviour is to do nothing at all
-    virtual void OnCellMouseHover(wxHtmlCell *cell, wxCoord x, wxCoord y);
-
-    // Called when user clicks on a cell. Default behavior is to call
-    // OnLinkClicked() if this cell corresponds to a hypertext link
-    virtual void OnCellClicked(wxHtmlCell *cell,
-                               wxCoord x, wxCoord y,
-                               const wxMouseEvent& event);
-
-    // Called when user clicked on hypertext link. Default behavior is to
+    // Called when user clicked on hypertext link. Default behaviour is to
     // call LoadPage(loc)
     virtual void OnLinkClicked(const wxHtmlLinkInfo& link);
 
@@ -218,6 +383,11 @@ public:
     wxString ToText();
 #endif // wxUSE_CLIPBOARD
 
+    virtual void OnInternalIdle();
+
+    /// Returns standard HTML cursor as used by wxHtmlWindow
+    static wxCursor GetDefaultHTMLCursor(HTMLCursor type);
+
 protected:
     void Init();
 
@@ -231,8 +401,8 @@ protected:
     // actual size of window. This method also setup scrollbars
     void CreateLayout();
 
-    void OnEraseBackground(wxEraseEvent& event);
     void OnPaint(wxPaintEvent& event);
+    void OnEraseBackground(wxEraseEvent& event);
     void OnSize(wxSizeEvent& event);
     void OnMouseMove(wxMouseEvent& event);
     void OnMouseDown(wxMouseEvent& event);
@@ -241,11 +411,11 @@ protected:
     void OnKeyUp(wxKeyEvent& event);
     void OnDoubleClick(wxMouseEvent& event);
     void OnCopy(wxCommandEvent& event);
+    void OnClipboardEvent(wxClipboardTextEvent& event);
     void OnMouseEnter(wxMouseEvent& event);
     void OnMouseLeave(wxMouseEvent& event);
+    void OnMouseCaptureLost(wxMouseCaptureLostEvent& event);
 #endif // wxUSE_CLIPBOARD
-
-    virtual void OnInternalIdle();
 
     // Returns new filter (will be stored into m_DefaultFilter variable)
     virtual wxHtmlFilter *GetDefaultFilter() {return new wxHtmlFilterPlainText;}
@@ -273,38 +443,56 @@ protected:
     void StopAutoScrolling();
 #endif // wxUSE_CLIPBOARD
 
-protected:
     wxString DoSelectionToText(wxHtmlSelection *sel);
 
+public:
+    // wxHtmlWindowInterface methods:
+    virtual void SetHTMLWindowTitle(const wxString& title);
+    virtual void OnHTMLLinkClicked(const wxHtmlLinkInfo& link);
+    virtual wxHtmlOpeningStatus OnHTMLOpeningURL(wxHtmlURLType type,
+                                                 const wxString& url,
+                                                 wxString *redirect) const;
+    virtual wxPoint HTMLCoordsToWindow(wxHtmlCell *cell,
+                                       const wxPoint& pos) const;
+    virtual wxWindow* GetHTMLWindow();
+    virtual wxColour GetHTMLBackgroundColour() const;
+    virtual void SetHTMLBackgroundColour(const wxColour& clr);
+    virtual void SetHTMLBackgroundImage(const wxBitmap& bmpBg);
+    virtual void SetHTMLStatusText(const wxString& text);
+    virtual wxCursor GetHTMLCursor(HTMLCursor type) const;
+
+    // implementation of SetPage()
+    bool DoSetPage(const wxString& source);
+
+protected:
     // This is pointer to the first cell in parsed data.  (Note: the first cell
     // is usually top one = all other cells are sub-cells of this one)
     wxHtmlContainerCell *m_Cell;
     // parser which is used to parse HTML input.
-    // Each wxHtmlWindow has it's own parser because sharing one global
+    // Each wxHtmlWindow has its own parser because sharing one global
     // parser would be problematic (because of reentrancy)
     wxHtmlWinParser *m_Parser;
-    // contains name of actualy opened page or empty string if no page opened
+    // contains name of actually opened page or empty string if no page opened
     wxString m_OpenedPage;
     // contains name of current anchor within m_OpenedPage
     wxString m_OpenedAnchor;
-    // contains title of actualy opened page or empty string if no <TITLE> tag
+    // contains title of actually opened page or empty string if no <TITLE> tag
     wxString m_OpenedPageTitle;
     // class for opening files (file system)
     wxFileSystem* m_FS;
 
-    wxFrame *m_RelatedFrame;
-    wxString m_TitleFormat;
-#if wxUSE_STATUSBAR
-    // frame in which page title should be displayed & number of it's statusbar
+    // frame in which page title should be displayed & number of its statusbar
     // reserved for usage with this html window
-    int m_RelatedStatusBar;
+    wxFrame *m_RelatedFrame;
+#if wxUSE_STATUSBAR
+    int m_RelatedStatusBarIndex;
+    wxStatusBar* m_RelatedStatusBar;
 #endif // wxUSE_STATUSBAR
+    wxString m_TitleFormat;
 
     // borders (free space between text and window borders)
     // defaults to 10 pixels.
     int m_Borders;
-
-    int m_Style;
 
     // current text selection or NULL
     wxHtmlSelection *m_selection;
@@ -315,7 +503,7 @@ protected:
 #if wxUSE_CLIPBOARD
     // time of the last doubleclick event, used to detect tripleclicks
     // (tripleclicks are used to select whole line):
-    wxLongLong m_lastDoubleClick;
+    wxMilliClock_t m_lastDoubleClick;
 
     // helper class to automatically scroll the window if the user is selecting
     // text and the mouse leaves wxHtmlWindow:
@@ -323,8 +511,13 @@ protected:
 #endif // wxUSE_CLIPBOARD
 
 private:
-    // window content for double buffered rendering:
-    wxBitmap *m_backBuffer;
+    // erase the window background using m_bmpBg or just solid colour if we
+    // don't have any background image
+    void DoEraseBackground(wxDC& dc);
+
+    // window content for double buffered rendering, may be invalid until it is
+    // really initialized in OnPaint()
+    wxBitmap m_backBuffer;
 
     // background image, may be invalid
     wxBitmap m_bmpBg;
@@ -333,10 +526,6 @@ private:
     wxPoint     m_tmpSelFromPos;
     wxHtmlCell *m_tmpSelFromCell;
 
-    // contains last link name
-    wxHtmlLinkInfo *m_tmpLastLink;
-    // contains the last (terminal) cell which contained the mouse
-    wxHtmlCell *m_tmpLastCell;
     // if >0 contents of the window is not redrawn
     // (in order to avoid ugly blinking)
     int m_tmpCanDrawLocks;
@@ -356,18 +545,112 @@ private:
     // if this FLAG is false, items are not added to history
     bool m_HistoryOn;
 
-    // a flag indicated if mouse moved
-    // (if true we will try to change cursor in last call to OnIdle)
-    bool m_tmpMouseMoved;
+    // Flag used to communicate between OnPaint() and OnEraseBackground(), see
+    // the comments near its use.
+    bool m_isBgReallyErased;
 
-    // a flag set if we need to erase background in OnPaint() (otherwise this
-    // is supposed to have been done in OnEraseBackground())
-    bool m_eraseBgInOnPaint;
+    // standard mouse cursors
+    static wxCursor *ms_cursorLink;
+    static wxCursor *ms_cursorText;
 
     DECLARE_EVENT_TABLE()
-    DECLARE_NO_COPY_CLASS(wxHtmlWindow)
+    wxDECLARE_NO_COPY_CLASS(wxHtmlWindow);
 };
 
+class WXDLLIMPEXP_FWD_HTML wxHtmlCellEvent;
+
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_HTML, wxEVT_HTML_CELL_CLICKED, wxHtmlCellEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_HTML, wxEVT_HTML_CELL_HOVER, wxHtmlCellEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_HTML, wxEVT_HTML_LINK_CLICKED, wxHtmlLinkEvent );
+
+
+/*!
+ * Html cell window event
+ */
+
+class WXDLLIMPEXP_HTML wxHtmlCellEvent : public wxCommandEvent
+{
+public:
+    wxHtmlCellEvent() {}
+    wxHtmlCellEvent(wxEventType commandType, int id,
+                    wxHtmlCell *cell, const wxPoint &pt,
+                    const wxMouseEvent &ev)
+        : wxCommandEvent(commandType, id)
+    {
+        m_cell = cell;
+        m_pt = pt;
+        m_mouseEvent = ev;
+        m_bLinkWasClicked = false;
+    }
+
+    wxHtmlCell* GetCell() const { return m_cell; }
+    wxPoint GetPoint() const { return m_pt; }
+    wxMouseEvent GetMouseEvent() const { return m_mouseEvent; }
+
+    void SetLinkClicked(bool linkclicked) { m_bLinkWasClicked=linkclicked; }
+    bool GetLinkClicked() const { return m_bLinkWasClicked; }
+
+    // default copy ctor, assignment operator and dtor are ok
+    virtual wxEvent *Clone() const { return new wxHtmlCellEvent(*this); }
+
+private:
+    wxHtmlCell *m_cell;
+    wxMouseEvent m_mouseEvent;
+    wxPoint m_pt;
+
+    bool m_bLinkWasClicked;
+
+    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxHtmlCellEvent)
+};
+
+
+
+/*!
+ * Html link event
+ */
+
+class WXDLLIMPEXP_HTML wxHtmlLinkEvent : public wxCommandEvent
+{
+public:
+    wxHtmlLinkEvent() {}
+    wxHtmlLinkEvent(int id, const wxHtmlLinkInfo &linkinfo)
+        : wxCommandEvent(wxEVT_HTML_LINK_CLICKED, id)
+    {
+        m_linkInfo = linkinfo;
+    }
+
+    const wxHtmlLinkInfo &GetLinkInfo() const { return m_linkInfo; }
+
+    // default copy ctor, assignment operator and dtor are ok
+    virtual wxEvent *Clone() const { return new wxHtmlLinkEvent(*this); }
+
+private:
+    wxHtmlLinkInfo m_linkInfo;
+
+    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxHtmlLinkEvent)
+};
+
+
+typedef void (wxEvtHandler::*wxHtmlCellEventFunction)(wxHtmlCellEvent&);
+typedef void (wxEvtHandler::*wxHtmlLinkEventFunction)(wxHtmlLinkEvent&);
+
+#define wxHtmlCellEventHandler(func) \
+    wxEVENT_HANDLER_CAST(wxHtmlCellEventFunction, func)
+#define wxHtmlLinkEventHandler(func) \
+    wxEVENT_HANDLER_CAST(wxHtmlLinkEventFunction, func)
+
+#define EVT_HTML_CELL_CLICKED(id, fn) \
+    wx__DECLARE_EVT1(wxEVT_HTML_CELL_CLICKED, id, wxHtmlCellEventHandler(fn))
+#define EVT_HTML_CELL_HOVER(id, fn) \
+    wx__DECLARE_EVT1(wxEVT_HTML_CELL_HOVER, id, wxHtmlCellEventHandler(fn))
+#define EVT_HTML_LINK_CLICKED(id, fn) \
+    wx__DECLARE_EVT1(wxEVT_HTML_LINK_CLICKED, id, wxHtmlLinkEventHandler(fn))
+
+
+// old wxEVT_COMMAND_* constants
+#define wxEVT_COMMAND_HTML_CELL_CLICKED   wxEVT_HTML_CELL_CLICKED
+#define wxEVT_COMMAND_HTML_CELL_HOVER     wxEVT_HTML_CELL_HOVER
+#define wxEVT_COMMAND_HTML_LINK_CLICKED   wxEVT_HTML_LINK_CLICKED
 
 #endif // wxUSE_HTML
 

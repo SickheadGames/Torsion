@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        slider.h
+// Name:        wx/os2/slider.h
 // Purpose:     wxSlider class
 // Author:      David Webster
 // Modified by:
 // Created:     10/15/99
-// RCS-ID:      $Id: slider.h,v 1.14 2004/05/23 20:51:40 JS Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,7 +14,7 @@
 #include "wx/control.h"
 
 // Slider
-class WXDLLEXPORT wxSlider: public wxSliderBase
+class WXDLLIMPEXP_CORE wxSlider: public wxSliderBase
 {
 public:
   wxSlider();
@@ -43,7 +42,7 @@ public:
                ,rsName
               );
     }
-    ~wxSlider();
+    virtual ~wxSlider();
 
     bool Create( wxWindow*          pParent
                 ,wxWindowID         vId
@@ -94,9 +93,6 @@ public:
                                   );
                  void SetThumbLength(int nLen) ;
                  void SetTick(int ntickPos) ;
-                 void SetTickFreq( int n
-                                  ,int nPos
-                                 );
 
     //
     // IMPLEMENTATION
@@ -148,6 +144,10 @@ protected:
                            ,int  nHeight
                            ,int  nSizeFlags = wxSIZE_AUTO
                           );
+
+    // Platform-specific implementation of SetTickFreq
+    virtual void DoSetTickFreq(int freq);
+
 private:
     DECLARE_DYNAMIC_CLASS(wxSlider)
 }; // end of CLASS wxSlider

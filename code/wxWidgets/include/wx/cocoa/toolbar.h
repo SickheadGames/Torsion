@@ -4,7 +4,6 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/08/17
-// RCS-ID:      $Id: toolbar.h,v 1.4 2004/11/17 18:02:52 DE Exp $
 // Copyright:   (c) 2003 David Elliott
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,10 +16,15 @@
 // ========================================================================
 // wxToolBar
 // ========================================================================
+#if defined(__LP64__) || defined(NS_BUILD_32_LIKE_64)
+typedef struct CGPoint NSPoint;
+#else
 typedef struct _NSPoint NSPoint;
+#endif
+
 class wxToolBarTool;
 
-class wxToolBar : public wxToolBarBase
+class WXDLLIMPEXP_CORE wxToolBar : public wxToolBarBase
 {
     DECLARE_DYNAMIC_CLASS(wxToolBar)
 // ------------------------------------------------------------------------
@@ -57,6 +61,7 @@ protected:
 // Cocoa
 // ------------------------------------------------------------------------
 protected:
+    virtual bool Cocoa_acceptsFirstMouse(bool &acceptsFirstMouse, WX_NSEvent theEvent);
     virtual bool Cocoa_drawRect(const NSRect &rect);
     virtual bool Cocoa_mouseDown(WX_NSEvent theEvent);
     virtual bool Cocoa_mouseDragged(WX_NSEvent theEvent);
@@ -102,7 +107,8 @@ protected:
                                           wxObject *clientData,
                                           const wxString& shortHelpString,
                                           const wxString& longHelpString);
-    virtual wxToolBarToolBase *CreateTool(wxControl *control);
+    virtual wxToolBarToolBase *CreateTool(wxControl *control,
+                                          const wxString& label);
 
     wxSize m_bestSize;
     wxFrame *m_owningFrame;

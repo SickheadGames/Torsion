@@ -4,7 +4,6 @@
 // Author:      Markus Greither
 // Modified by: 31.07.01: VZ: integrated into wxWidgets
 // Created:     23/03/2001
-// RCS-ID:
 // Copyright:   (c) Markus Greither
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,15 +11,11 @@
 #ifndef _WX_MSW_FDREPDLG_H_
 #define _WX_MSW_FDREPDLG_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "mswfdrepdlg.h"
-#endif
-
 // ----------------------------------------------------------------------------
 // wxFindReplaceDialog: dialog for searching / replacing text
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxFindReplaceDialog : public wxFindReplaceDialogBase
+class WXDLLIMPEXP_CORE wxFindReplaceDialog : public wxFindReplaceDialogBase
 {
 public:
     // ctors and such
@@ -60,7 +55,7 @@ protected:
     wxFindReplaceDialogImpl *m_impl;
 
     DECLARE_DYNAMIC_CLASS(wxFindReplaceDialog)
-    DECLARE_NO_COPY_CLASS(wxFindReplaceDialog)
+    wxDECLARE_NO_COPY_CLASS(wxFindReplaceDialog);
 };
 
 #endif // _WX_MSW_FDREPDLG_H_

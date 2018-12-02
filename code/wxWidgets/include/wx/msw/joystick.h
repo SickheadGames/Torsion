@@ -1,20 +1,15 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        joystick.h
+// Name:        wx/msw/joystick.h
 // Purpose:     wxJoystick class
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: joystick.h,v 1.8 2004/08/30 10:18:43 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_JOYSTICK_H_
 #define _WX_JOYSTICK_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "joystick.h"
-#endif
 
 #include "wx/event.h"
 
@@ -32,6 +27,8 @@ class WXDLLIMPEXP_ADV wxJoystick: public wxObject
   ////////////////////////////////////////////////////////////////////////////
 
   wxPoint GetPosition(void) const;
+  int GetPosition(unsigned axis) const;
+  bool GetButtonState(unsigned button) const;
   int GetZPosition(void) const;
   int GetButtonState(void) const;
   int GetPOVPosition(void) const;

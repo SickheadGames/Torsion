@@ -1,20 +1,15 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        process.h
+// Name:        wx/process.h
 // Purpose:     wxProcess class
 // Author:      Guilhem Lavaux
 // Modified by: Vadim Zeitlin to check error codes, added Detach() method
 // Created:     24/06/98
-// RCS-ID:      $Id: process.h,v 1.37 2005/03/09 16:29:55 ABX Exp $
 // Copyright:   (c) 1998 Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_PROCESSH__
 #define _WX_PROCESSH__
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "process.h"
-#endif
 
 #include "wx/event.h"
 
@@ -59,12 +54,15 @@ public:
 
 
     // ctors
-    wxProcess(wxEvtHandler *parent = (wxEvtHandler *) NULL, int nId = wxID_ANY)
+    wxProcess(wxEvtHandler *parent = NULL, int nId = wxID_ANY)
         { Init(parent, nId, wxPROCESS_DEFAULT); }
 
     wxProcess(int flags) { Init(NULL, wxID_ANY, flags); }
 
     virtual ~wxProcess();
+
+    // get the process ID of the process executed by Open()
+    long GetPid() const { return m_pid; }
 
     // may be overridden to be notified about process termination
     virtual void OnTerminate(int pid, int status);
@@ -105,15 +103,28 @@ public:
                         wxInputStream *errStream);
 #endif // wxUSE_STREAMS
 
-    // for backwards compatibility only, don't use
-#if WXWIN_COMPATIBILITY_2_2
-    wxDEPRECATED( wxProcess(wxEvtHandler *parent, bool redirect) );
-#endif // WXWIN_COMPATIBILITY_2_2
+    // priority
+        // Sets the priority to the given value: see wxPRIORITY_XXX constants.
+        //
+        // NB: the priority can only be set before the process is created
+    void SetPriority(unsigned priority);
+
+        // Get the current priority.
+    unsigned GetPriority() const { return m_priority; }
+
+    // implementation only - don't use!
+    // --------------------------------
+
+    // needs to be public since it needs to be used from wxExecute() global func
+    void SetPid(long pid) { m_pid = pid; }
 
 protected:
     void Init(wxEvtHandler *parent, int id, int flags);
 
     int m_id;
+    long m_pid;
+
+    unsigned m_priority;
 
 #if wxUSE_STREAMS
     // these streams are connected to stdout, stderr and stdin of the child
@@ -127,16 +138,16 @@ protected:
     bool m_redirect;
 
     DECLARE_DYNAMIC_CLASS(wxProcess)
-    DECLARE_NO_COPY_CLASS(wxProcess)
+    wxDECLARE_NO_COPY_CLASS(wxProcess);
 };
 
 // ----------------------------------------------------------------------------
 // wxProcess events
 // ----------------------------------------------------------------------------
 
-BEGIN_DECLARE_EVENT_TYPES()
-    DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_BASE, wxEVT_END_PROCESS, 440)
-END_DECLARE_EVENT_TYPES()
+class WXDLLIMPEXP_FWD_BASE wxProcessEvent;
+
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_BASE, wxEVT_END_PROCESS, wxProcessEvent );
 
 class WXDLLIMPEXP_BASE wxProcessEvent : public wxEvent
 {
@@ -168,7 +179,7 @@ public:
 typedef void (wxEvtHandler::*wxProcessEventFunction)(wxProcessEvent&);
 
 #define wxProcessEventHandler(func) \
-    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxProcessEventFunction, &func)
+    wxEVENT_HANDLER_CAST(wxProcessEventFunction, func)
 
 #define EVT_END_PROCESS(id, func) \
    wx__DECLARE_EVT1(wxEVT_END_PROCESS, id, wxProcessEventHandler(func))

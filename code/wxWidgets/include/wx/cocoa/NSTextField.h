@@ -4,7 +4,6 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2002/12/09
-// RCS-ID:      $Id: 
 // Copyright:   (c) 2002 David Elliott
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,6 +20,7 @@ class wxCocoaNSTextField
     WX_DECLARE_OBJC_INTERFACE(NSTextField)
 protected:
     virtual void Cocoa_didChangeText(void) = 0;
+    virtual ~wxCocoaNSTextField() { }
 };
 
 #endif // _WX_COCOA_NSTEXTFIELD_H_

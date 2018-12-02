@@ -1,43 +1,25 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        control.h
+// Name:        wx/gtk/control.h
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id: control.h,v 1.29 2005/08/02 22:57:53 MW Exp $
 // Copyright:   (c) 1998 Robert Roebling, Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef __GTKCONTROLH__
-#define __GTKCONTROLH__
+#ifndef _WX_GTK_CONTROL_H_
+#define _WX_GTK_CONTROL_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface
-#endif
-
-#include "wx/defs.h"
-#include "wx/object.h"
-#include "wx/list.h"
-#include "wx/window.h"
-
-//-----------------------------------------------------------------------------
-// classes
-//-----------------------------------------------------------------------------
-
-class WXDLLIMPEXP_CORE wxControl;
+typedef struct _GtkLabel GtkLabel;
+typedef struct _GtkFrame GtkFrame;
+typedef struct _GtkEntry GtkEntry;
 
 //-----------------------------------------------------------------------------
 // wxControl
 //-----------------------------------------------------------------------------
 
-// C-linkage function pointer types for GetDefaultAttributesFromGTKWidget
-extern "C" {
-    typedef GtkWidget* (*wxGtkWidgetNew_t)(void);
-    typedef GtkWidget* (*wxGtkWidgetNewFromStr_t)(const gchar*);
-    typedef GtkWidget* (*wxGtkWidgetNewFromAdj_t)(GtkAdjustment*);
-}
-
 class WXDLLIMPEXP_CORE wxControl : public wxControlBase
 {
+    typedef wxControlBase base_type;
 public:
     wxControl();
     wxControl(wxWindow *parent, wxWindowID id,
@@ -55,49 +37,57 @@ public:
             const wxValidator& validator = wxDefaultValidator,
             const wxString& name = wxControlNameStr);
 
-    // this function will filter out '&' characters and will put the accelerator
-    // char (the one immediately after '&') into m_chAccel (TODO not yet)
-    virtual void SetLabel( const wxString &label );
-    virtual wxString GetLabel() const;
-    
     virtual wxVisualAttributes GetDefaultAttributes() const;
+#ifdef __WXGTK3__
+    virtual bool SetFont(const wxFont& font);
+#endif
 
 protected:
     virtual wxSize DoGetBestSize() const;
     void PostCreation(const wxSize& size);
 
-#ifdef __WXGTK20__
-    wxString PrepareLabelMnemonics( const wxString &label ) const;
-#endif
+    // sets the label to the given string and also sets it for the given widget
+    void GTKSetLabelForLabel(GtkLabel *w, const wxString& label);
+#if wxUSE_MARKUP
+    void GTKSetLabelWithMarkupForLabel(GtkLabel *w, const wxString& label);
+#endif // wxUSE_MARKUP
+
+    // GtkFrame helpers
+    GtkWidget* GTKCreateFrame(const wxString& label);
+    void GTKSetLabelForFrame(GtkFrame *w, const wxString& label);
+    void GTKFrameApplyWidgetStyle(GtkFrame* w, GtkRcStyle* rc);
+    void GTKFrameSetMnemonicWidget(GtkFrame* w, GtkWidget* widget);
+
+    // remove mnemonics ("&"s) from the label
+    static wxString GTKRemoveMnemonics(const wxString& label);
+
+    // converts wx label to GTK+ label, i.e. basically replace "&"s with "_"s
+    static wxString GTKConvertMnemonics(const wxString &label);
+
+    // converts wx label to GTK+ labels preserving Pango markup
+    static wxString GTKConvertMnemonicsWithMarkup(const wxString& label);
 
     // These are used by GetDefaultAttributes
     static wxVisualAttributes
         GetDefaultAttributesFromGTKWidget(GtkWidget* widget,
                                           bool useBase = false,
-                                          int state = -1);
-    static wxVisualAttributes
-        GetDefaultAttributesFromGTKWidget(wxGtkWidgetNew_t,
-                                          bool useBase = false,
-                                          int state = -1);
-    static wxVisualAttributes
-        GetDefaultAttributesFromGTKWidget(wxGtkWidgetNewFromStr_t,
-                                          bool useBase = false,
-                                          int state = -1);
-
-    static wxVisualAttributes
-        GetDefaultAttributesFromGTKWidget(wxGtkWidgetNewFromAdj_t,
-                                          bool useBase = false,
-                                          int state = -1);
+                                          int state = 0);
 
     // Widgets that use the style->base colour for the BG colour should
     // override this and return true.
     virtual bool UseGTKStyleBase() const { return false; }
 
-    wxString   m_label;
-    char       m_chAccel;  // enabled to avoid breaking binary compatibility later on
+    // Fix sensitivity due to bug in GTK+ < 2.14
+    void GTKFixSensitivity(bool onlyIfUnderMouse = true);
+
+    // Ask GTK+ for preferred size. Use it after setting the font.
+    wxSize GTKGetPreferredSize(GtkWidget* widget) const;
+
+    // Inner margins in a GtkEntry
+    wxPoint GTKGetEntryMargins(GtkEntry* entry) const;
 
 private:
     DECLARE_DYNAMIC_CLASS(wxControl)
 };
 
-#endif // __GTKCONTROLH__
+#endif // _WX_GTK_CONTROL_H_

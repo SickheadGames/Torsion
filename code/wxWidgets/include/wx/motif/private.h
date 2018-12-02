@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        private.h
+// Name:        wx/motif/private.h
 // Purpose:     Private declarations for wxMotif port
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id: private.h,v 1.31 2005/09/13 16:49:04 VZ Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -13,13 +12,15 @@
 #define _WX_PRIVATE_H_
 
 #include "wx/defs.h"
-#include "X11/Xlib.h"
+#include <X11/Xlib.h>
+#include <Xm/Xm.h>
+#include "wx/evtloop.h"
 
-class WXDLLEXPORT wxFont;
-class WXDLLEXPORT wxWindow;
-class WXDLLEXPORT wxSize;
-class WXDLLEXPORT wxBitmap;
-class WXDLLEXPORT wxColour;
+class WXDLLIMPEXP_FWD_CORE wxFont;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxSize;
+class WXDLLIMPEXP_FWD_CORE wxBitmap;
+class WXDLLIMPEXP_FWD_CORE wxColour;
 
 #include "wx/x11/privx.h"
 
@@ -42,7 +43,7 @@ class WXDLLEXPORT wxColour;
 // (non const) "char *" but many Motif functions take "char *" parameters which
 // are really "const char *" so use this macro to suppress the warnings when we
 // know it's ok
-#define wxMOTIF_STR(x) wx_const_cast(char *, x)
+#define wxMOTIF_STR(x) const_cast<char *>(x)
 
 // ----------------------------------------------------------------------------
 // Miscellaneous functions
@@ -55,11 +56,11 @@ WXWidget wxCreateBorderWidget( WXWidget parent, long style );
 // ----------------------------------------------------------------------------
 
 // All widgets should have this as their resize proc.
-extern void wxWidgetResizeProc(Widget w, XConfigureEvent *event, 
+extern void wxWidgetResizeProc(Widget w, XConfigureEvent *event,
                                String args[], int *num_args);
 
 // For repainting arbitrary windows
-void wxUniversalRepaintProc(Widget w, XtPointer WXUNUSED(c_data), 
+void wxUniversalRepaintProc(Widget w, XtPointer WXUNUSED(c_data),
                             XEvent *event, char *);
 
 // ----------------------------------------------------------------------------
@@ -76,7 +77,7 @@ extern bool wxAddWindowToTable(Widget w, wxWindow *win);
 // ----------------------------------------------------------------------------
 
 // Creates a bitmap with transparent areas drawn in the given colour.
-wxBitmap wxCreateMaskedBitmap(const wxBitmap& bitmap, wxColour& colour);
+wxBitmap wxCreateMaskedBitmap(const wxBitmap& bitmap, const wxColour& colour);
 
 // ----------------------------------------------------------------------------
 // key events related functions
@@ -99,12 +100,15 @@ extern bool wxTranslateKeyEvent(wxKeyEvent& wxevent, wxWindow *win,
 extern void wxDoChangeForegroundColour(WXWidget widget,
                                        wxColour& foregroundColour);
 extern void wxDoChangeBackgroundColour(WXWidget widget,
-                                       wxColour& backgroundColour,
+                                       const wxColour& backgroundColour,
                                        bool changeArmColour = false);
-extern void wxDoChangeFont(WXWidget widget, wxFont& font);
+extern void wxDoChangeFont(WXWidget widget, const wxFont& font);
 extern void wxGetTextExtent(WXDisplay* display, const wxFont& font,
                             double scale,
                             const wxString& string, int* width, int* height,
+                            int* ascent, int* descent);
+extern void wxGetTextExtent(const wxWindow* window, const wxString& str,
+                            int* width, int* height,
                             int* ascent, int* descent);
 
 #define wxNO_COLORS   0x00
@@ -124,34 +128,55 @@ extern XColor itemColors[5] ;
 // ----------------------------------------------------------------------------
 
 wxString wxXmStringToString( const XmString& xmString );
-XmString wxStringToXmString( const wxString& string );
 XmString wxStringToXmString( const char* string );
+inline XmString wxStringToXmString( const wxScopedCharBuffer& string )
+    { return wxStringToXmString(string.data()); }
+inline XmString wxStringToXmString( const wxString& string )
+    { return wxStringToXmString((const char*)string.mb_str()); }
 
 // XmString made easy to use in wxWidgets (and has an added benefit of
 // cleaning up automatically)
 class wxXmString
 {
+    void Init(const char *str)
+    {
+        m_string = XmStringCreateLtoR
+                   (
+                    const_cast<char *>(str),
+                    const_cast<char *>(XmSTRING_DEFAULT_CHARSET)
+                   );
+    }
+
 public:
     wxXmString(const char* str)
     {
-        m_string = XmStringCreateLtoR((char *)str, XmSTRING_DEFAULT_CHARSET);
+        Init(str);
+    }
+
+    wxXmString(const wchar_t* str)
+    {
+        Init(wxConvLibc.cWC2MB(str));
     }
 
     wxXmString(const wxString& str)
     {
-        m_string = XmStringCreateLtoR((char *)str.c_str(),
-            XmSTRING_DEFAULT_CHARSET);
+        Init(str.mb_str());
+    }
+
+    wxXmString(const wxCStrData& str)
+    {
+        Init(str);
     }
 
     // just to avoid calling XmStringFree()
     wxXmString(const XmString& string) { m_string = string; }
 
     ~wxXmString() { XmStringFree(m_string); }
-    
+
     // semi-implicit conversion to XmString (shouldn't rely on implicit
     // conversion because many of Motif functions are macros)
     XmString operator()() const { return m_string; }
-    
+
 private:
     XmString m_string;
 };
@@ -173,11 +198,9 @@ wxSize wxDoGetSingleTextCtrlBestSize( Widget textWidget,
 // event-related functions
 // ----------------------------------------------------------------------------
 
-class wxEventLoop;
-
 // executes one main loop iteration (implemented in src/motif/evtloop.cpp)
 // returns true if the loop should be exited
-bool wxDoEventLoopIteration( wxEventLoop& evtLoop );
+bool wxDoEventLoopIteration( wxGUIEventLoop& evtLoop );
 
 // Consume all events until no more left
 void wxFlushEvents(WXDisplay* display);

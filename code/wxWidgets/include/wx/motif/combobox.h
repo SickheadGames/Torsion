@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        combobox.h
+// Name:        wx/motif/combobox.h
 // Purpose:     wxComboBox class
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id: combobox.h,v 1.20 2005/01/19 16:25:06 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,20 +11,16 @@
 #ifndef _WX_COMBOBOX_H_
 #define _WX_COMBOBOX_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "combobox.h"
-#endif
-
 #include "wx/choice.h"
+#include "wx/textentry.h"
 
 // Combobox item
-class WXDLLEXPORT wxComboBox: public wxChoice
+class WXDLLIMPEXP_CORE wxComboBox : public wxChoice,
+                               public wxTextEntry
 {
-    DECLARE_DYNAMIC_CLASS(wxComboBox)
-
 public:
     wxComboBox() { m_inSetSelection = false; }
-    ~wxComboBox();
+    virtual ~wxComboBox();
 
     inline wxComboBox(wxWindow *parent, wxWindowID id,
         const wxString& value = wxEmptyString,
@@ -73,33 +68,34 @@ public:
         const wxValidator& validator = wxDefaultValidator,
         const wxString& name = wxComboBoxNameStr);
 
-    // implementation of wxControlWithItems
-    virtual int DoAppend(const wxString& item);
-    virtual int DoInsert(const wxString& item, int pos);
-    virtual void Delete(int n);
+    // See wxComboBoxBase discussion of IsEmpty().
+    bool IsListEmpty() const { return wxItemContainer::IsEmpty(); }
+    bool IsTextEmpty() const { return wxTextEntry::IsEmpty(); }
+
+    // resolve ambiguities among virtual functions inherited from both base
+    // classes
     virtual void Clear();
+    virtual wxString GetValue() const { return wxTextEntry::GetValue(); }
+    virtual void SetValue(const wxString& value);
+    virtual wxString GetStringSelection() const
+        { return wxChoice::GetStringSelection(); }
+
+    virtual void SetSelection(long from, long to)
+        { wxTextEntry::SetSelection(from, to); }
+    virtual void GetSelection(long *from, long *to) const
+        { wxTextEntry::GetSelection(from, to); }
+
+
+    // implementation of wxControlWithItems
+    virtual int DoInsertItems(const wxArrayStringsAdapter& items,
+                              unsigned int pos,
+                              void **clientData, wxClientDataType type);
+    virtual void DoDeleteOneItem(unsigned int n);
     virtual int GetSelection() const ;
     virtual void SetSelection(int n);
-    virtual int FindString(const wxString& s) const;
-    virtual wxString GetString(int n) const ;
-    virtual void SetString(int n, const wxString& s);
-
-    // Text field functions
-    virtual wxString GetValue() const ;
-    virtual void SetValue(const wxString& value);
-
-    // Clipboard operations
-    virtual void Copy();
-    virtual void Cut();
-    virtual void Paste();
-    virtual void SetInsertionPoint(long pos);
-    virtual void SetInsertionPointEnd();
-    virtual long GetInsertionPoint() const ;
-    virtual wxTextPos GetLastPosition() const ;
-    virtual void Replace(long from, long to, const wxString& value);
-    virtual void Remove(long from, long to);
-    virtual void SetSelection(long from, long to);
-    virtual void SetEditable(bool editable);
+    virtual int FindString(const wxString& s, bool bCase = false) const;
+    virtual wxString GetString(unsigned int n) const ;
+    virtual void SetString(unsigned int n, const wxString& s);
 
     // Implementation
     virtual void ChangeFont(bool keepOriginalSize = true);
@@ -108,11 +104,20 @@ public:
     WXWidget GetTopWidget() const { return m_mainWidget; }
     WXWidget GetMainWidget() const { return m_mainWidget; }
 
-    virtual wxSize DoGetBestSize() const;
+   //Copied from wxComboBoxBase because for wxMOTIF wxComboBox does not inherit from it.
+    virtual void Popup() { wxFAIL_MSG( wxT("Not implemented") ); }
+    virtual void Dismiss() { wxFAIL_MSG( wxT("Not implemented") ); }
+
 protected:
+    virtual wxSize DoGetBestSize() const;
     virtual void DoSetSize(int x, int y,
-        int width, int height,
-        int sizeFlags = wxSIZE_AUTO);
+                           int width, int height,
+                           int sizeFlags = wxSIZE_AUTO);
+
+    // implement wxTextEntry pure virtual methods
+    virtual wxWindow *GetEditableWindow() { return this; }
+    virtual WXWidget GetTextWidget() const;
+
 private:
     // only implemented for native combo box
     void AdjustDropDownListSize();
@@ -120,7 +125,8 @@ private:
     // implementation detail, should really be private
 public:
     bool m_inSetSelection;
+
+    DECLARE_DYNAMIC_CLASS(wxComboBox)
 };
 
-#endif
-// _WX_COMBOBOX_H_
+#endif // _WX_COMBOBOX_H_

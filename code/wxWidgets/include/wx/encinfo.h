@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     19.09.2003 (extracted from wx/fontenc.h)
-// RCS-ID:      $Id: encinfo.h,v 1.6 2004/12/20 12:43:48 ABX Exp $
 // Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -32,10 +31,9 @@
 // to create a font of non-standard encoding (like KOI8) under Windows - the
 // facename specifies the encoding then)
 
-struct WXDLLEXPORT wxNativeEncodingInfo
+struct WXDLLIMPEXP_CORE wxNativeEncodingInfo
 {
     wxString facename;          // may be empty meaning "any"
-#ifndef __WXPALMOS__
     wxFontEncoding encoding;    // so that we know what this struct represents
 
 #if defined(__WXMSW__) || \
@@ -53,14 +51,10 @@ struct WXDLLEXPORT wxNativeEncodingInfo
 #elif defined(_WX_X_FONTLIKE)
     wxString xregistry,
              xencoding;
-#elif defined(__WXGTK20__)
-    // No way to specify this in Pango as this
-    // seems to be handled internally.
-#elif defined(__WXMGL__)
-    int      mglEncoding;
+#elif defined(wxHAS_UTF8_FONTS)
+    // ports using UTF-8 for text don't need encoding information for fonts
 #else
     #error "Unsupported toolkit"
-#endif
 #endif
     // this struct is saved in config by wxFontMapper, so it should know to
     // serialise itself (implemented in platform-specific code)

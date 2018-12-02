@@ -1,21 +1,16 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        ftp.h
+// Name:        wx/protocol/ftp.h
 // Purpose:     FTP protocol
 // Author:      Vadim Zeitlin
-// Modified by: Mark Johnson, wxWindows@mj10777.de 
+// Modified by: Mark Johnson, wxWindows@mj10777.de
 //              20000917 : RmDir, GetLastResult, GetList
 // Created:     07/07/1997
-// RCS-ID:      $Id: ftp.h,v 1.21 2005/05/31 09:18:48 JS Exp $
 // Copyright:   (c) 1997, 1998 Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WX_FTP_H__
 #define __WX_FTP_H__
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "ftp.h"
-#endif
 
 #include "wx/defs.h"
 
@@ -39,11 +34,9 @@ public:
     virtual ~wxFTP();
 
     // Connecting and disconnecting
-    void SetUser(const wxString& user) { m_user = user; }
-    void SetPassword(const wxString& passwd) { m_passwd = passwd; }
-
-    bool Connect(wxSockAddress& addr, bool wait = true);
-    bool Connect(const wxString& host);
+    virtual bool Connect(const wxSockAddress& addr, bool wait = true);
+    virtual bool Connect(const wxString& host) { return Connect(host, 0); }
+    virtual bool Connect(const wxString& host, unsigned short port);
 
     // disconnect
     virtual bool Close();
@@ -51,19 +44,18 @@ public:
     // Parameters set up
 
     // set transfer mode now
-    void SetPassive(bool pasv) { m_bPassive = pasv; };
-    void SetDefaultTimeout(wxUint32 Value);
+    void SetPassive(bool pasv) { m_bPassive = pasv; }
     bool SetBinary() { return SetTransferMode(BINARY); }
     bool SetAscii() { return SetTransferMode(ASCII); }
     bool SetTransferMode(TransferMode mode);
 
     // Generic FTP interface
 
-    // the error code
-    virtual wxProtocolError GetError() { return m_lastError; }
+    // FTP doesn't know the MIME type of the last downloaded/uploaded file
+    virtual wxString GetContentType() const { return wxEmptyString; }
 
     // the last FTP server reply
-    const wxString& GetLastResult() { return m_lastResult; }
+    const wxString& GetLastResult() const { return m_lastResult; }
 
     // send any FTP command (should be full FTP command line but without
     // trailing "\r\n") and return its return code
@@ -72,6 +64,7 @@ public:
     // check that the command returned the given code
     bool CheckCommand(const wxString& command, char expectedReturn)
     {
+        // SendCommand() does updates m_lastError
         return SendCommand(command) == expectedReturn;
     }
 
@@ -85,9 +78,9 @@ public:
 
     // Get the size of a file in the current dir.
     // this function tries its best to deliver the size in bytes using BINARY
-    // (the SIZE command reports different sizes depending on whether 
+    // (the SIZE command reports different sizes depending on whether
     // type is set to ASCII or BINARY)
-    // returns -1 if file is non-existant or size could not be found
+    // returns -1 if file is non-existent or size could not be found
     int GetFileSize(const wxString& fileName);
 
        // Check to see if a file exists in the current dir
@@ -142,36 +135,33 @@ protected:
     wxSocketBase *GetActivePort();
 
     // helper for GetPort()
-    wxString GetPortCmdArgument(wxIPV4address Local, wxIPV4address New);
+    wxString GetPortCmdArgument(const wxIPV4address& Local, const wxIPV4address& New);
 
     // accept connection from server in active mode, returns the same socket as
-    // passed in in passive mode
+    // passed in passive mode
     wxSocketBase *AcceptIfActive(wxSocketBase *sock);
 
 
-    wxString m_user,
-             m_passwd;
+    // internal variables:
 
-    wxString m_lastResult;
-    wxProtocolError m_lastError;
+    wxString        m_lastResult;
 
     // true if there is an FTP transfer going on
-    bool m_streaming;
+    bool            m_streaming;
 
     // although this should be set to ASCII by default according to STD9,
     // we will use BINARY transfer mode by default for backwards compatibility
-    TransferMode m_currentTransfermode;
-
-    friend class wxInputFTPStream;
-    friend class wxOutputFTPStream;
+    TransferMode    m_currentTransfermode;
 
     bool            m_bPassive;
-    wxUint32        m_uiDefaultTimeout;
 
     // following is true when  a read or write times out, we then assume
     // the connection is dead and abort. we avoid additional delays this way
     bool            m_bEncounteredError;
 
+
+    friend class wxInputFTPStream;
+    friend class wxOutputFTPStream;
 
     DECLARE_DYNAMIC_CLASS_NO_COPY(wxFTP)
     DECLARE_PROTOCOL(wxFTP)
@@ -179,7 +169,7 @@ protected:
 
 // the trace mask used by assorted wxLogTrace() in ftp code, do
 // wxLog::AddTraceMask(FTP_TRACE_MASK) to see them in output
-#define FTP_TRACE_MASK _T("ftp")
+#define FTP_TRACE_MASK wxT("ftp")
 
 #endif // wxUSE_PROTOCOL_FTP
 

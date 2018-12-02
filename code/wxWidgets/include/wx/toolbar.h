@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     20.11.99
-// RCS-ID:      $Id: toolbar.h,v 1.41 2005/05/04 18:52:05 JS Exp $
 // Copyright:   (c) Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -22,9 +21,11 @@ enum
 {
     // lay out the toolbar horizontally
     wxTB_HORIZONTAL  = wxHORIZONTAL,    // == 0x0004
+    wxTB_TOP         = wxTB_HORIZONTAL,
 
     // lay out the toolbar vertically
     wxTB_VERTICAL    = wxVERTICAL,      // == 0x0008
+    wxTB_LEFT        = wxTB_VERTICAL,
 
     // show 3D buttons (wxToolBarSimple only)
     wxTB_3DBUTTONS   = 0x0010,
@@ -49,7 +50,18 @@ enum
 
     // show the text and the icons alongside, not vertically stacked (Win32/GTK)
     wxTB_HORZ_LAYOUT = 0x0800,
-    wxTB_HORZ_TEXT   = wxTB_HORZ_LAYOUT | wxTB_TEXT
+    wxTB_HORZ_TEXT   = wxTB_HORZ_LAYOUT | wxTB_TEXT,
+
+    // don't show the toolbar short help tooltips
+    wxTB_NO_TOOLTIPS = 0x1000,
+
+    // lay out toolbar at the bottom of the window
+    wxTB_BOTTOM       = 0x2000,
+
+    // lay out toolbar at the right edge of the window
+    wxTB_RIGHT        = 0x4000,
+
+    wxTB_DEFAULT_STYLE = wxTB_HORIZONTAL | wxTB_FLAT
 };
 
 #if wxUSE_TOOLBAR
@@ -57,20 +69,18 @@ enum
 
     #if defined(__WXUNIVERSAL__)
        #include "wx/univ/toolbar.h"
-    #elif defined(__WXPALMOS__)
-       #include "wx/palmos/toolbar.h"
     #elif defined(__WXMSW__) && (!defined(_WIN32_WCE) || (_WIN32_WCE >= 400 && !defined(__POCKETPC__) && !defined(__SMARTPHONE__)))
-       #include "wx/msw/tbar95.h"
+       #include "wx/msw/toolbar.h"
     #elif defined(__WXWINCE__)
        #include "wx/msw/wince/tbarwce.h"
-    #elif defined(__WXMSW__)
-       #include "wx/msw/tbarmsw.h"
     #elif defined(__WXMOTIF__)
        #include "wx/motif/toolbar.h"
+    #elif defined(__WXGTK20__)
+        #include "wx/gtk/toolbar.h"
     #elif defined(__WXGTK__)
-        #include "wx/gtk/tbargtk.h"
+        #include "wx/gtk1/toolbar.h"
     #elif defined(__WXMAC__)
-       #include "wx/mac/toolbar.h"
+       #include "wx/osx/toolbar.h"
     #elif defined(__WXCOCOA__)
        #include "wx/cocoa/toolbar.h"
     #elif defined(__WXPM__)

@@ -55,7 +55,7 @@ void ScriptDoc::OnAutoCompHint( bool enabled )
       {
          int length = view->GetCtrl()->GetTextLength();
          wxChar* buffer = m_TextBuffer->GetWriteBuf( length );
-         view->GetCtrl()->GetTextRangeRaw( buffer, 0, -1 );
+         view->GetCtrl()->GetTextRangeRaw(0, length);
       }
       m_TextBuffer->Unlock();
    }

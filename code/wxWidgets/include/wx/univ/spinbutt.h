@@ -4,17 +4,12 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     21.01.01
-// RCS-ID:      $Id: spinbutt.h,v 1.10 2004/08/10 13:08:34 ABX Exp $
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_UNIV_SPINBUTT_H_
 #define _WX_UNIV_SPINBUTT_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univspinbutt.h"
-#endif
 
 #include "wx/univ/scrarrow.h"
 
@@ -23,10 +18,10 @@
 // ----------------------------------------------------------------------------
 
 // actions supported by this control
-#define wxACTION_SPIN_INC    _T("inc")
-#define wxACTION_SPIN_DEC    _T("dec")
+#define wxACTION_SPIN_INC    wxT("inc")
+#define wxACTION_SPIN_DEC    wxT("dec")
 
-class WXDLLEXPORT wxSpinButton : public wxSpinButtonBase,
+class WXDLLIMPEXP_CORE wxSpinButton : public wxSpinButtonBase,
                                  public wxControlWithArrows
 {
 public:
@@ -57,19 +52,25 @@ public:
     virtual int GetArrowState(wxScrollArrows::Arrow arrow) const;
     virtual void SetArrowFlag(wxScrollArrows::Arrow arrow, int flag, bool set);
     virtual bool OnArrow(wxScrollArrows::Arrow arrow);
-    virtual wxScrollArrows::Arrow HitTest(const wxPoint& pt) const;
+    virtual wxScrollArrows::Arrow HitTestArrow(const wxPoint& pt) const;
 
     // for wxStdSpinButtonInputHandler
     const wxScrollArrows& GetArrows() { return m_arrows; }
+
+    virtual bool PerformAction(const wxControlAction& action,
+                               long numArg = 0,
+                               const wxString& strArg = wxEmptyString);
+
+    static wxInputHandler *GetStdInputHandler(wxInputHandler *handlerDef);
+    virtual wxInputHandler *DoGetStdInputHandler(wxInputHandler *handlerDef)
+    {
+        return GetStdInputHandler(handlerDef);
+    }
 
 protected:
     virtual wxSize DoGetBestClientSize() const;
     virtual void DoDraw(wxControlRenderer *renderer);
     virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
-
-    virtual bool PerformAction(const wxControlAction& action,
-                               long numArg = 0,
-                               const wxString& strArg = wxEmptyString);
 
     // the common part of all ctors
     void Init();
@@ -102,7 +103,7 @@ private:
 // wxStdScrollBarInputHandler) and processes keyboard events too
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxStdSpinButtonInputHandler : public wxStdInputHandler
+class WXDLLIMPEXP_CORE wxStdSpinButtonInputHandler : public wxStdInputHandler
 {
 public:
     wxStdSpinButtonInputHandler(wxInputHandler *inphand);

@@ -1,18 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        imagtiff.h
+// Name:        wx/imagtiff.h
 // Purpose:     wxImage TIFF handler
 // Author:      Robert Roebling
-// RCS-ID:      $Id: imagtiff.h,v 1.13 2005/03/16 16:18:19 ABX Exp $
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_IMAGTIFF_H_
 #define _WX_IMAGTIFF_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "imagtiff.h"
-#endif
 
 #include "wx/defs.h"
 
@@ -23,23 +18,35 @@
 #if wxUSE_LIBTIFF
 
 #include "wx/image.h"
+#include "wx/versioninfo.h"
 
 // defines for wxImage::SetOption
-#define wxIMAGE_OPTION_BITSPERSAMPLE               wxString(_T("BitsPerSample"))
-#define wxIMAGE_OPTION_SAMPLESPERPIXEL             wxString(_T("SamplesPerPixel"))
-#define wxIMAGE_OPTION_COMPRESSION                 wxString(_T("Compression"))
-#define wxIMAGE_OPTION_IMAGEDESCRIPTOR             wxString(_T("ImageDescriptor"))
+#define wxIMAGE_OPTION_TIFF_BITSPERSAMPLE               wxString(wxT("BitsPerSample"))
+#define wxIMAGE_OPTION_TIFF_SAMPLESPERPIXEL             wxString(wxT("SamplesPerPixel"))
+#define wxIMAGE_OPTION_TIFF_COMPRESSION                 wxString(wxT("Compression"))
+#define wxIMAGE_OPTION_TIFF_PHOTOMETRIC                 wxString(wxT("Photometric"))
+#define wxIMAGE_OPTION_TIFF_IMAGEDESCRIPTOR             wxString(wxT("ImageDescriptor"))
 
-class WXDLLEXPORT wxTIFFHandler: public wxImageHandler
+// for backwards compatibility
+#define wxIMAGE_OPTION_BITSPERSAMPLE               wxIMAGE_OPTION_TIFF_BITSPERSAMPLE
+#define wxIMAGE_OPTION_SAMPLESPERPIXEL             wxIMAGE_OPTION_TIFF_SAMPLESPERPIXEL
+#define wxIMAGE_OPTION_COMPRESSION                 wxIMAGE_OPTION_TIFF_COMPRESSION
+#define wxIMAGE_OPTION_IMAGEDESCRIPTOR             wxIMAGE_OPTION_TIFF_IMAGEDESCRIPTOR
+
+class WXDLLIMPEXP_CORE wxTIFFHandler: public wxImageHandler
 {
 public:
     wxTIFFHandler();
 
+    static wxVersionInfo GetLibraryVersionInfo();
+
 #if wxUSE_STREAMS
     virtual bool LoadFile( wxImage *image, wxInputStream& stream, bool verbose=true, int index=-1 );
     virtual bool SaveFile( wxImage *image, wxOutputStream& stream, bool verbose=true );
+
+protected:
+    virtual int DoGetImageCount( wxInputStream& stream );
     virtual bool DoCanRead( wxInputStream& stream );
-    virtual int GetImageCount( wxInputStream& stream );
 #endif
 
 private:

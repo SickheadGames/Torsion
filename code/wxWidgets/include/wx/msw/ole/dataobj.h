@@ -1,10 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Name:        msw/ole/dataobj.h
+// Name:        wx/msw/ole/dataobj.h
 // Purpose:     declaration of the wxDataObject class
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     10.05.98
-// RCS-ID:      $Id: dataobj.h,v 1.31 2004/08/16 12:45:40 ABX Exp $
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -22,7 +21,7 @@ struct IDataObject;
 // wxDataObject is a "smart" and polymorphic piece of data.
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxDataObject : public wxDataObjectBase
+class WXDLLIMPEXP_CORE wxDataObject : public wxDataObjectBase
 {
 public:
     // ctor & dtor
@@ -40,13 +39,26 @@ public:
     bool IsSupportedFormat(const wxDataFormat& format) const
         { return wxDataObjectBase::IsSupported(format, Get); }
 
+    // if this method returns false, this wxDataObject will be copied to
+    // the clipboard with its size prepended to it, which is compatible with
+    // older wx versions
+    //
+    // if returns true, then this wxDataObject will be copied to the clipboard
+    // without any additional information and ::HeapSize() function will be used
+    // to get the size of that data
+    virtual bool NeedsVerbatimData(const wxDataFormat& WXUNUSED(format)) const
+    {
+        // return false from here only for compatibility with earlier wx versions
+        return true;
+    }
+
     // function to return symbolic name of clipboard format (for debug messages)
 #ifdef __WXDEBUG__
     static const wxChar *GetFormatName(wxDataFormat format);
 
     #define wxGetFormatName(format) wxDataObject::GetFormatName(format)
 #else // !Debug
-    #define wxGetFormatName(format) _T("")
+    #define wxGetFormatName(format) wxT("")
 #endif // Debug/!Debug
     // they need to be accessed from wxIDataObject, so made them public,
     // or wxIDataObject friend
@@ -56,10 +68,11 @@ public:
     virtual void* SetSizeInBuffer( void* buffer, size_t size,
                                    const wxDataFormat& format );
     virtual size_t GetBufferOffset( const wxDataFormat& format );
+
 private:
     IDataObject *m_pIDataObject; // pointer to the COM interface
 
-    DECLARE_NO_COPY_CLASS(wxDataObject)
+    wxDECLARE_NO_COPY_CLASS(wxDataObject);
 };
 
 #endif  //_WX_MSW_OLE_DATAOBJ_H

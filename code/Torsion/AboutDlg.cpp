@@ -118,7 +118,9 @@ void AboutDlg::CreateControls()
 
 ////@end AboutDlg content construction
 
-   FindWindow( abID_VERSION )->SetTitle( tsGetFullBuildString() );
+  // FindWindow( abID_VERSION )->SetTitle( tsGetFullBuildString() )
+
+   FindWindow(abID_VERSION)->SetName(tsGetFullBuildString());
 
    /*
    wxString info;

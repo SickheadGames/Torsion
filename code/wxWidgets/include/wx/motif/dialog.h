@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        dialog.h
+// Name:        wx/motif/dialog.h
 // Purpose:     wxDialog class
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id: dialog.h,v 1.27 2005/09/20 20:33:44 VZ Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,21 +11,14 @@
 #ifndef _WX_DIALOG_H_
 #define _WX_DIALOG_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "dialog.h"
-#endif
-
-class WXDLLEXPORT wxEventLoop;
+class WXDLLIMPEXP_FWD_CORE wxEventLoop;
 
 // Dialog boxes
-class WXDLLEXPORT wxDialog : public wxDialogBase
+class WXDLLIMPEXP_CORE wxDialog : public wxDialogBase
 {
-    DECLARE_DYNAMIC_CLASS(wxDialog)
-
 public:
     wxDialog();
 
-    // Constructor with no modal flag - the new convention.
     wxDialog(wxWindow *parent, wxWindowID id,
         const wxString& title,
         const wxPoint& pos = wxDefaultPosition,
@@ -44,7 +36,7 @@ public:
         long style = wxDEFAULT_DIALOG_STYLE,
         const wxString& name = wxDialogNameStr);
 
-    ~wxDialog();
+    virtual ~wxDialog();
 
     virtual bool Destroy();
 
@@ -55,7 +47,7 @@ public:
     void SetModal(bool flag);
 
     virtual bool IsModal() const
-    { return ((GetWindowStyleFlag() & wxDIALOG_MODAL) == wxDIALOG_MODAL); }
+    { return m_modalShowing; }
 
     virtual int ShowModal();
     virtual void EndModal(int retCode);
@@ -64,22 +56,11 @@ public:
     virtual void ChangeFont(bool keepOriginalSize = true);
     virtual void ChangeBackgroundColour();
     virtual void ChangeForegroundColour();
-    inline WXWidget GetTopWidget() const { return m_mainWidget; }
-    inline WXWidget GetClientWidget() const { return m_mainWidget; }
-
-    // Standard buttons
-    void OnOK(wxCommandEvent& event);
-    void OnApply(wxCommandEvent& event);
-    void OnCancel(wxCommandEvent& event);
-
-    // Responds to colour changes
-    void OnSysColourChanged(wxSysColourChangedEvent& event);
-
-    void OnCharHook(wxKeyEvent& event);
-    void OnCloseWindow(wxCloseEvent& event);
+    WXWidget GetTopWidget() const { return m_mainWidget; }
+    WXWidget GetClientWidget() const { return m_mainWidget; }
 
 private:
-    virtual bool DoCreate(wxWindow* parent,
+    virtual bool XmDoCreateTLW(wxWindow* parent,
                                wxWindowID id,
                                const wxString& title,
                                const wxPoint& pos,
@@ -94,20 +75,14 @@ private:
 
 protected:
     virtual void DoSetSize(int x, int y,
-        int width, int height,
-        int sizeFlags = wxSIZE_AUTO);
+                           int width, int height,
+                           int sizeFlags = wxSIZE_AUTO);
 
     virtual void DoSetClientSize(int width, int height);
 
-#if wxCHECK_VERSION(2,7,0)
-    #error "Remove DoDestroy(), it was only kept for binary backwards compatibility"
-#endif
-
-    virtual void DoDestroy();
 
 private:
-    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS(wxDialog)
 };
 
-#endif
-// _WX_DIALOG_H_
+#endif // _WX_DIALOG_H_

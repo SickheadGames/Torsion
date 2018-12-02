@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        fs_mem.h
+// Name:        wx/fs_mem.h
 // Purpose:     in-memory file system
 // Author:      Vaclav Slavik
 // Copyright:   (c) 2000 Vaclav Slavik
@@ -9,26 +9,19 @@
 #ifndef _WX_FS_MEM_H_
 #define _WX_FS_MEM_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA) && !defined(__EMX__)
-// Some older compilers (such as EMX) cannot handle
-// #pragma interface/implementation correctly, iff
-// #pragma implementation is used in _two_ translation
-// units (as created by e.g. event.cpp compiled for
-// libwx_base and event.cpp compiled for libwx_gui_core).
-// So we must not use those pragmas for those compilers in
-// such files.
-#pragma interface "fs_mem.h"
-#endif
-
 #include "wx/defs.h"
 
 #if wxUSE_FILESYSTEM
 
 #include "wx/filesys.h"
 
+#include "wx/hashmap.h"
+
+class wxMemoryFSFile;
+WX_DECLARE_STRING_HASH_MAP(wxMemoryFSFile *, wxMemoryFSHash);
+
 #if wxUSE_GUI
-    class WXDLLIMPEXP_CORE wxBitmap;
-    class WXDLLIMPEXP_CORE wxImage;
+    #include "wx/bitmap.h"
 #endif // wxUSE_GUI
 
 // ----------------------------------------------------------------------------
@@ -39,13 +32,19 @@ class WXDLLIMPEXP_BASE wxMemoryFSHandlerBase : public wxFileSystemHandler
 {
 public:
     wxMemoryFSHandlerBase();
-    ~wxMemoryFSHandlerBase();
+    virtual ~wxMemoryFSHandlerBase();
 
     // Add file to list of files stored in memory. Stored data (bitmap, text or
     // raw data) will be copied into private memory stream and available under
     // name "memory:" + filename
     static void AddFile(const wxString& filename, const wxString& textdata);
     static void AddFile(const wxString& filename, const void *binarydata, size_t size);
+    static void AddFileWithMimeType(const wxString& filename,
+                                    const wxString& textdata,
+                                    const wxString& mimetype);
+    static void AddFileWithMimeType(const wxString& filename,
+                                    const void *binarydata, size_t size,
+                                    const wxString& mimetype);
 
     // Remove file from memory FS and free occupied memory
     static void RemoveFile(const wxString& filename);
@@ -56,8 +55,21 @@ public:
     virtual wxString FindNext();
 
 protected:
-    static bool CheckHash(const wxString& filename);
-    static wxHashTable *m_Hash;
+    // check that the given file is not already present in m_Hash; logs an
+    // error and returns false if it does exist
+    static bool CheckDoesntExist(const wxString& filename);
+
+    // the hash map indexed by the names of the files stored in the memory FS
+    static wxMemoryFSHash m_Hash;
+
+    // the file name currently being searched for, i.e. the argument of the
+    // last FindFirst() call or empty string if FindFirst() hasn't been called
+    // yet or FindNext() didn't find anything
+    wxString m_findArgument;
+
+    // iterator into m_Hash used by FindFirst/Next(), possibly m_Hash.end() or
+    // even invalid (can only be used when m_findArgument is not empty)
+    wxMemoryFSHash::const_iterator m_findIter;
 };
 
 // ----------------------------------------------------------------------------
@@ -84,15 +96,31 @@ public:
     {
         wxMemoryFSHandlerBase::AddFile(filename, binarydata, size);
     }
+    static void AddFileWithMimeType(const wxString& filename,
+                                    const wxString& textdata,
+                                    const wxString& mimetype)
+    {
+        wxMemoryFSHandlerBase::AddFileWithMimeType(filename,
+                                                   textdata,
+                                                   mimetype);
+    }
+    static void AddFileWithMimeType(const wxString& filename,
+                                    const void *binarydata, size_t size,
+                                    const wxString& mimetype)
+    {
+        wxMemoryFSHandlerBase::AddFileWithMimeType(filename,
+                                                   binarydata, size,
+                                                   mimetype);
+    }
 
 #if wxUSE_IMAGE
     static void AddFile(const wxString& filename,
                         const wxImage& image,
-                        long type);
+                        wxBitmapType type);
 
     static void AddFile(const wxString& filename,
                         const wxBitmap& bitmap,
-                        long type);
+                        wxBitmapType type);
 #endif // wxUSE_IMAGE
 
 };

@@ -1,26 +1,21 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Name:        mac/dataobj2.h
+// Name:        wx/os2/dataobj2.h
 // Purpose:     declaration of standard wxDataObjectSimple-derived classes
 // Author:      Stefan Csomor (adapted from Robert Roebling's gtk port
 // Modified by:
 // Created:     10/21/99
-// RCS-ID:      $Id: dataobj2.h,v 1.5 2004/05/23 20:51:38 JS Exp $
 // Copyright:   (c) 1998, 1999 Vadim Zeitlin, Robert Roebling
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_MAC_DATAOBJ2_H_
-#define _WX_MAC_DATAOBJ2_H_
-
-#ifdef __GNUG__
-    #pragma interface "dataobj.h"
-#endif
+#ifndef _WX_OS2_DATAOBJ2_H_
+#define _WX_OS2_DATAOBJ2_H_
 
 // ----------------------------------------------------------------------------
 // wxBitmapDataObject is a specialization of wxDataObject for bitmaps
 // ----------------------------------------------------------------------------
 
-class wxBitmapDataObject : public wxBitmapDataObjectBase
+class WXDLLIMPEXP_CORE wxBitmapDataObject : public wxBitmapDataObjectBase
 {
 public:
     // ctors
@@ -28,7 +23,7 @@ public:
     wxBitmapDataObject(const wxBitmap& bitmap);
 
     // destr
-    ~wxBitmapDataObject();
+    virtual ~wxBitmapDataObject();
 
     // override base class virtual to update PNG data too
     virtual void SetBitmap(const wxBitmap& bitmap);
@@ -41,7 +36,7 @@ public:
     virtual bool SetData(size_t len, const void *buf);
 
 protected:
-    void Init() { m_pngData = (void *)NULL; m_pngSize = 0; }
+    void Init() { m_pngData = NULL; m_pngSize = 0; }
     void Clear() { free(m_pngData); }
     void ClearAll() { Clear(); Init(); }
 
@@ -86,5 +81,4 @@ private:
     { return(wxDataObjectSimple::SetData(rFormat, nLen, pBuf)); }
 };
 
-#endif // _WX_MAC_DATAOBJ2_H_
-
+#endif // _WX_OS2_DATAOBJ2_H_

@@ -4,9 +4,8 @@
 // Author:      Wlodzimierz ABX Skiba
 // Modified by:
 // Created:     29.07.2004
-// RCS-ID:      $Id: choicece.h,v 1.3 2005/03/13 15:32:21 ABX Exp $
 // Copyright:   (c) Wlodzimierz Skiba
-// License:     wxWindows licence
+// Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_CHOICECE_H_BASE_
@@ -16,24 +15,20 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "choicece.h"
-#endif
-
 #include "wx/defs.h"
 
 #if wxUSE_CHOICE
 
 #include "wx/dynarray.h"
 
-class WXDLLEXPORT wxChoice;
+class WXDLLIMPEXP_FWD_CORE wxChoice;
 WX_DEFINE_EXPORTED_ARRAY_PTR(wxChoice *, wxArrayChoiceSpins);
 
 // ----------------------------------------------------------------------------
 // Choice item
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxChoice : public wxChoiceBase
+class WXDLLIMPEXP_CORE wxChoice : public wxChoiceBase
 {
 public:
     // ctors
@@ -82,18 +77,16 @@ public:
                 const wxString& name = wxChoiceNameStr);
 
     // implement base class pure virtuals
-    virtual int DoAppend(const wxString& item);
-    virtual int DoInsert(const wxString& item, int pos);
-    virtual void Delete(int n);
-    virtual void Clear() ;
+    virtual void DoDeleteOneItem(unsigned int n);
+    virtual void DoClear();
 
-    virtual int GetCount() const;
+    virtual unsigned int GetCount() const;
     virtual int GetSelection() const;
     virtual void SetSelection(int n);
 
-    virtual int FindString(const wxString& s) const;
-    virtual wxString GetString(int n) const;
-    virtual void SetString(int n, const wxString& s);
+    virtual int FindString(const wxString& s, bool bCase = false) const;
+    virtual wxString GetString(unsigned int n) const;
+    virtual void SetString(unsigned int n, const wxString& s);
 
     // get the subclassed window proc of the buddy list of choices
     WXFARPROC GetBuddyWndProc() const { return m_wndProcBuddy; }
@@ -104,10 +97,14 @@ public:
     virtual bool MSWCommand(WXUINT param, WXWORD id);
 
 protected:
-    virtual void DoSetItemClientData( int n, void* clientData );
-    virtual void* DoGetItemClientData( int n ) const;
-    virtual void DoSetItemClientObject( int n, wxClientData* clientData );
-    virtual wxClientData* DoGetItemClientObject( int n ) const;
+    virtual int DoInsertItems(const wxArrayStringsAdapter& items,
+                              unsigned int pos,
+                              void **clientData, wxClientDataType type);
+
+    virtual void DoSetItemClientData(unsigned int n, void* clientData);
+    virtual void* DoGetItemClientData(unsigned int n) const;
+
+    virtual WXHWND MSWGetItemsHWND() const { return m_hwndBuddy; }
 
     // MSW implementation
     virtual void DoGetPosition(int *x, int *y) const;
@@ -125,9 +122,6 @@ protected:
                        long style,
                        const wxValidator& validator,
                        const wxString& name);
-
-    // free all memory we have (used by Clear() and dtor)
-    void Free();
 
     // the data for the "buddy" list
     WXHWND     m_hwndBuddy;

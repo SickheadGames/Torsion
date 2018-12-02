@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        listbox.h
+// Name:        wx/os2/listbox.h
 // Purpose:     wxListBox class
 // Author:      David Webster
 // Modified by:
 // Created:     10/09/99
-// RCS-ID:      $Id: listbox.h,v 1.18 2005/07/21 17:17:14 ABX Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,10 +16,10 @@
 // ----------------------------------------------------------------------------
 
 #if wxUSE_OWNER_DRAWN
-    class WXDLLEXPORT wxOwnerDrawn;
+    class WXDLLIMPEXP_FWD_CORE wxOwnerDrawn;
 
     // define the array of list box items
-    #include  <wx/dynarray.h>
+    #include  "wx/dynarray.h"
 
     WX_DEFINE_EXPORTED_ARRAY_PTR(wxOwnerDrawn *, wxListBoxItemsArray);
 #endif // wxUSE_OWNER_DRAWN
@@ -32,7 +31,7 @@ class wxArrayInt;
 // List box control
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxListBox : public wxListBoxBase
+class WXDLLIMPEXP_CORE wxListBox : public wxListBoxBase
 {
 public:
     // ctors and such
@@ -103,41 +102,22 @@ public:
     //
     // Implement base class pure virtuals
     //
-    virtual void          Clear(void);
-    virtual void          Delete(int n);
+    virtual void          DoClear(void);
+    virtual void          DoDeleteOneItem(unsigned int n);
 
-    virtual int           GetCount(void) const;
-    virtual wxString      GetString(int n) const;
-    virtual void          SetString( int             n
-                                    ,const wxString& rsString
-                                   );
-    virtual int           FindString(const wxString& rsString) const;
+    virtual unsigned int  GetCount() const;
+    virtual wxString      GetString(unsigned int n) const;
+    virtual void          SetString(unsigned int n, const wxString& rsString);
 
     virtual bool          IsSelected(int n) const;
-    virtual void          DoSetSelection( int  n
-                                       ,bool bSelect
-                                      );
+    virtual void          DoSetSelection(int  n, bool bSelect);
     virtual int           GetSelection(void) const;
     virtual int           GetSelections(wxArrayInt& raSelections) const;
 
-    virtual int           DoAppend(const wxString& rsItem);
-    virtual void          DoInsertItems( const wxArrayString& raItems
-                                        ,int                  rPos
-                                       );
-    virtual void          DoSetItems( const wxArrayString& raItems
-                                     ,void **              ppClientData
-                                    );
-
     virtual void          DoSetFirstItem(int n);
 
-    virtual void          DoSetItemClientData( int   n
-                                              ,void* pClientData
-                                             );
-    virtual void*         DoGetItemClientData(int n) const;
-    virtual void          DoSetItemClientObject( int           n
-                                                ,wxClientData* pClientData
-                                               );
-    virtual wxClientData* DoGetItemClientObject(int n) const;
+    virtual void          DoSetItemClientData(unsigned int n, void* pClientData);
+    virtual void*         DoGetItemClientData(unsigned int n) const;
 
     //
     // wxCheckListBox support
@@ -161,9 +141,8 @@ protected:
     bool                  HasMultipleSelection(void) const;
     virtual wxSize        DoGetBestSize(void) const;
 
-    int                             m_nNumItems;
-    int                             m_nSelected;
-
+    unsigned int          m_nNumItems;
+    int                   m_nSelected;
 
 #if wxUSE_OWNER_DRAWN
     //
@@ -172,9 +151,15 @@ protected:
     wxListBoxItemsArray             m_aItems;
 #endif
 
-private:
+    //
+    // Implement base wxItemContainer virtuals
+    //
+    virtual int           DoInsertItems(const wxArrayStringsAdapter& items,
+                                        unsigned int pos,
+                                        void **clientData,
+                                        wxClientDataType type);
+
     DECLARE_DYNAMIC_CLASS(wxListBox)
 }; // end of wxListBox
 
-#endif
-    // _WX_LISTBOX_H_
+#endif // _WX_LISTBOX_H_

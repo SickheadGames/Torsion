@@ -1,23 +1,16 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        listbox.h
+// Name:        wx/gtk/listbox.h
 // Purpose:     wxListBox class declaration
 // Author:      Robert Roebling
-// Id:          $Id: listbox.h,v 1.50 2005/08/02 22:57:55 MW Exp $
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef _WX_GTK_LISTBOX_H_
+#define _WX_GTK_LISTBOX_H_
 
-#ifndef __GTKLISTBOXH__
-#define __GTKLISTBOXH__
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "listbox.h"
-#endif
-
-#include "wx/list.h"
-
-class WXDLLIMPEXP_BASE wxSortedArrayString;
+struct _wxTreeEntry;
+struct _GtkTreeIter;
 
 //-----------------------------------------------------------------------------
 // wxListBox
@@ -27,7 +20,10 @@ class WXDLLIMPEXP_CORE wxListBox : public wxListBoxBase
 {
 public:
     // ctors and such
-    wxListBox();
+    wxListBox()
+    {
+        Init();
+    }
     wxListBox( wxWindow *parent, wxWindowID id,
             const wxPoint& pos = wxDefaultPosition,
             const wxSize& size = wxDefaultSize,
@@ -36,9 +32,7 @@ public:
             const wxValidator& validator = wxDefaultValidator,
             const wxString& name = wxListBoxNameStr )
     {
-#if wxUSE_CHECKLISTBOX
-        m_hasCheckBoxes = FALSE;
-#endif // wxUSE_CHECKLISTBOX
+        Init();
         Create(parent, id, pos, size, n, choices, style, validator, name);
     }
     wxListBox( wxWindow *parent, wxWindowID id,
@@ -49,9 +43,7 @@ public:
             const wxValidator& validator = wxDefaultValidator,
             const wxString& name = wxListBoxNameStr )
     {
-#if wxUSE_CHECKLISTBOX
-        m_hasCheckBoxes = FALSE;
-#endif // wxUSE_CHECKLISTBOX
+        Init();
         Create(parent, id, pos, size, choices, style, validator, name);
     }
     virtual ~wxListBox();
@@ -71,75 +63,73 @@ public:
                 const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = wxListBoxNameStr);
 
-    // implement base class pure virtuals
-    virtual void Clear();
-    virtual void Delete(int n);
-
-    virtual int GetCount() const;
-    virtual wxString GetString(int n) const;
-    virtual void SetString(int n, const wxString& s);
-    virtual int FindString(const wxString& s) const;
+    virtual unsigned int GetCount() const;
+    virtual wxString GetString(unsigned int n) const;
+    virtual void SetString(unsigned int n, const wxString& s);
+    virtual int FindString(const wxString& s, bool bCase = false) const;
 
     virtual bool IsSelected(int n) const;
-    virtual void DoSetSelection(int n, bool select);
     virtual int GetSelection() const;
     virtual int GetSelections(wxArrayInt& aSelections) const;
 
-    virtual int DoAppend(const wxString& item);
-    virtual void DoInsertItems(const wxArrayString& items, int pos);
-    virtual void DoSetItems(const wxArrayString& items, void **clientData);
+    virtual void EnsureVisible(int n);
 
-    virtual void DoSetFirstItem(int n);
-
-    virtual void DoSetItemClientData(int n, void* clientData);
-    virtual void* DoGetItemClientData(int n) const;
-    virtual void DoSetItemClientObject(int n, wxClientData* clientData);
-    virtual wxClientData* DoGetItemClientObject(int n) const;
+    virtual void Update();
 
     static wxVisualAttributes
     GetClassDefaultAttributes(wxWindowVariant variant = wxWINDOW_VARIANT_NORMAL);
-    
+
     // implementation from now on
 
-    void GtkAddItem( const wxString &item, int pos=-1 );
-    int GtkGetIndex( GtkWidget *item ) const;
-    GtkWidget *GetConnectWidget();
-    bool IsOwnGtkWindow( GdkWindow *window );
-    void DoApplyWidgetStyle(GtkRcStyle *style);
-    void OnInternalIdle();
+    virtual GtkWidget *GetConnectWidget();
 
-#if wxUSE_TOOLTIPS
-    void ApplyToolTip( GtkTooltips *tips, const wxChar *tip );
-#endif // wxUSE_TOOLTIPS
-
-    GtkList   *m_list;
-    wxList     m_clientList;
+    struct _GtkTreeView   *m_treeview;
+    struct _GtkListStore  *m_liststore;
 
 #if wxUSE_CHECKLISTBOX
     bool       m_hasCheckBoxes;
 #endif // wxUSE_CHECKLISTBOX
 
-    int        m_prevSelection;
-    bool       m_blockEvent;
+    struct _wxTreeEntry* GTKGetEntry(unsigned pos) const;
 
-    virtual void FixUpMouseEvent(GtkWidget *widget, wxCoord& x, wxCoord& y);
+    void GTKDisableEvents();
+    void GTKEnableEvents();
+
+    void GTKOnSelectionChanged();
+    void GTKOnActivated(int item);
 
 protected:
+    virtual void DoClear();
+    virtual void DoDeleteOneItem(unsigned int n);
     virtual wxSize DoGetBestSize() const;
+    virtual void DoApplyWidgetStyle(GtkRcStyle *style);
+    virtual GdkWindow *GTKGetWindow(wxArrayGdkWindows& windows) const;
 
-    // return the string label for the given item
-    wxString GetRealLabel(struct _GList *item) const;
+    virtual void DoSetSelection(int n, bool select);
 
-    // Widgets that use the style->base colour for the BG colour should
-    // override this and return true.
-    virtual bool UseGTKStyleBase() const { return true; }
+    virtual int DoInsertItems(const wxArrayStringsAdapter& items,
+                              unsigned int pos,
+                              void **clientData, wxClientDataType type);
+    virtual int DoInsertOneItem(const wxString& item, unsigned int pos);
+
+    virtual void DoSetFirstItem(int n);
+    virtual void DoSetItemClientData(unsigned int n, void* clientData);
+    virtual void* DoGetItemClientData(unsigned int n) const;
+    virtual int DoListHitTest(const wxPoint& point) const;
+
+    // get the iterator for the given index, returns false if invalid
+    bool GTKGetIteratorFor(unsigned pos, _GtkTreeIter *iter) const;
+
+    // get the index for the given iterator, return wxNOT_FOUND on failure
+    int GTKGetIndexFor(_GtkTreeIter& iter) const;
+
+    // common part of DoSetFirstItem() and EnsureVisible()
+    void DoScrollToCell(int n, float alignY, float alignX);
 
 private:
-    // this array is only used for controls with wxCB_SORT style, so only
-    // allocate it if it's needed (hence using pointer)
-    wxSortedArrayString *m_strings;
+    void Init(); //common construction
 
     DECLARE_DYNAMIC_CLASS(wxListBox)
 };
 
-#endif // __GTKLISTBOXH__
+#endif // _WX_GTK_LISTBOX_H_

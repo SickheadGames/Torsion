@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     19.05.01
-// RCS-ID:      $Id: frame.h,v 1.25 2005/02/20 00:11:58 VZ Exp $
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,15 +11,11 @@
 #ifndef _WX_UNIV_FRAME_H_
 #define _WX_UNIV_FRAME_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univframe.h"
-#endif
-
 // ----------------------------------------------------------------------------
 // wxFrame
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxFrame : public wxFrameBase
+class WXDLLIMPEXP_CORE wxFrame : public wxFrameBase
 {
 public:
     wxFrame() {}
@@ -48,7 +43,7 @@ public:
 
 #if wxUSE_STATUSBAR
     virtual wxStatusBar* CreateStatusBar(int number = 1,
-                                         long style = wxST_SIZEGRIP,
+                                         long style = wxSTB_DEFAULT_STYLE,
                                          wxWindowID id = 0,
                                          const wxString& name = wxStatusLineNameStr);
 #endif // wxUSE_STATUSBAR
@@ -58,14 +53,9 @@ public:
     virtual wxToolBar* CreateToolBar(long style = -1,
                                      wxWindowID id = wxID_ANY,
                                      const wxString& name = wxToolBarNameStr);
-    virtual void PositionToolBar();
 #endif // wxUSE_TOOLBAR
 
-    virtual int GetMinWidth() const;
-    virtual int GetMinHeight() const;
-
-    // sends wxSizeEvent to itself (used after attaching xxxBar)
-    virtual void SendSizeEvent();
+    virtual wxSize GetMinSize() const;
 
 protected:
     void OnSize(wxSizeEvent& event);
@@ -85,6 +75,11 @@ protected:
     // override to update statusbar position when the frame size changes
     virtual void PositionStatusBar();
 #endif // wxUSE_MENUS
+
+protected:
+#if wxUSE_TOOLBAR
+    virtual void PositionToolBar();
+#endif // wxUSE_TOOLBAR
 
     DECLARE_EVENT_TABLE()
     DECLARE_DYNAMIC_CLASS(wxFrame)

@@ -4,9 +4,8 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/02/15
-// RCS-ID:      $Id: 
 // Copyright:   (c) 2003 David Elliott
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WX_COCOA_CONTROL_H__
@@ -18,7 +17,7 @@
 // wxControl
 // ========================================================================
 
-class WXDLLEXPORT wxControl : public wxControlBase, public wxCocoaNSControl
+class WXDLLIMPEXP_CORE wxControl : public wxControlBase, public wxCocoaNSControl
 {
     DECLARE_ABSTRACT_CLASS(wxControl)
     WX_DECLARE_COCOA_OWNER(NSControl,NSView,NSView)
@@ -53,7 +52,7 @@ public:
     // --------------------------
 
     void OnEraseBackground(wxEraseEvent& event);
-   
+
     virtual void Command(wxCommandEvent& event) { ProcessCommand(event); }
 
     // Calls the callback and appropriate event handlers
@@ -63,6 +62,16 @@ public:
     virtual void CocoaSetEnabled(bool enable);
 protected:
     virtual wxSize DoGetBestSize() const;
+
+    // Provides a common implementation of title setting which strips mnemonics
+    // and then calls setTitle: with the stripped string.  May be implemented
+    // to call setTitleWithMnemonic: on OpenStep-compatible systems.  Only
+    // intended for use by views or cells which implement at least setTitle:
+    // and possibly setTitleWithMnemonic: such as NSBox and NSButton or NSCell
+    // classes, for example as used by wxRadioBox.  Not usable with classes like
+    // NSTextField which expect setStringValue:.
+    static void CocoaSetLabelForObject(const wxString& labelWithWxMnemonic, struct objc_object *anObject);
 };
 
-#endif // __WX_COCOA_CONTROL_H__
+#endif
+    // __WX_COCOA_CONTROL_H__

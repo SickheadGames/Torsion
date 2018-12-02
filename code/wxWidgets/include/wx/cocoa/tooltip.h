@@ -1,10 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Name:        cocoa/tooltip.h
+// Name:        wx/cocoa/tooltip.h
 // Purpose:     wxToolTip class - tooltip control
 // Author:      Ryan Norton
 // Modified by:
 // Created:     31.01.99
-// RCS-ID:      $Id: tooltip.h,v 1.2.4.1 2005/09/25 20:46:16 MW Exp $
 // Copyright:   (c) Ryan Norton
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -36,6 +35,10 @@ public:
     static void Enable(bool flag);
         // set the delay after which the tooltip appears
     static void SetDelay(long milliseconds);
+        // set the delay after which the tooltip disappears or how long the tooltip remains visible
+    static void SetAutoPop(long milliseconds);
+        // set the delay between subsequent tooltips to appear
+    static void SetReshow(long milliseconds);
 
 private:
     void SetWindow(wxWindow* window);
@@ -44,7 +47,7 @@ private:
 
     wxString  m_text;           // tooltip text
     wxWindow *m_window;         // window we're associated with
-    
+
     DECLARE_ABSTRACT_CLASS(wxToolTip)
 };
 

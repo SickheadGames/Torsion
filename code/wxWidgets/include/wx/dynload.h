@@ -1,21 +1,16 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:         dynload.h
+// Name:         wx/dynload.h
 // Purpose:      Dynamic loading framework
 // Author:       Ron Lee, David Falkinder, Vadim Zeitlin and a cast of 1000's
 //               (derived in part from dynlib.cpp (c) 1998 Guilhem Lavaux)
 // Modified by:
 // Created:      03/12/01
-// RCS-ID:       $Id: dynload.h,v 1.24.2.2 2006/01/18 16:32:38 JS Exp $
 // Copyright:    (c) 2001 Ron Lee <ron@debian.org>
 // Licence:      wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_DYNAMICLOADER_H__
 #define _WX_DYNAMICLOADER_H__
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "dynload.h"
-#endif
 
 // ----------------------------------------------------------------------------
 // headers
@@ -29,7 +24,7 @@
 #include "wx/hashmap.h"
 #include "wx/module.h"
 
-class WXDLLIMPEXP_BASE wxPluginLibrary;
+class WXDLLIMPEXP_FWD_BASE wxPluginLibrary;
 
 
 WX_DECLARE_STRING_HASH_MAP_WITH_DECL(wxPluginLibrary *, wxDLManifest,
@@ -75,7 +70,7 @@ public:
     void  RefObj() { ++m_objcount; }
     void  UnrefObj()
     {
-        wxASSERT_MSG( m_objcount > 0, _T("Too many objects deleted??") );
+        wxASSERT_MSG( m_objcount > 0, wxT("Too many objects deleted??") );
         --m_objcount;
     }
 
@@ -86,8 +81,11 @@ public:
 
 private:
 
-    wxClassInfo    *m_before;       // sm_first before loading this lib
-    wxClassInfo    *m_after;        // ..and after.
+    // These pointers may be NULL but if they are not, then m_ourLast follows
+    // m_ourFirst in the linked list, i.e. can be found by calling GetNext() a
+    // sufficient number of times.
+    const wxClassInfo    *m_ourFirst; // first class info in this plugin
+    const wxClassInfo    *m_ourLast;  // ..and the last one
 
     size_t          m_linkcount;    // Ref count of library link calls
     size_t          m_objcount;     // ..and (pluggable) object instantiations.
@@ -98,7 +96,7 @@ private:
     void    RegisterModules();      // Init any wxModules in the lib.
     void    UnregisterModules();    // Cleanup any wxModules we installed.
 
-    DECLARE_NO_COPY_CLASS(wxPluginLibrary)
+    wxDECLARE_NO_COPY_CLASS(wxPluginLibrary);
 };
 
 
@@ -111,13 +109,6 @@ public:
     static wxPluginLibrary    *LoadLibrary( const wxString &libname,
                                             int flags = wxDL_DEFAULT );
     static bool                UnloadLibrary(const wxString &libname);
-
-        // This is used by wxDllLoader.  It's wrapped in the compatibility
-        // macro because it's of arguable use outside of that.
-
-#if WXWIN_COMPATIBILITY_2_2
-    wxDEPRECATED( static wxPluginLibrary *GetObjectFromHandle(wxDllType handle) );
-#endif
 
         // Instance methods.
 
@@ -155,7 +146,7 @@ private:
 
     // We could allow this class to be copied if we really
     // wanted to, but not without modification.
-    DECLARE_NO_COPY_CLASS(wxPluginManager)
+    wxDECLARE_NO_COPY_CLASS(wxPluginManager);
 };
 
 

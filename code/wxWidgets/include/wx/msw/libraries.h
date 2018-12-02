@@ -3,7 +3,6 @@
  * Purpose:     Pragmas for linking libs conditionally
  * Author:      Michael Wetherell
  * Modified by:
- * RCS-ID:      $Id: libraries.h,v 1.1.2.3 2006/01/27 22:04:03 MW Exp $
  * Copyright:   (c) 2005 Michael Wetherell
  * Licence:     wxWindows licence
  */

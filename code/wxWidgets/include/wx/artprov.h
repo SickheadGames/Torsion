@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        artprov.h
+// Name:        wx/artprov.h
 // Purpose:     wxArtProvider class
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     18/03/2002
-// RCS-ID:      $Id: artprov.h,v 1.23 2005/05/26 19:15:43 RD Exp $
 // Copyright:   (c) Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,16 +11,13 @@
 #ifndef _WX_ARTPROV_H_
 #define _WX_ARTPROV_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "artprov.h"
-#endif
-
 #include "wx/string.h"
 #include "wx/bitmap.h"
 #include "wx/icon.h"
+#include "wx/iconbndl.h"
 
-class WXDLLEXPORT wxArtProvidersList;
-class WXDLLEXPORT wxArtProviderCache;
+class WXDLLIMPEXP_FWD_CORE wxArtProvidersList;
+class WXDLLIMPEXP_FWD_CORE wxArtProviderCache;
 class wxArtProviderModule;
 
 // ----------------------------------------------------------------------------
@@ -31,10 +27,10 @@ class wxArtProviderModule;
 typedef wxString wxArtClient;
 typedef wxString wxArtID;
 
-#define wxART_MAKE_CLIENT_ID_FROM_STR(id)  (id + _T("_C"))
-#define wxART_MAKE_CLIENT_ID(id)           _T(#id) _T("_C")
+#define wxART_MAKE_CLIENT_ID_FROM_STR(id)  ((id) + "_C")
+#define wxART_MAKE_CLIENT_ID(id)           (#id "_C")
 #define wxART_MAKE_ART_ID_FROM_STR(id)     (id)
-#define wxART_MAKE_ART_ID(id)              _T(#id)
+#define wxART_MAKE_ART_ID(id)              (#id)
 
 // ----------------------------------------------------------------------------
 // Art clients
@@ -48,6 +44,7 @@ typedef wxString wxArtID;
 #define wxART_HELP_BROWSER         wxART_MAKE_CLIENT_ID(wxART_HELP_BROWSER)
 #define wxART_MESSAGE_BOX          wxART_MAKE_CLIENT_ID(wxART_MESSAGE_BOX)
 #define wxART_BUTTON               wxART_MAKE_CLIENT_ID(wxART_BUTTON)
+#define wxART_LIST                 wxART_MAKE_CLIENT_ID(wxART_LIST)
 
 #define wxART_OTHER                wxART_MAKE_CLIENT_ID(wxART_OTHER)
 
@@ -68,6 +65,8 @@ typedef wxString wxArtID;
 #define wxART_GO_DOWN              wxART_MAKE_ART_ID(wxART_GO_DOWN)
 #define wxART_GO_TO_PARENT         wxART_MAKE_ART_ID(wxART_GO_TO_PARENT)
 #define wxART_GO_HOME              wxART_MAKE_ART_ID(wxART_GO_HOME)
+#define wxART_GOTO_FIRST           wxART_MAKE_ART_ID(wxART_GOTO_FIRST)
+#define wxART_GOTO_LAST            wxART_MAKE_ART_ID(wxART_GOTO_LAST)
 #define wxART_FILE_OPEN            wxART_MAKE_ART_ID(wxART_FILE_OPEN)
 #define wxART_FILE_SAVE            wxART_MAKE_ART_ID(wxART_FILE_SAVE)
 #define wxART_FILE_SAVE_AS         wxART_MAKE_ART_ID(wxART_FILE_SAVE_AS)
@@ -103,6 +102,10 @@ typedef wxString wxArtID;
 #define wxART_UNDO                 wxART_MAKE_ART_ID(wxART_UNDO)
 #define wxART_REDO                 wxART_MAKE_ART_ID(wxART_REDO)
 
+#define wxART_PLUS                 wxART_MAKE_ART_ID(wxART_PLUS)
+#define wxART_MINUS                wxART_MAKE_ART_ID(wxART_MINUS)
+
+#define wxART_CLOSE                wxART_MAKE_ART_ID(wxART_CLOSE)
 #define wxART_QUIT                 wxART_MAKE_ART_ID(wxART_QUIT)
 
 #define wxART_FIND                 wxART_MAKE_ART_ID(wxART_FIND)
@@ -113,18 +116,37 @@ typedef wxString wxArtID;
 // wxArtProvider class
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxArtProvider : public wxObject
+class WXDLLIMPEXP_CORE wxArtProvider : public wxObject
 {
 public:
-    // Add new provider to the top of providers stack.
-    static void PushProvider(wxArtProvider *provider);
+    // Dtor removes the provider from providers stack if it's still on it
+    virtual ~wxArtProvider();
+
+    // Does this platform implement native icons theme?
+    static bool HasNativeProvider();
+
+    // Add new provider to the top of providers stack (i.e. the provider will
+    // be queried first of all).
+    static void Push(wxArtProvider *provider);
+
+    // Add new provider to the bottom of providers stack (i.e. the provider
+    // will be queried as the last one).
+    static void PushBack(wxArtProvider *provider);
+
+#if WXWIN_COMPATIBILITY_2_8
+    // use PushBack(), it's the same thing
+    static wxDEPRECATED( void Insert(wxArtProvider *provider) );
+#endif
 
     // Remove latest added provider and delete it.
-    static bool PopProvider();
+    static bool Pop();
 
-    // Remove provider. The provider must have been added previously!
-    // The provider is _not_ deleted.
-    static bool RemoveProvider(wxArtProvider *provider);
+    // Remove provider from providers stack but don't delete it.
+    static bool Remove(wxArtProvider *provider);
+
+    // Delete the given provider and remove it from the providers stack.
+    static bool Delete(wxArtProvider *provider);
+
 
     // Query the providers for bitmap with given ID and return it. Return
     // wxNullBitmap if no provider provides it.
@@ -138,31 +160,85 @@ public:
                           const wxArtClient& client = wxART_OTHER,
                           const wxSize& size = wxDefaultSize);
 
-    // Get the size hint of an icon from a specific wxArtClient, queries 
+    // Helper used by GetMessageBoxIcon(): return the art id corresponding to
+    // the standard wxICON_INFORMATION/WARNING/ERROR/QUESTION flags (only one
+    // can be set)
+    static wxArtID GetMessageBoxIconId(int flags);
+
+    // Helper used by several generic classes: return the icon corresponding to
+    // the standard wxICON_INFORMATION/WARNING/ERROR/QUESTION flags (only one
+    // can be set)
+    static wxIcon GetMessageBoxIcon(int flags)
+    {
+        return GetIcon(GetMessageBoxIconId(flags), wxART_MESSAGE_BOX);
+    }
+
+    // Query the providers for iconbundle with given ID and return it. Return
+    // wxNullIconBundle if no provider provides it.
+    static wxIconBundle GetIconBundle(const wxArtID& id,
+                                      const wxArtClient& client = wxART_OTHER);
+
+    // Gets native size for given 'client' or wxDefaultSize if it doesn't
+    // have native equivalent
+    static wxSize GetNativeSizeHint(const wxArtClient& client);
+
+    // Get the size hint of an icon from a specific wxArtClient, queries
     // the topmost provider if platform_dependent = false
     static wxSize GetSizeHint(const wxArtClient& client, bool platform_dependent = false);
 
+#if WXWIN_COMPATIBILITY_2_6
+    // use the corresponding methods without redundant "Provider" suffix
+    static wxDEPRECATED( void PushProvider(wxArtProvider *provider) );
+    static wxDEPRECATED( void InsertProvider(wxArtProvider *provider) );
+    static wxDEPRECATED( bool PopProvider() );
+
+    // use Delete() if this is what you really need, or just delete the
+    // provider pointer, do not use Remove() as it does not delete the pointer
+    // unlike RemoveProvider() which does
+    static wxDEPRECATED( bool RemoveProvider(wxArtProvider *provider) );
+#endif // WXWIN_COMPATIBILITY_2_6
+
 protected:
     friend class wxArtProviderModule;
+#if wxUSE_ARTPROVIDER_STD
     // Initializes default provider
     static void InitStdProvider();
+#endif // wxUSE_ARTPROVIDER_STD
+    // Initializes Tango-based icon provider
+#if wxUSE_ARTPROVIDER_TANGO
+    static void InitTangoProvider();
+#endif // wxUSE_ARTPROVIDER_TANGO
     // Initializes platform's native provider, if available (e.g. GTK2)
     static void InitNativeProvider();
     // Destroy caches & all providers
     static void CleanUpProviders();
 
     // Get the default size of an icon for a specific client
-    virtual wxSize DoGetSizeHint(const wxArtClient& client) 
+    virtual wxSize DoGetSizeHint(const wxArtClient& client)
     {
         return GetSizeHint(client, true);
     }
-                             
-    // Derived classes must override this method to create requested
-    // art resource. This method is called only once per instance's
-    // lifetime for each requested wxArtID.
+
+    // Derived classes must override CreateBitmap or CreateIconBundle
+    // (or both) to create requested art resource. This method is called
+    // only once per instance's lifetime for each requested wxArtID.
     virtual wxBitmap CreateBitmap(const wxArtID& WXUNUSED(id),
                                   const wxArtClient& WXUNUSED(client),
-                                  const wxSize& WXUNUSED(size)) = 0;
+                                  const wxSize& WXUNUSED(size))
+    {
+        return wxNullBitmap;
+    }
+
+    virtual wxIconBundle CreateIconBundle(const wxArtID& WXUNUSED(id),
+                                          const wxArtClient& WXUNUSED(client))
+    {
+        return wxNullIconBundle;
+    }
+
+private:
+    static void CommonAddingProvider();
+    static wxIconBundle DoGetIconBundle(const wxArtID& id,
+                                        const wxArtClient& client);
 
 private:
     // list of providers:
@@ -173,5 +249,13 @@ private:
     DECLARE_ABSTRACT_CLASS(wxArtProvider)
 };
 
+
+#if !defined(__WXUNIVERSAL__) && \
+    ((defined(__WXGTK__) && defined(__WXGTK20__)) || defined(__WXMSW__) || \
+     defined(__WXMAC__))
+  // *some* (partial) native implementation of wxArtProvider exists; this is
+  // not the same as wxArtProvider::HasNativeProvider()!
+  #define wxHAS_NATIVE_ART_PROVIDER_IMPL
+#endif
 
 #endif // _WX_ARTPROV_H_

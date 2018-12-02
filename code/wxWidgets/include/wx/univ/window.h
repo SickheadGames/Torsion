@@ -6,7 +6,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     06.08.00
-// RCS-ID:      $Id: window.h,v 1.35 2005/08/16 20:32:31 ABX Exp $
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -14,18 +13,21 @@
 #ifndef _WX_UNIV_WINDOW_H_
 #define _WX_UNIV_WINDOW_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univwindow.h"
-#endif
-
 #include "wx/bitmap.h"      // for m_bitmapBg
 
-class WXDLLEXPORT wxControlRenderer;
-class WXDLLEXPORT wxEventLoop;
-class WXDLLEXPORT wxMenu;
-class WXDLLEXPORT wxMenuBar;
-class WXDLLEXPORT wxRenderer;
-class WXDLLEXPORT wxScrollBar;
+class WXDLLIMPEXP_FWD_CORE wxControlRenderer;
+class WXDLLIMPEXP_FWD_CORE wxEventLoop;
+
+#if wxUSE_MENUS
+    class WXDLLIMPEXP_FWD_CORE wxMenu;
+    class WXDLLIMPEXP_FWD_CORE wxMenuBar;
+#endif // wxUSE_MENUS
+
+class WXDLLIMPEXP_FWD_CORE wxRenderer;
+
+#if wxUSE_SCROLLBAR
+    class WXDLLIMPEXP_FWD_CORE wxScrollBar;
+#endif // wxUSE_SCROLLBAR
 
 #ifdef __WXX11__
 #define wxUSE_TWO_WINDOWS 1
@@ -41,15 +43,13 @@ class WXDLLEXPORT wxScrollBar;
 #define wxWindowNative wxWindowMSW
 #elif defined(__WXGTK__)
 #define wxWindowNative wxWindowGTK
-#elif defined(__WXMGL__)
-#define wxWindowNative wxWindowMGL
 #elif defined(__WXX11__)
 #define wxWindowNative wxWindowX11
 #elif defined(__WXMAC__)
 #define wxWindowNative wxWindowMac
 #endif
 
-class WXDLLEXPORT wxWindow : public wxWindowNative
+class WXDLLIMPEXP_CORE wxWindow : public wxWindowNative
 {
 public:
     // ctors and create functions
@@ -99,7 +99,7 @@ public:
     virtual int GetScrollThumb(int orient) const;
     virtual int GetScrollRange(int orient) const;
     virtual void ScrollWindow(int dx, int dy,
-                              const wxRect* rect = (wxRect *) NULL);
+                              const wxRect* rect = NULL);
 
     // take into account the borders here
     virtual wxPoint GetClientAreaOrigin() const;
@@ -110,8 +110,6 @@ public:
     // NB: all menu related functions are implemented in menu.cpp
 
 #if wxUSE_MENUS
-    virtual bool DoPopupMenu(wxMenu *menu, int x, int y);
-
     // this is wxUniv-specific private method to be used only by wxMenu
     void DismissPopupMenu();
 #endif // wxUSE_MENUS
@@ -131,11 +129,13 @@ public:
     // set the "highlighted" flag and return true if it changed
     virtual bool SetCurrent(bool doit = true);
 
+#if wxUSE_SCROLLBAR
     // get the scrollbar (may be NULL) for the given orientation
     wxScrollBar *GetScrollbar(int orient) const
     {
         return orient & wxVERTICAL ? m_scrollbarVert : m_scrollbarHorz;
     }
+#endif // wxUSE_SCROLLBAR
 
     // methods used by wxColourScheme to choose the colours for this window
     // --------------------------------------------------------------------
@@ -187,11 +187,23 @@ public:
     // should we use the standard control colours or not?
     virtual bool ShouldInheritColours() const { return false; }
 
+    virtual bool IsClientAreaChild(const wxWindow *child) const
+    {
+#if wxUSE_SCROLLBAR
+        if ( child == (wxWindow*)m_scrollbarHorz ||
+             child == (wxWindow*)m_scrollbarVert )
+            return false;
+#endif
+        return wxWindowNative::IsClientAreaChild(child);
+    }
+
 protected:
     // common part of all ctors
     void Init();
 
-    // overridden base class virtuals
+#if wxUSE_MENUS
+    virtual bool DoPopupMenu(wxMenu *menu, int x, int y);
+#endif // wxUSE_MENUS
 
     // we deal with the scrollbars in these functions
     virtual void DoSetClientSize(int width, int height);
@@ -222,11 +234,8 @@ protected:
     // draw the controls contents
     virtual void DoDraw(wxControlRenderer *renderer);
 
-    // calculate the best size for the client area of the window: default
-    // implementation of DoGetBestSize() uses this method and adds the border
-    // width to the result
-    virtual wxSize DoGetBestClientSize() const;
-    virtual wxSize DoGetBestSize() const;
+    // override the base class method to return the size of the window borders
+    virtual wxSize DoGetBorderSize() const;
 
     // adjust the size of the window to take into account its borders
     wxSize AdjustSize(const wxSize& size) const;
@@ -254,19 +263,18 @@ protected:
     bool m_isCurrent:1;
 
 #ifdef __WXMSW__
-
-#if wxABI_VERSION >= 20602
 public:
-#endif
     // override MSWWindowProc() to process WM_NCHITTEST
     WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
-
 #endif // __WXMSW__
 
 private:
+
+#if wxUSE_SCROLLBAR
     // the window scrollbars
     wxScrollBar *m_scrollbarHorz,
                 *m_scrollbarVert;
+#endif // wxUSE_SCROLLBAR
 
 #if wxUSE_MENUS
     // the current modal event loop for the popup menu we show or NULL
@@ -281,4 +289,3 @@ private:
 };
 
 #endif // _WX_UNIV_WINDOW_H_
-

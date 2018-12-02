@@ -1,9 +1,8 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        notebook.h
+// Name:        wx/os2/notebook.h
 // Purpose:     MSW/GTK compatible notebook (a.k.a. property sheet)
 // Author:      David Webster
 // Modified by:
-// RCS-ID:      $Id: notebook.h,v 1.14 2005/01/13 20:29:46 ABX Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -23,7 +22,7 @@
 // wxNotebook
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxNotebook : public wxNotebookBase
+class WXDLLIMPEXP_CORE wxNotebook : public wxNotebookBase
 {
 public:
     //
@@ -61,15 +60,13 @@ public:
 
     //
     // Set the currently selected page, return the index of the previously
-    // selected one (or -1 on error)
+    // selected one (or wxNOT_FOUND on error)
     // NB: this function will _not_ generate wxEVT_NOTEBOOK_PAGE_xxx events
     //
     int      SetSelection(size_t nPage);
 
-    //
-    // Get the currently selected page
-    //
-    inline int      GetSelection(void) const { return m_nSelection; }
+    // changes selected page without sending events
+    int ChangeSelection(size_t nPage);
 
     //
     // Set/Get the title of a page
@@ -152,7 +149,7 @@ public:
     // ---------
     //
     void OnSize(wxSizeEvent& rEvent);
-    void OnSelChange(wxNotebookEvent& rEvent);
+    void OnSelChange(wxBookCtrlEvent& rEvent);
     void OnSetFocus(wxFocusEvent& rEvent);
     void OnNavigationKey(wxNavigationKeyEvent& rEvent);
 
@@ -189,8 +186,6 @@ protected:
     //
     // Helper functions
     //
-
-    int                     m_nSelection; // The current selection (-1 if none)
 
 private:
     wxArrayLong                     m_alPageId;

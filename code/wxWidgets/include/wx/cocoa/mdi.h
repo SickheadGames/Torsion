@@ -2,10 +2,10 @@
 // Name:        wx/cocoa/mdi.h
 // Purpose:     wxMDIParentFrame, wxMDIChildFrame, wxMDIClientWindow
 // Author:      David Elliott
-// Modified by:
+// Modified by: 2008-10-31 Vadim Zeitlin: derive from the base classes
 // Created:     2003/09/08
-// RCS-ID:      $Id: mdi.h,v 1.4 2005/03/21 12:27:28 VZ Exp $
 // Copyright:   (c) 2003 David Elliott
+//              (c) 2008 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -16,17 +16,17 @@
 
 DECLARE_WXCOCOA_OBJC_CLASS(wxMDIParentFrameObserver);
 
-class WXDLLEXPORT wxMDIChildFrame;
-class WXDLLEXPORT wxMDIClientWindow;
+class WXDLLIMPEXP_FWD_CORE wxMDIChildFrame;
+class WXDLLIMPEXP_FWD_CORE wxMDIClientWindow;
 
-WX_DECLARE_LIST(wxMDIChildFrame, wxCocoaMDIChildFrameList);
+WX_DECLARE_EXPORTED_LIST(wxMDIChildFrame, wxCocoaMDIChildFrameList);
 
 // ========================================================================
 // wxMDIParentFrame
 // ========================================================================
-class WXDLLEXPORT wxMDIParentFrame: public wxFrame
+class WXDLLIMPEXP_CORE wxMDIParentFrame : public wxMDIParentFrameBase
 {
-    friend class WXDLLEXPORT wxMDIChildFrame;
+    friend class WXDLLIMPEXP_FWD_CORE wxMDIChildFrame;
     DECLARE_EVENT_TABLE()
     DECLARE_DYNAMIC_CLASS(wxMDIParentFrame)
 // ------------------------------------------------------------------------
@@ -76,17 +76,16 @@ protected:
 // Implementation
 // ------------------------------------------------------------------------
 public:
-    wxMDIChildFrame *GetActiveChild() const;
     void SetActiveChild(wxMDIChildFrame *child);
 
-    wxMDIClientWindow *GetClientWindow() const;
-    virtual wxMDIClientWindow *OnCreateClient();
+    // implement base class pure virtuals
+    // ----------------------------------
 
-    virtual void Cascade() {}
-    virtual void Tile(wxOrientation WXUNUSED(orient) = wxHORIZONTAL) {}
-    virtual void ArrangeIcons() {}
-    virtual void ActivateNext();
-    virtual void ActivatePrevious();
+    static bool IsTDI() { return false; }
+
+    virtual void ActivateNext() { /* TODO */ }
+    virtual void ActivatePrevious() { /* TODO */ }
+
 protected:
     wxMDIClientWindow *m_clientWindow;
     wxMDIChildFrame *m_currentChild;
@@ -96,9 +95,9 @@ protected:
 // ========================================================================
 // wxMDIChildFrame
 // ========================================================================
-class WXDLLEXPORT wxMDIChildFrame: public wxFrame
+class WXDLLIMPEXP_CORE wxMDIChildFrame: public wxFrame
 {
-    friend class WXDLLEXPORT wxMDIParentFrame;
+    friend class WXDLLIMPEXP_FWD_CORE wxMDIParentFrame;
     DECLARE_EVENT_TABLE()
     DECLARE_DYNAMIC_CLASS(wxMDIChildFrame)
 // ------------------------------------------------------------------------
@@ -150,14 +149,15 @@ protected:
 // ========================================================================
 // wxMDIClientWindow
 // ========================================================================
-class wxMDIClientWindow: public wxWindow
+class wxMDIClientWindow : public wxMDIClientWindowBase
 {
-    DECLARE_DYNAMIC_CLASS(wxMDIClientWindow)
 public:
-    wxMDIClientWindow();
-    wxMDIClientWindow( wxMDIParentFrame *parent, long style = 0 );
-    ~wxMDIClientWindow();
-    virtual bool CreateClient( wxMDIParentFrame *parent, long style = 0 );
+    wxMDIClientWindow() { }
+
+    virtual bool CreateClient(wxMDIParentFrame *parent,
+                              long style = wxHSCROLL | wxVSCROLL);
+
+    DECLARE_DYNAMIC_CLASS(wxMDIClientWindow)
 };
 
 #endif // __WX_COCOA_MDI_H__

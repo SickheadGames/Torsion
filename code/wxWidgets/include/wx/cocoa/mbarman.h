@@ -4,7 +4,6 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/09/04
-// RCS-ID:      $Id: mbarman.h,v 1.7 2004/05/23 20:50:42 JS Exp $
 // Copyright:   (c) 2003 David Elliott
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,7 +20,7 @@ DECLARE_WXCOCOA_OBJC_CLASS(wxMenuBarManagerObserver);
 // ========================================================================
 // wxMenuBarManager
 // ========================================================================
-class WXDLLEXPORT wxMenuBarManager : public wxObject
+class WXDLLIMPEXP_CORE wxMenuBarManager : public wxObject
 {
 // ------------------------------------------------------------------------
 // initialization/destruction

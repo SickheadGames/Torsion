@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: statbmp.h,v 1.34 2005/08/30 13:54:24 VZ Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,18 +11,14 @@
 #ifndef _WX_STATBMP_H_
 #define _WX_STATBMP_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "statbmp.h"
-#endif
-
 #include "wx/control.h"
 #include "wx/icon.h"
 #include "wx/bitmap.h"
 
-extern WXDLLEXPORT_DATA(const wxChar*) wxStaticBitmapNameStr;
+extern WXDLLIMPEXP_DATA_CORE(const char) wxStaticBitmapNameStr[];
 
 // a control showing an icon or a bitmap
-class WXDLLEXPORT wxStaticBitmap : public wxStaticBitmapBase
+class WXDLLIMPEXP_CORE wxStaticBitmap : public wxStaticBitmapBase
 {
 public:
     wxStaticBitmap() { Init(); }
@@ -53,33 +48,19 @@ public:
 
     virtual void SetIcon(const wxIcon& icon) { SetImage(&icon); }
     virtual void SetBitmap(const wxBitmap& bitmap) { SetImage(&bitmap); }
+    virtual wxBitmap GetBitmap() const;
+    virtual wxIcon GetIcon() const;
 
-    // assert failure is provoked by an attempt to get an icon from bitmap or
-    // vice versa
-    wxIcon GetIcon() const
-    {
-        wxASSERT_MSG( m_isIcon, _T("no icon in this wxStaticBitmap") );
-
-        return *(wxIcon *)m_image;
-    }
-
-    wxBitmap GetBitmap() const
-    {
-        wxASSERT_MSG( !m_isIcon, _T("no bitmap in this wxStaticBitmap") );
-
-        return *(wxBitmap *)m_image;
-    }
-
-    // implementation only from now on
-    // -------------------------------
-
-protected:
-    virtual wxBorder GetDefaultBorder() const;
-    virtual wxSize DoGetBestSize() const;
     virtual WXDWORD MSWGetStyle(long style, WXDWORD *exstyle) const;
 
+    // returns true if the platform should explicitly apply a theme border
+    virtual bool CanApplyThemeBorder() const { return false; }
+
+protected:
+    virtual wxSize DoGetBestClientSize() const;
+
     // ctor/dtor helpers
-    void Init() { m_isIcon = true; m_image = NULL; }
+    void Init() { m_isIcon = true; m_image = NULL; m_currentHandle = 0; }
     void Free();
 
     // true if icon/bitmap is valid
@@ -88,13 +69,29 @@ protected:
     void SetImage(const wxGDIImage* image);
     void SetImageNoCopy( wxGDIImage* image );
 
+#ifndef __WXWINCE__
+    // draw the bitmap ourselves here if the OS can't do it correctly (if it
+    // can we leave it to it)
+    void DoPaintManually(wxPaintEvent& event);
+#endif // !__WXWINCE__
+
+    void WXHandleSize(wxSizeEvent& event);
+
     // we can have either an icon or a bitmap
     bool m_isIcon;
     wxGDIImage *m_image;
 
+    // handle used in last call to STM_SETIMAGE
+    WXHANDLE m_currentHandle;
+
 private:
+    // Replace the image at the native control level with the given HBITMAP or
+    // HICON (which can be 0) and destroy the previous image if necessary.
+    void MSWReplaceImageHandle(WXLPARAM handle);
+
     DECLARE_DYNAMIC_CLASS(wxStaticBitmap)
-    DECLARE_NO_COPY_CLASS(wxStaticBitmap)
+    wxDECLARE_EVENT_TABLE();
+    wxDECLARE_NO_COPY_CLASS(wxStaticBitmap);
 };
 
 #endif

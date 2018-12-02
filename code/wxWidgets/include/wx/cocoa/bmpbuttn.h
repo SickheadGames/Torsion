@@ -4,9 +4,8 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/03/16
-// RCS-ID:      $Id:
 // Copyright:   (c) 2003 David Elliott
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WX_COCOA_BMPBUTTN_H__
@@ -17,7 +16,7 @@
 // ========================================================================
 // wxBitmapButton
 // ========================================================================
-class WXDLLEXPORT wxBitmapButton : public wxBitmapButtonBase
+class WXDLLIMPEXP_CORE wxBitmapButton : public wxBitmapButtonBase
 {
     DECLARE_DYNAMIC_CLASS(wxBitmapButton)
     DECLARE_EVENT_TABLE()

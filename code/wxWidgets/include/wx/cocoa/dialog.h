@@ -4,7 +4,6 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2002/12/15
-// RCS-ID:      $Id:
 // Copyright:   David Elliott
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,15 +16,12 @@
 #include "wx/panel.h"
 #include "wx/cocoa/NSPanel.h"
 
-WXDLLEXPORT_DATA(extern const wxChar*) wxDialogNameStr;
-
 // ========================================================================
 // wxDialog
 // ========================================================================
-class WXDLLEXPORT wxDialog : public wxDialogBase, protected wxCocoaNSPanel
+class WXDLLIMPEXP_CORE wxDialog : public wxDialogBase, protected wxCocoaNSPanel
 {
     DECLARE_DYNAMIC_CLASS(wxDialog)
-    DECLARE_EVENT_TABLE()
     WX_DECLARE_COCOA_OWNER(NSPanel,NSWindow,NSWindow)
 // ------------------------------------------------------------------------
 // initialization
@@ -33,18 +29,19 @@ class WXDLLEXPORT wxDialog : public wxDialogBase, protected wxCocoaNSPanel
 public:
     wxDialog() { Init(); }
 
+#if WXWIN_COMPATIBILITY_2_6
     // Constructor with a modal flag, but no window id - the old convention
     wxDialog(wxWindow *parent,
-            const wxString& title, bool modal,
-            int x = -1, int y= -1, int width = 500, int height = 500,
+            const wxString& title, bool WXUNUSED(modal),
+            int x = wxDefaultCoord, int y= wxDefaultCoord, int width = 500, int height = 500,
             long style = wxDEFAULT_DIALOG_STYLE,
             const wxString& name = wxDialogNameStr)
     {
         Init();
-        long modalStyle = modal ? wxDIALOG_MODAL : wxDIALOG_MODELESS ;
-        Create(parent, -1, title, wxPoint(x, y), wxSize(width, height),
-               style | modalStyle, name);
+        Create(parent, wxID_ANY, title, wxPoint(x, y), wxSize(width, height),
+               style, name);
     }
+#endif // WXWIN_COMPATIBILITY_2_6
 
     // Constructor with no modal flag - the new convention.
     wxDialog(wxWindow *parent, wxWindowID winid,
@@ -65,7 +62,7 @@ public:
                 long style = wxDEFAULT_DIALOG_STYLE,
                 const wxString& name = wxDialogNameStr);
 
-    ~wxDialog();
+    virtual ~wxDialog();
 protected:
     void Init();
 
@@ -87,21 +84,11 @@ public:
     virtual bool IsModal() const { return m_isModal; }
     bool m_isModal;
 
-    // For now, same as Show(TRUE) but returns return code
+    // For now, same as Show(true) but returns return code
     virtual int ShowModal();
 
     // may be called to terminate the dialog with the given return code
     virtual void EndModal(int retCode);
-
-// ------------------------------------------------------------------------
-// Event handlers
-// ------------------------------------------------------------------------
-protected:
-    void OnCloseWindow(wxCloseEvent& event);
-    // Standard buttons
-    void OnOK(wxCommandEvent& event);
-    void OnApply(wxCommandEvent& event);
-    void OnCancel(wxCommandEvent& event);
 };
 
 #endif // _WX_COCOA_DIALOG_H_

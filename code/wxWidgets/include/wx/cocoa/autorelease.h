@@ -2,9 +2,8 @@
 // Name:        wx/cocoa/autorelease.h
 // Purpose:     Automatic NSAutoreleasePool functionality
 // Author:      David Elliott
-// Modified by: 
+// Modified by:
 // Created:     2003/07/11
-// RCS-ID:      $Id: autorelease.h,v 1.3 2004/05/23 20:50:42 JS Exp $
 // Copyright:   (c) 2003 David Elliott <dfe@cox.net>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////

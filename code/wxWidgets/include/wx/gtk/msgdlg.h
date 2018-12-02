@@ -4,37 +4,23 @@
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     2003/02/28
-// RCS-ID:      $Id: msgdlg.h,v 1.11 2005/03/11 15:33:22 ABX Exp $
 // Copyright:   (c) Vaclav Slavik, 2003
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef __MSGDLG_H__
-#define __MSGDLG_H__
+#ifndef _WX_GTK_MSGDLG_H_
+#define _WX_GTK_MSGDLG_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "msgdlg.h"
-#endif
-
-#include "wx/setup.h"
-#include "wx/dialog.h"
-
-// type is an 'or' (|) of wxOK, wxCANCEL, wxYES_NO
-// Returns wxYES/NO/OK/CANCEL
-
-WXDLLEXPORT_DATA(extern const wxChar*) wxMessageBoxCaptionStr;
-
-class WXDLLEXPORT wxMessageDialog: public wxDialog, public wxMessageDialogBase
+class WXDLLIMPEXP_CORE wxMessageDialog : public wxMessageDialogBase
 {
 public:
     wxMessageDialog(wxWindow *parent, const wxString& message,
                     const wxString& caption = wxMessageBoxCaptionStr,
                     long style = wxOK|wxCENTRE,
                     const wxPoint& pos = wxDefaultPosition);
-    ~wxMessageDialog();
 
-    int ShowModal();
-    virtual bool Show( bool WXUNUSED(show) = true ) { return false; };
+    virtual int ShowModal();
+    virtual bool Show(bool WXUNUSED(show) = true) { return false; }
 
 protected:
     // implement some base class methods to do nothing to avoid asserts and
@@ -44,12 +30,22 @@ protected:
                            int WXUNUSED(sizeFlags) = wxSIZE_AUTO) {}
     virtual void DoMoveWindow(int WXUNUSED(x), int WXUNUSED(y),
                               int WXUNUSED(width), int WXUNUSED(height)) {}
+    // override to convert wx mnemonics to GTK+ ones and handle stock ids
+    virtual void DoSetCustomLabel(wxString& var, const ButtonLabel& label);
 
 private:
-    wxString m_caption;
-    wxString m_message;
+    // override to use stock GTK+ defaults instead of just string ones
+    virtual wxString GetDefaultYesLabel() const;
+    virtual wxString GetDefaultNoLabel() const;
+    virtual wxString GetDefaultOKLabel() const;
+    virtual wxString GetDefaultCancelLabel() const;
+    virtual wxString GetDefaultHelpLabel() const;
+
+    // create the real GTK+ dialog: this is done from ShowModal() to allow
+    // changing the message between constructing the dialog and showing it
+    void GTKCreateMsgDialog();
 
     DECLARE_DYNAMIC_CLASS(wxMessageDialog)
 };
 
-#endif
+#endif // _WX_GTK_MSGDLG_H_

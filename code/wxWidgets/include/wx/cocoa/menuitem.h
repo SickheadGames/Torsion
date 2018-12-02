@@ -4,7 +4,6 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2002/12/13
-// RCS-ID:      $Id: 
 // Copyright:   (c) 2002 David Elliott
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,18 +24,18 @@
 class wxMenuItemCocoa;
 WX_DECLARE_HASH_MAP(WX_NSMenuItem,wxMenuItem*,wxPointerHash,wxPointerEqual,wxMenuItemCocoaHash);
 
-class WXDLLEXPORT wxMenuItemCocoa : public wxMenuItemBase
+class WXDLLIMPEXP_CORE wxMenuItemCocoa : public wxMenuItemBase
 {
 public:
 // ------------------------------------------------------------------------
 // initialization
 // ------------------------------------------------------------------------
-    wxMenuItemCocoa(wxMenu *parentMenu = (wxMenu *)NULL,
+    wxMenuItemCocoa(wxMenu *parentMenu = NULL,
                int id = wxID_SEPARATOR,
                const wxString& name = wxEmptyString,
                const wxString& help = wxEmptyString,
                wxItemKind kind = wxITEM_NORMAL,
-               wxMenu *subMenu = (wxMenu *)NULL);
+               wxMenu *subMenu = NULL);
     virtual ~wxMenuItemCocoa();
 
 // ------------------------------------------------------------------------
@@ -63,7 +62,7 @@ protected:
 // ------------------------------------------------------------------------
 public:
     // override base class virtuals to update the item appearance on screen
-    virtual void SetText(const wxString& text);
+    virtual void SetItemLabel(const wxString& text);
     virtual void SetCheckable(bool checkable);
 
     virtual void Enable(bool enable = TRUE);

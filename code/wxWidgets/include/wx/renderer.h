@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     20.07.2003
-// RCS-ID:      $Id: renderer.h,v 1.19 2005/03/24 00:22:01 VZ Exp $
 // Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,16 +24,25 @@
 #ifndef _WX_RENDERER_H_
 #define _WX_RENDERER_H_
 
-class WXDLLEXPORT wxDC;
-class WXDLLEXPORT wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxDC;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
-#include "wx/gdicmn.h" // for wxPoint
+#include "wx/gdicmn.h" // for wxPoint, wxSize
+#include "wx/colour.h"
+#include "wx/font.h"
+#include "wx/bitmap.h"
+#include "wx/string.h"
 
 // some platforms have their own renderers, others use the generic one
-#if defined(__WXMSW__) || defined(__WXMAC__) || defined(__WXGTK__)
+#if defined(__WXMSW__) || ( defined(__WXMAC__) && wxOSX_USE_COCOA_OR_CARBON ) || defined(__WXGTK__)
     #define wxHAS_NATIVE_RENDERER
 #else
     #undef wxHAS_NATIVE_RENDERER
+#endif
+
+// only MSW and OS X currently provides DrawTitleBarBitmap() method
+#if defined(__WXMSW__) || (defined(__WXMAC__) && wxUSE_LIBPNG && wxUSE_IMAGE)
+    #define wxHAS_DRAW_TITLE_BAR_BITMAP
 #endif
 
 // ----------------------------------------------------------------------------
@@ -47,9 +55,12 @@ enum
     wxCONTROL_DISABLED   = 0x00000001,  // control is disabled
     wxCONTROL_FOCUSED    = 0x00000002,  // currently has keyboard focus
     wxCONTROL_PRESSED    = 0x00000004,  // (button) is pressed
-    wxCONTROL_ISDEFAULT  = 0x00000008,  // only applies to the buttons
-    wxCONTROL_ISSUBMENU  = wxCONTROL_ISDEFAULT, // only for menu items
-    wxCONTROL_EXPANDED   = wxCONTROL_ISDEFAULT, // only for the tree items
+    wxCONTROL_SPECIAL    = 0x00000008,  // control-specific bit:
+    wxCONTROL_ISDEFAULT  = wxCONTROL_SPECIAL, // only for the buttons
+    wxCONTROL_ISSUBMENU  = wxCONTROL_SPECIAL, // only for the menu items
+    wxCONTROL_EXPANDED   = wxCONTROL_SPECIAL, // only for the tree items
+    wxCONTROL_SIZEGRIP   = wxCONTROL_SPECIAL, // only for the status bar panes
+    wxCONTROL_FLAT       = wxCONTROL_SPECIAL, // checkboxes only: flat border
     wxCONTROL_CURRENT    = 0x00000010,  // mouse is currently over the control
     wxCONTROL_SELECTED   = 0x00000020,  // selected item in e.g. listbox
     wxCONTROL_CHECKED    = 0x00000040,  // (check/radio button) is checked
@@ -63,12 +74,25 @@ enum
     wxCONTROL_DIRTY      = 0x80000000
 };
 
+// title bar buttons supported by DrawTitleBarBitmap()
+//
+// NB: they have the same values as wxTOPLEVEL_BUTTON_XXX constants in
+//     wx/univ/toplevel.h as they really represent the same things
+enum wxTitleBarButton
+{
+    wxTITLEBAR_BUTTON_CLOSE    = 0x01000000,
+    wxTITLEBAR_BUTTON_MAXIMIZE = 0x02000000,
+    wxTITLEBAR_BUTTON_ICONIZE  = 0x04000000,
+    wxTITLEBAR_BUTTON_RESTORE  = 0x08000000,
+    wxTITLEBAR_BUTTON_HELP     = 0x10000000
+};
+
 // ----------------------------------------------------------------------------
 // helper structs
 // ----------------------------------------------------------------------------
 
 // wxSplitterWindow parameters
-struct WXDLLEXPORT wxSplitterRenderParams
+struct WXDLLIMPEXP_CORE wxSplitterRenderParams
 {
     // the only way to initialize this struct is by using this ctor
     wxSplitterRenderParams(wxCoord widthSash_, wxCoord border_, bool isSens_)
@@ -86,8 +110,33 @@ struct WXDLLEXPORT wxSplitterRenderParams
     const bool isHotSensitive;
 };
 
+
+// extra optional parameters for DrawHeaderButton
+struct WXDLLIMPEXP_CORE wxHeaderButtonParams
+{
+    wxHeaderButtonParams()
+        : m_labelAlignment(wxALIGN_LEFT)
+    { }
+
+    wxColour    m_arrowColour;
+    wxColour    m_selectionColour;
+    wxString    m_labelText;
+    wxFont      m_labelFont;
+    wxColour    m_labelColour;
+    wxBitmap    m_labelBitmap;
+    int         m_labelAlignment;
+};
+
+enum wxHeaderSortIconType
+{
+    wxHDR_SORT_ICON_NONE,        // Header button has no sort arrow
+    wxHDR_SORT_ICON_UP,          // Header button an up sort arrow icon
+    wxHDR_SORT_ICON_DOWN         // Header button a down sort arrow icon
+};
+
+
 // wxRendererNative interface version
-struct WXDLLEXPORT wxRendererVersion
+struct WXDLLIMPEXP_CORE wxRendererVersion
 {
     wxRendererVersion(int version_, int age_) : version(version_), age(age_) { }
 
@@ -121,17 +170,38 @@ struct WXDLLEXPORT wxRendererVersion
 // wxRendererNative: abstracts drawing methods needed by the native controls
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxRendererNative
+class WXDLLIMPEXP_CORE wxRendererNative
 {
 public:
     // drawing functions
     // -----------------
 
-    // draw the header control button (used by wxListCtrl)
-    virtual void DrawHeaderButton(wxWindow *win,
+    // draw the header control button (used by wxListCtrl) Returns optimal
+    // width for the label contents.
+    virtual int  DrawHeaderButton(wxWindow *win,
                                   wxDC& dc,
                                   const wxRect& rect,
-                                  int flags = 0) = 0;
+                                  int flags = 0,
+                                  wxHeaderSortIconType sortArrow = wxHDR_SORT_ICON_NONE,
+                                  wxHeaderButtonParams* params=NULL) = 0;
+
+
+    // Draw the contents of a header control button (label, sort arrows, etc.)
+    // Normally only called by DrawHeaderButton.
+    virtual int  DrawHeaderButtonContents(wxWindow *win,
+                                          wxDC& dc,
+                                          const wxRect& rect,
+                                          int flags = 0,
+                                          wxHeaderSortIconType sortArrow = wxHDR_SORT_ICON_NONE,
+                                          wxHeaderButtonParams* params=NULL) = 0;
+
+    // Returns the default height of a header button, either a fixed platform
+    // height if available, or a generic height based on the window's font.
+    virtual int GetHeaderButtonHeight(wxWindow *win) = 0;
+
+    // Returns the margin on left and right sides of header button's label
+    virtual int GetHeaderButtonMargin(wxWindow *win) = 0;
+
 
     // draw the expanded/collapsed icon for a tree control item
     virtual void DrawTreeItemButton(wxWindow *win,
@@ -169,6 +239,87 @@ public:
                                wxDC& dc,
                                const wxRect& rect,
                                int flags = 0) = 0;
+
+    // draw check button
+    //
+    // flags may use wxCONTROL_CHECKED, wxCONTROL_UNDETERMINED and wxCONTROL_CURRENT
+    virtual void DrawCheckBox(wxWindow *win,
+                              wxDC& dc,
+                              const wxRect& rect,
+                              int flags = 0) = 0;
+
+    // Returns the default size of a check box.
+    virtual wxSize GetCheckBoxSize(wxWindow *win) = 0;
+
+    // draw blank button
+    //
+    // flags may use wxCONTROL_PRESSED, wxCONTROL_CURRENT and wxCONTROL_ISDEFAULT
+    virtual void DrawPushButton(wxWindow *win,
+                                wxDC& dc,
+                                const wxRect& rect,
+                                int flags = 0) = 0;
+
+    // draw rectangle indicating that an item in e.g. a list control
+    // has been selected or focused
+    //
+    // flags may use
+    // wxCONTROL_SELECTED (item is selected, e.g. draw background)
+    // wxCONTROL_CURRENT (item is the current item, e.g. dotted border)
+    // wxCONTROL_FOCUSED (the whole control has focus, e.g. blue background vs. grey otherwise)
+    virtual void DrawItemSelectionRect(wxWindow *win,
+                                       wxDC& dc,
+                                       const wxRect& rect,
+                                       int flags = 0) = 0;
+
+    // draw the focus rectangle around the label contained in the given rect
+    //
+    // only wxCONTROL_SELECTED makes sense in flags here
+    virtual void DrawFocusRect(wxWindow* win,
+                               wxDC& dc,
+                               const wxRect& rect,
+                               int flags = 0) = 0;
+
+    // Draw a native wxChoice
+    virtual void DrawChoice(wxWindow* win,
+                            wxDC& dc,
+                            const wxRect& rect,
+                            int flags = 0) = 0;
+
+    // Draw a native wxComboBox
+    virtual void DrawComboBox(wxWindow* win,
+                              wxDC& dc,
+                              const wxRect& rect,
+                              int flags = 0) = 0;
+
+    // Draw a native wxTextCtrl frame
+    virtual void DrawTextCtrl(wxWindow* win,
+                              wxDC& dc,
+                              const wxRect& rect,
+                              int flags = 0) = 0;
+
+    // Draw a native wxRadioButton bitmap
+    virtual void DrawRadioBitmap(wxWindow* win,
+                                 wxDC& dc,
+                                 const wxRect& rect,
+                                 int flags = 0) = 0;
+
+#ifdef wxHAS_DRAW_TITLE_BAR_BITMAP
+    // Draw one of the standard title bar buttons
+    //
+    // This is currently implemented only for MSW and OS X (for the close
+    // button only) because there is no way to render standard title bar
+    // buttons under the other platforms, the best can be done is to use normal
+    // (only) images which wxArtProvider provides for wxART_HELP and
+    // wxART_CLOSE (but not any other title bar buttons)
+    //
+    // NB: make sure PNG handler is enabled if using this function under OS X
+    virtual void DrawTitleBarBitmap(wxWindow *win,
+                                    wxDC& dc,
+                                    const wxRect& rect,
+                                    wxTitleBarButton button,
+                                    int flags = 0) = 0;
+#endif // wxHAS_DRAW_TITLE_BAR_BITMAP
+
 
     // geometry functions
     // ------------------
@@ -223,7 +374,7 @@ public:
 // wxDelegateRendererNative: allows reuse of renderers code
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxDelegateRendererNative : public wxRendererNative
+class WXDLLIMPEXP_CORE wxDelegateRendererNative : public wxRendererNative
 {
 public:
     wxDelegateRendererNative()
@@ -233,11 +384,27 @@ public:
         : m_rendererNative(rendererNative) { }
 
 
-    virtual void DrawHeaderButton(wxWindow *win,
+    virtual int  DrawHeaderButton(wxWindow *win,
                                   wxDC& dc,
                                   const wxRect& rect,
-                                  int flags = 0)
-        { m_rendererNative.DrawHeaderButton(win, dc, rect, flags); }
+                                  int flags = 0,
+                                  wxHeaderSortIconType sortArrow = wxHDR_SORT_ICON_NONE,
+                                  wxHeaderButtonParams* params = NULL)
+        { return m_rendererNative.DrawHeaderButton(win, dc, rect, flags, sortArrow, params); }
+
+    virtual int  DrawHeaderButtonContents(wxWindow *win,
+                                          wxDC& dc,
+                                          const wxRect& rect,
+                                          int flags = 0,
+                                          wxHeaderSortIconType sortArrow = wxHDR_SORT_ICON_NONE,
+                                          wxHeaderButtonParams* params = NULL)
+        { return m_rendererNative.DrawHeaderButtonContents(win, dc, rect, flags, sortArrow, params); }
+
+    virtual int GetHeaderButtonHeight(wxWindow *win)
+        { return m_rendererNative.GetHeaderButtonHeight(win); }
+
+    virtual int GetHeaderButtonMargin(wxWindow *win)
+        { return m_rendererNative.GetHeaderButtonMargin(win); }
 
     virtual void DrawTreeItemButton(wxWindow *win,
                                     wxDC& dc,
@@ -272,6 +439,66 @@ public:
                                int flags = 0)
         { m_rendererNative.DrawDropArrow(win, dc, rect, flags); }
 
+    virtual void DrawCheckBox(wxWindow *win,
+                              wxDC& dc,
+                              const wxRect& rect,
+                              int flags = 0)
+        { m_rendererNative.DrawCheckBox( win, dc, rect, flags ); }
+
+    virtual wxSize GetCheckBoxSize(wxWindow *win)
+        { return m_rendererNative.GetCheckBoxSize(win); }
+
+    virtual void DrawPushButton(wxWindow *win,
+                                wxDC& dc,
+                                const wxRect& rect,
+                                int flags = 0)
+        { m_rendererNative.DrawPushButton( win, dc, rect, flags ); }
+
+    virtual void DrawItemSelectionRect(wxWindow *win,
+                                       wxDC& dc,
+                                       const wxRect& rect,
+                                       int flags = 0)
+        { m_rendererNative.DrawItemSelectionRect( win, dc, rect, flags ); }
+
+    virtual void DrawFocusRect(wxWindow* win,
+                               wxDC& dc,
+                               const wxRect& rect,
+                               int flags = 0)
+        { m_rendererNative.DrawFocusRect( win, dc, rect, flags ); }
+
+    virtual void DrawChoice(wxWindow* win,
+                            wxDC& dc,
+                            const wxRect& rect,
+                            int flags = 0)
+        { m_rendererNative.DrawChoice( win, dc, rect, flags); }
+
+    virtual void DrawComboBox(wxWindow* win,
+                              wxDC& dc,
+                              const wxRect& rect,
+                              int flags = 0)
+        { m_rendererNative.DrawComboBox( win, dc, rect, flags); }
+
+    virtual void DrawTextCtrl(wxWindow* win,
+                              wxDC& dc,
+                              const wxRect& rect,
+                              int flags = 0)
+        { m_rendererNative.DrawTextCtrl( win, dc, rect, flags); }
+
+    virtual void DrawRadioBitmap(wxWindow* win,
+                                 wxDC& dc,
+                                 const wxRect& rect,
+                                 int flags = 0)
+        { m_rendererNative.DrawRadioBitmap(win, dc, rect, flags); }
+
+#ifdef wxHAS_DRAW_TITLE_BAR_BITMAP
+    virtual void DrawTitleBarBitmap(wxWindow *win,
+                                    wxDC& dc,
+                                    const wxRect& rect,
+                                    wxTitleBarButton button,
+                                    int flags = 0)
+        { m_rendererNative.DrawTitleBarBitmap(win, dc, rect, button, flags); }
+#endif // wxHAS_DRAW_TITLE_BAR_BITMAP
+
     virtual wxSplitterRenderParams GetSplitterParams(const wxWindow *win)
         { return m_rendererNative.GetSplitterParams(win); }
 
@@ -281,7 +508,7 @@ public:
 protected:
     wxRendererNative& m_rendererNative;
 
-    DECLARE_NO_COPY_CLASS(wxDelegateRendererNative)
+    wxDECLARE_NO_COPY_CLASS(wxDelegateRendererNative);
 };
 
 // ----------------------------------------------------------------------------
@@ -300,4 +527,3 @@ wxRendererNative& wxRendererNative::GetDefault()
 #endif // !wxHAS_NATIVE_RENDERER
 
 #endif // _WX_RENDERER_H_
-

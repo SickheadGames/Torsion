@@ -4,17 +4,12 @@
 // Author:      Guilhem Lavaux
 // Modified by: (or rather rewritten by) Vadim Zeitlin
 // Created:     04/22/98
-// RCS-ID:      $Id: tokenzr.h,v 1.19 2004/05/23 20:50:25 JS Exp $
 // Copyright:   (c) Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_TOKENZRH
 #define _WX_TOKENZRH
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "tokenzr.h"
-#endif
 
 #include "wx/object.h"
 #include "wx/string.h"
@@ -25,7 +20,7 @@
 // ----------------------------------------------------------------------------
 
 // default: delimiters are usual white space characters
-#define wxDEFAULT_DELIMITERS (_T(" \t\r\n"))
+#define wxDEFAULT_DELIMITERS (wxT(" \t\r\n"))
 
 // wxStringTokenizer mode flags which determine its behaviour
 enum wxStringTokenizerMode
@@ -62,27 +57,34 @@ public:
     void Reinit(const wxString& str);
 
     // tokens access
-        // count them
+        // return the number of remaining tokens
     size_t CountTokens() const;
         // did we reach the end of the string?
     bool HasMoreTokens() const;
         // get the next token, will return empty string if !HasMoreTokens()
     wxString GetNextToken();
+        // get the delimiter which terminated the token last retrieved by
+        // GetNextToken() or NUL if there had been no tokens yet or the last
+        // one wasn't terminated (but ran to the end of the string)
+    wxChar GetLastDelimiter() const { return m_lastDelim; }
 
     // get current tokenizer state
         // returns the part of the string which remains to tokenize (*not* the
         // initial string)
-    wxString GetString() const { return m_string; }
+    wxString GetString() const { return wxString(m_pos, m_string.end()); }
 
         // returns the current position (i.e. one index after the last
         // returned token or 0 if GetNextToken() has never been called) in the
         // original string
-    size_t GetPosition() const { return m_pos; }
+    size_t GetPosition() const { return m_pos - m_string.begin(); }
 
     // misc
         // get the current mode - can be different from the one passed to the
         // ctor if it was wxTOKEN_DEFAULT
     wxStringTokenizerMode GetMode() const { return m_mode; }
+        // do we return empty tokens?
+    bool AllowEmpty() const { return m_mode != wxTOKEN_STRTOK; }
+
 
     // backwards compatibility section from now on
     // -------------------------------------------
@@ -108,14 +110,28 @@ public:
 protected:
     bool IsOk() const { return m_mode != wxTOKEN_INVALID; }
 
-    wxString m_string,              // the (rest of) string to tokenize
-             m_delims;              // all delimiters
+    bool DoHasMoreTokens() const;
 
-    size_t   m_pos;                 // the position in the original string
+    enum MoreTokensState
+    {
+        MoreTokens_Unknown,
+        MoreTokens_Yes,
+        MoreTokens_No
+    };
+
+    MoreTokensState m_hasMoreTokens;
+
+    wxString m_string;              // the string we tokenize
+    wxString::const_iterator m_stringEnd;
+    // FIXME-UTF8: use wxWcharBuffer
+    wxWxCharBuffer m_delims;        // all possible delimiters
+    size_t m_delimsLen;
+
+    wxString::const_iterator m_pos; // the current position in m_string
 
     wxStringTokenizerMode m_mode;   // see wxTOKEN_XXX values
 
-    bool     m_hasMore;             // do we have more (possible empty) tokens?
+    wxChar   m_lastDelim;           // delimiter after last token or '\0'
 };
 
 // ----------------------------------------------------------------------------

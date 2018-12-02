@@ -1,41 +1,42 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/display.h
 // Purpose:     wxDisplay class
-// Author:      Royce Mitchell III
-// Modified by: Vadim Zeitlin (resolution changes, display modes, ...)
+// Author:      Royce Mitchell III, Vadim Zeitlin
 // Created:     06/21/02
-// RCS-ID:      $Id: display.h,v 1.20 2005/01/21 18:48:18 ABX Exp $
-// Copyright:   (c) 2002-2003 wxWidgets team
+// Copyright:   (c) 2002-2006 wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_DISPLAY_H_BASE_
 #define _WX_DISPLAY_H_BASE_
 
+// NB: no #if wxUSE_DISPLAY here, the display geometry part of this class (but
+//     not the video mode stuff) is always available but if wxUSE_DISPLAY == 0
+//     it becomes just a trivial wrapper around the old wxDisplayXXX() functions
+
 #if wxUSE_DISPLAY
+    #include "wx/dynarray.h"
+    #include "wx/vidmode.h"
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "displaybase.h"
-#endif
+    WX_DECLARE_EXPORTED_OBJARRAY(wxVideoMode, wxArrayVideoModes);
 
-#include "wx/dynarray.h"
-#include "wx/vidmode.h"
+    // default, uninitialized, video mode object
+    extern WXDLLIMPEXP_DATA_CORE(const wxVideoMode) wxDefaultVideoMode;
+#endif // wxUSE_DISPLAY
 
-class WXDLLEXPORT wxWindow;
-class WXDLLEXPORT wxPoint;
-class WXDLLEXPORT wxRect;
-class WXDLLEXPORT wxString;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxPoint;
+class WXDLLIMPEXP_FWD_CORE wxRect;
+class WXDLLIMPEXP_FWD_BASE wxString;
 
-WX_DECLARE_EXPORTED_OBJARRAY(wxVideoMode, wxArrayVideoModes);
-
-// default, uninitialized, video mode object
-extern WXDLLEXPORT_DATA(const wxVideoMode) wxDefaultVideoMode;
+class WXDLLIMPEXP_FWD_CORE wxDisplayFactory;
+class WXDLLIMPEXP_FWD_CORE wxDisplayImpl;
 
 // ----------------------------------------------------------------------------
-// wxDisplayBase: represents a display/monitor attached to the system
+// wxDisplay: represents a display/monitor attached to the system
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxDisplayBase
+class WXDLLIMPEXP_CORE wxDisplay
 {
 public:
     // initialize the object containing all information about the given
@@ -43,11 +44,16 @@ public:
     //
     // the displays are numbered from 0 to GetCount() - 1, 0 is always the
     // primary display and the only one which is always supported
-    wxDisplayBase(size_t index = 0);
+    wxDisplay(unsigned n = 0);
+
+    // dtor is not virtual as this is a concrete class not meant to be derived
+    // from
+    ~wxDisplay();
+
 
     // return the number of available displays, valid parameters to
     // wxDisplay ctor are from 0 up to this number
-    static size_t GetCount();
+    static unsigned GetCount();
 
     // find the display where the given point lies, return wxNOT_FOUND if
     // it doesn't belong to any display
@@ -55,22 +61,26 @@ public:
 
     // find the display where the given window lies, return wxNOT_FOUND if it
     // is not shown at all
-    static int GetFromWindow(wxWindow *window);
+    static int GetFromWindow(const wxWindow *window);
 
 
     // return true if the object was initialized successfully
-    virtual bool IsOk() const { return true; }
+    bool IsOk() const { return m_impl != NULL; }
 
-    // get the display size
-    virtual wxRect GetGeometry() const = 0;
+    // get the full display size
+    wxRect GetGeometry() const;
+
+    // get the client area of the display, i.e. without taskbars and such
+    wxRect GetClientArea() const;
 
     // name may be empty
-    virtual wxString GetName() const = 0;
+    wxString GetName() const;
 
     // display 0 is usually the primary display
-    virtual bool IsPrimary() const { return m_index == 0; }
+    bool IsPrimary() const;
 
 
+#if wxUSE_DISPLAY
     // enumerate all video modes supported by this display matching the given
     // one (in the sense of wxVideoMode::Match())
     //
@@ -78,47 +88,40 @@ public:
     // always at least one video mode supported by display, the returned array
     // is only empty for the default value of the argument if this function is
     // not supported at all on this platform
-    virtual wxArrayVideoModes
-        GetModes(const wxVideoMode& mode = wxDefaultVideoMode) const = 0;
+    wxArrayVideoModes
+        GetModes(const wxVideoMode& mode = wxDefaultVideoMode) const;
 
     // get current video mode
-    virtual wxVideoMode GetCurrentMode() const = 0;
+    wxVideoMode GetCurrentMode() const;
 
     // change current mode, return true if succeeded, false otherwise
     //
     // for the default value of the argument restores the video mode to default
-    virtual bool ChangeMode(const wxVideoMode& mode = wxDefaultVideoMode) = 0;
+    bool ChangeMode(const wxVideoMode& mode = wxDefaultVideoMode);
 
     // restore the default video mode (just a more readable synonym)
     void ResetMode() { (void)ChangeMode(); }
-
-    // virtual dtor as for any base class
-    virtual ~wxDisplayBase() { }
-
-protected:
-    // the index of this display (0 is always the primary one)
-    size_t m_index;
-
-    DECLARE_NO_COPY_CLASS(wxDisplayBase)
-};
-
-
-#if defined(__WXMSW__)
-    #include "wx/msw/display.h"
-#elif defined(__WXMOTIF__)
-    #include "wx/unix/displayx11.h"
-#elif defined(__WXGTK__)
-    #include "wx/unix/displayx11.h"
-#elif defined(__WXX11__)
-    #include "wx/unix/displayx11.h"
-#elif defined(__WXCOCOA__)
-    #include "wx/cocoa/display.h"
-#elif defined(__WXMAC__)
-    #include "wx/mac/display.h"
-#elif defined(__WXPM__)
-    #include "wx/os2/display.h"
-#endif
-
 #endif // wxUSE_DISPLAY
+
+private:
+    // returns the factory used to implement our static methods and create new
+    // displays
+    static wxDisplayFactory& Factory();
+
+    // creates the factory object, called by Factory() when it is called for
+    // the first time and should return a pointer allocated with new (the
+    // caller will delete it)
+    //
+    // this method must be implemented in platform-specific code if
+    // wxUSE_DISPLAY == 1 (if it is 0 we provide the stub in common code)
+    static wxDisplayFactory *CreateFactory();
+
+
+    // the real implementation
+    wxDisplayImpl *m_impl;
+
+
+    wxDECLARE_NO_COPY_CLASS(wxDisplay);
+};
 
 #endif // _WX_DISPLAY_H_BASE_

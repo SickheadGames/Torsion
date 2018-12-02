@@ -1,10 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Name:        gtk/dataform.h
+// Name:        wx/gtk/dataform.h
 // Purpose:     declaration of the wxDataFormat class
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     19.10.99 (extracted from gtk/dataobj.h)
-// RCS-ID:      $Id: dataform.h,v 1.7 2005/08/02 22:57:53 MW Exp $
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,12 +19,24 @@ public:
 
     wxDataFormat();
     wxDataFormat( wxDataFormatId type );
-    wxDataFormat( const wxString &id );
-    wxDataFormat( const wxChar *id );
     wxDataFormat( NativeFormat format );
 
+    // we have to provide all the overloads to allow using strings instead of
+    // data formats (as a lot of existing code does)
+    wxDataFormat( const wxString& id ) { InitFromString(id); }
+    wxDataFormat( const char *id ) { InitFromString(id); }
+    wxDataFormat( const wchar_t *id ) { InitFromString(id); }
+    wxDataFormat( const wxCStrData& id ) { InitFromString(id); }
+
     wxDataFormat& operator=(const wxDataFormat& format)
-        { m_type = format.m_type; m_format = format.m_format; return *this; }
+    {
+        if (&format != this)
+        {
+            m_type = format.m_type;
+            m_format = format.m_format;
+        }
+        return *this;
+    }
     wxDataFormat& operator=(NativeFormat format)
         { SetId(format); return *this; }
 
@@ -50,13 +61,16 @@ public:
     // string ids are used for custom types - this SetId() must be used for
     // application-specific formats
     wxString GetId() const;
-    void SetId( const wxChar *id );
+    void SetId( const wxString& id );
 
     // implementation
     wxDataFormatId GetType() const;
     void SetType( wxDataFormatId type );
 
 private:
+    // common part of ctors from format name
+    void InitFromString(const wxString& id);
+
     wxDataFormatId   m_type;
     NativeFormat     m_format;
 

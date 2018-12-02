@@ -4,7 +4,6 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2002/12/08
-// RCS-ID:      $Id: toplevel.h,v 1.18 2004/05/23 20:50:42 JS Exp $
 // Copyright:   (c) 2002 David Elliott
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -15,12 +14,12 @@
 #include "wx/hashmap.h"
 #include "wx/cocoa/NSWindow.h"
 
-class WXDLLEXPORT wxMenuBar;
+class WXDLLIMPEXP_FWD_CORE wxMenuBar;
 
 // ========================================================================
 // wxTopLevelWindowCocoa
 // ========================================================================
-class WXDLLEXPORT wxTopLevelWindowCocoa : public wxTopLevelWindowBase, protected wxCocoaNSWindow
+class WXDLLIMPEXP_CORE wxTopLevelWindowCocoa : public wxTopLevelWindowBase, protected wxCocoaNSWindow
 {
     DECLARE_EVENT_TABLE();
     DECLARE_NO_COPY_CLASS(wxTopLevelWindowCocoa);
@@ -80,6 +79,7 @@ protected:
     static wxCocoaNSWindowHash sm_cocoaHash;
     virtual void CocoaReplaceView(WX_NSView oldView, WX_NSView newView);
     static unsigned int NSWindowStyleForWxStyle(long style);
+    static NSRect MakeInitialNSWindowContentRect(const wxPoint& pos, const wxSize& size, unsigned int cocoaStyleMask);
 
     static wxTopLevelWindowCocoa *sm_cocoaDeactivateWindow;
 // ------------------------------------------------------------------------
@@ -103,15 +103,17 @@ public:
     virtual void DoMoveWindow(int x, int y, int width, int height);
     virtual void DoGetSize(int *width, int *height) const;
     virtual void DoGetPosition(int *x, int *y) const;
+    virtual void SetTitle( const wxString& title);
+    virtual wxString GetTitle() const;
 
+    // Default button (item)
+    wxWindow *SetDefaultItem(wxWindow *win);
 
 // Things I may/may not do
-//    virtual void SetIcon(const wxIcon& icon);
-//    virtual void SetIcons(const wxIconBundle& icons) { SetIcon( icons.GetIcon( -1 ) ); }
+//    virtual void SetIcons(const wxIconBundle& icons);
 //    virtual void Clear() ;
 //    virtual void Raise();
 //    virtual void Lower();
-//    virtual void SetTitle( const wxString& title);
 protected:
     // is the frame currently iconized?
     bool m_iconized;
@@ -123,6 +125,6 @@ protected:
 };
 
 // list of all frames and modeless dialogs
-extern WXDLLEXPORT_DATA(wxWindowList) wxModelessWindows;
+extern WXDLLIMPEXP_DATA_CORE(wxWindowList) wxModelessWindows;
 
 #endif // __WX_COCOA_TOPLEVEL_H__

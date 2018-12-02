@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        stattext.h
+// Name:        wx/os2/stattext.h
 // Purpose:     wxStaticText class
 // Author:      David Webster
 // Modified by:
 // Created:     10/17/99
-// RCS-ID:      $Id: stattext.h,v 1.11 2004/05/23 20:51:40 JS Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,13 +11,9 @@
 #ifndef _WX_STATTEXT_H_
 #define _WX_STATTEXT_H_
 
-#ifdef __GNUG__
-#pragma interface "stattext.h"
-#endif
-
 #include "wx/control.h"
 
-class WXDLLEXPORT wxStaticText : public wxStaticTextBase
+class WXDLLIMPEXP_CORE wxStaticText : public wxStaticTextBase
 {
 public:
     inline wxStaticText() { }
@@ -50,7 +45,7 @@ public:
     virtual bool SetFont(const wxFont &rFont);
 
     //
-    // Overriden base class virtuals
+    // Overridden base class virtuals
     //
     virtual bool AcceptsFocus() const { return FALSE; }
 
@@ -70,6 +65,9 @@ protected:
                              ,int nSizeFlags = wxSIZE_AUTO
                             );
     virtual wxSize DoGetBestSize(void) const;
+
+    virtual void DoSetLabel(const wxString& str);
+    virtual wxString DoGetLabel() const;
 
 private:
     DECLARE_DYNAMIC_CLASS(wxStaticText)

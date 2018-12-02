@@ -1,8 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        wx/toplevel.h
+// Name:        wx/univ/toplevel.h
 // Purpose:     Top level window, abstraction of wxFrame and wxDialog
 // Author:      Vaclav Slavik
-// Id:          $Id: toplevel.h,v 1.24 2004/12/19 20:51:06 VZ Exp $
 // Copyright:   (c) 2001-2002 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,10 +9,6 @@
 
 #ifndef __WX_UNIV_TOPLEVEL_H__
 #define __WX_UNIV_TOPLEVEL_H__
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univtoplevel.h"
-#endif
 
 #include "wx/univ/inpcons.h"
 #include "wx/univ/inphand.h"
@@ -81,18 +76,18 @@ enum
 // the actions supported by this control
 // ----------------------------------------------------------------------------
 
-#define wxACTION_TOPLEVEL_ACTIVATE       _T("activate")   // (de)activate the frame
-#define wxACTION_TOPLEVEL_BUTTON_PRESS   _T("pressbtn")   // press titlebar btn
-#define wxACTION_TOPLEVEL_BUTTON_RELEASE _T("releasebtn") // press titlebar btn
-#define wxACTION_TOPLEVEL_BUTTON_CLICK   _T("clickbtn")   // press titlebar btn
-#define wxACTION_TOPLEVEL_MOVE           _T("move")       // move the frame
-#define wxACTION_TOPLEVEL_RESIZE         _T("resize")     // resize the frame
+#define wxACTION_TOPLEVEL_ACTIVATE       wxT("activate")   // (de)activate the frame
+#define wxACTION_TOPLEVEL_BUTTON_PRESS   wxT("pressbtn")   // press titlebar btn
+#define wxACTION_TOPLEVEL_BUTTON_RELEASE wxT("releasebtn") // press titlebar btn
+#define wxACTION_TOPLEVEL_BUTTON_CLICK   wxT("clickbtn")   // press titlebar btn
+#define wxACTION_TOPLEVEL_MOVE           wxT("move")       // move the frame
+#define wxACTION_TOPLEVEL_RESIZE         wxT("resize")     // resize the frame
 
 //-----------------------------------------------------------------------------
 // wxTopLevelWindow
 //-----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxTopLevelWindow : public wxTopLevelWindowNative,
+class WXDLLIMPEXP_CORE wxTopLevelWindow : public wxTopLevelWindowNative,
                                      public wxInputConsumer
 {
 public:
@@ -119,12 +114,21 @@ public:
                 long style = wxDEFAULT_FRAME_STYLE,
                 const wxString& name = wxFrameNameStr);
 
+    // wxUniv-specific methods: do [not] use native decorations for this (or
+    // all) window(s)
+    //
+    // notice that this has no effect if the system doesn't support any native
+    // decorations anyhow and that by default native decorations are used
+    //
+    // if UseNativeDecorations() is used, it must be called before Create()
+    static void UseNativeDecorationsByDefault(bool native = true);
+    void UseNativeDecorations(bool native = true);
+    bool IsUsingNativeDecorations() const;
+
+
     // implement base class pure virtuals
     virtual bool ShowFullScreen(bool show, long style = wxFULLSCREEN_ALL);
     virtual wxPoint GetClientAreaOrigin() const;
-    virtual void DoGetClientSize(int *width, int *height) const;
-    virtual void DoSetClientSize(int width, int height);
-    virtual void SetIcon(const wxIcon& icon) { SetIcons( wxIconBundle( icon ) ); }
     virtual void SetIcons(const wxIconBundle& icons);
 
     // implementation from now on
@@ -137,17 +141,25 @@ public:
                                long numArg = -1,
                                const wxString& strArg = wxEmptyString);
 
+    static wxInputHandler *GetStdInputHandler(wxInputHandler *handlerDef);
+    virtual wxInputHandler *DoGetStdInputHandler(wxInputHandler *handlerDef)
+    {
+        return GetStdInputHandler(handlerDef);
+    }
+
     // move/resize the frame interactively, i.e. let the user do it
     virtual void InteractiveMove(int flags = wxINTERACTIVE_MOVE);
 
-    virtual int GetMinWidth() const;
-    virtual int GetMinHeight() const;
+    virtual wxSize GetMinSize() const;
+
+    virtual wxWindow *GetInputWindow() const { return const_cast<wxTopLevelWindow*>(this); }
 
 protected:
+    virtual void DoGetClientSize(int *width, int *height) const;
+    virtual void DoSetClientSize(int width, int height);
+
     // handle titlebar button click event
     virtual void ClickTitleBarButton(long button);
-
-    virtual wxWindow *GetInputWindow() const { return (wxWindow*)this; }
 
     // return wxTOPLEVEL_xxx combination based on current state of the frame
     long GetDecorationsStyle() const;
@@ -163,8 +175,11 @@ protected:
     static int ms_drawDecorations;
     // true if wxTLW can be iconized
     static int ms_canIconize;
+
+    // true if we're using native decorations
+    bool m_usingNativeDecorations;
     // true for currently active frame
-    bool m_isActive:1;
+    bool m_isActive;
     // version of icon for titlebar (16x16)
     wxIcon m_titlebarIcon;
     // saved window style in fullscreen mdoe
@@ -175,29 +190,6 @@ protected:
     DECLARE_DYNAMIC_CLASS(wxTopLevelWindow)
     DECLARE_EVENT_TABLE()
     WX_DECLARE_INPUT_CONSUMER()
-};
-
-// ----------------------------------------------------------------------------
-// wxStdFrameInputHandler: handles focus, resizing and titlebar buttons clicks
-// ----------------------------------------------------------------------------
-
-class WXDLLEXPORT wxStdFrameInputHandler : public wxStdInputHandler
-{
-public:
-    wxStdFrameInputHandler(wxInputHandler *inphand);
-
-    virtual bool HandleMouse(wxInputConsumer *consumer,
-                             const wxMouseEvent& event);
-    virtual bool HandleMouseMove(wxInputConsumer *consumer, const wxMouseEvent& event);
-    virtual bool HandleActivation(wxInputConsumer *consumer, bool activated);
-
-private:
-    // the window (button) which has capture or NULL and the last hittest result
-    wxTopLevelWindow *m_winCapture;
-    long              m_winHitTest;
-    long              m_winPressed;
-    bool              m_borderCursorOn;
-    wxCursor          m_origCursor;
 };
 
 #endif // __WX_UNIV_TOPLEVEL_H__

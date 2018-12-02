@@ -4,9 +4,8 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/03/16
-// RCS-ID:      $Id:
 // Copyright:   (c) 2003 David Elliott
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WX_COCOA_CHOICE_H__
@@ -15,12 +14,12 @@
 //#include "wx/cocoa/NSPopUpButton.h"
 #include "wx/cocoa/NSMenu.h"
 
-class WXDLLIMPEXP_BASE wxSortedArrayString;
+class WXDLLIMPEXP_FWD_BASE wxSortedArrayString;
 
 // ========================================================================
 // wxChoice
 // ========================================================================
-class WXDLLEXPORT wxChoice: public wxChoiceBase /*, protected wxCocoaNSPopUpButton */, protected wxCocoaNSMenu
+class WXDLLIMPEXP_CORE wxChoice: public wxChoiceBase /*, protected wxCocoaNSPopUpButton */, protected wxCocoaNSMenu
 {
     DECLARE_DYNAMIC_CLASS(wxChoice)
     DECLARE_EVENT_TABLE()
@@ -80,20 +79,19 @@ protected:
 // Implementation
 // ------------------------------------------------------------------------
 public:
-    virtual void Clear();
-    virtual void Delete(int);
-    virtual int GetCount() const;
-    virtual wxString GetString(int) const;
-    virtual void SetString(int, const wxString&);
-    virtual int FindString(const wxString&) const;
+    virtual void DoClear();
+    virtual unsigned int GetCount() const;
+    virtual wxString GetString(unsigned int) const;
+    virtual void SetString(unsigned int pos, const wxString&);
+    virtual int FindString(const wxString& s, bool bCase = false) const;
     virtual int GetSelection() const;
-    virtual int DoAppend(const wxString&);
-    virtual int DoInsert(const wxString&, int);
-    virtual void DoSetItemClientData(int, void*);
-    virtual void* DoGetItemClientData(int) const;
-    virtual void DoSetItemClientObject(int, wxClientData*);
-    virtual wxClientData* DoGetItemClientObject(int) const;
-    virtual void SetSelection(int);
+    virtual int DoInsertItems(const wxArrayStringsAdapter& items,
+                              unsigned int pos,
+                              void **clientData, wxClientDataType type);
+    virtual void DoDeleteOneItem(unsigned int pos);
+    virtual void DoSetItemClientData(unsigned int, void*);
+    virtual void* DoGetItemClientData(unsigned int) const;
+    virtual void SetSelection(int pos);
 protected:
     wxSortedArrayString *m_sortedStrings;
     wxArrayPtrVoid m_itemsClientData;

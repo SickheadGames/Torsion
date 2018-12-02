@@ -1,22 +1,17 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        sashwin.h
+// Name:        wx/generic/sashwin.h
 // Purpose:     wxSashWindow implementation. A sash window has an optional
 //              sash on each edge, allowing it to be dragged. An event
 //              is generated when the sash is released.
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: sashwin.h,v 1.22 2005/05/17 23:05:33 VZ Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_SASHWIN_H_G_
 #define _WX_SASHWIN_H_G_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "sashwin.h"
-#endif
 
 #if wxUSE_SASH
 
@@ -43,10 +38,17 @@ enum wxSashEdgePosition {
 class WXDLLIMPEXP_ADV wxSashEdge
 {
 public:
-    wxSashEdge() { m_show = false; m_border = false; m_margin = 0; }
+    wxSashEdge()
+    { m_show = false;
+#if WXWIN_COMPATIBILITY_2_6
+      m_border = false;
+#endif
+      m_margin = 0; }
 
     bool    m_show;     // Is the sash showing?
+#if WXWIN_COMPATIBILITY_2_6
     bool    m_border;   // Do we draw a border?
+#endif
     int     m_margin;   // The margin size
 };
 
@@ -84,7 +86,7 @@ public:
         Create(parent, id, pos, size, style, name);
     }
 
-    ~wxSashWindow();
+    virtual ~wxSashWindow();
 
     bool Create(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize, long style = wxSW_3D|wxCLIP_CHILDREN, const wxString& name = wxT("sashWindow"));
@@ -95,11 +97,15 @@ public:
     // Get whether there's a sash in this position
     bool GetSashVisible(wxSashEdgePosition edge) const { return m_sashes[edge].m_show; }
 
+#if WXWIN_COMPATIBILITY_2_6
     // Set whether there's a border in this position
+    // This value is unused in wxSashWindow.
     void SetSashBorder(wxSashEdgePosition edge, bool border) { m_sashes[edge].m_border = border; }
 
     // Get whether there's a border in this position
+    // This value is unused in wxSashWindow.
     bool HasBorder(wxSashEdgePosition edge) const { return m_sashes[edge].m_border; }
+#endif
 
     // Get border size
     int GetEdgeMargin(wxSashEdgePosition edge) const { return m_sashes[edge].m_margin; }
@@ -193,13 +199,12 @@ private:
 private:
     DECLARE_DYNAMIC_CLASS(wxSashWindow)
     DECLARE_EVENT_TABLE()
-    DECLARE_NO_COPY_CLASS(wxSashWindow)
+    wxDECLARE_NO_COPY_CLASS(wxSashWindow);
 };
 
-BEGIN_DECLARE_EVENT_TYPES()
-    DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_ADV,
-                                wxEVT_SASH_DRAGGED, wxEVT_FIRST + 1200)
-END_DECLARE_EVENT_TYPES()
+class WXDLLIMPEXP_FWD_ADV wxSashEvent;
+
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_SASH_DRAGGED, wxSashEvent );
 
 enum wxSashDragStatus
 {
@@ -217,6 +222,12 @@ public:
         m_edge = edge;
     }
 
+    wxSashEvent(const wxSashEvent& event)
+        : wxCommandEvent(event),
+          m_edge(event.m_edge),
+          m_dragRect(event.m_dragRect),
+          m_dragStatus(event.m_dragStatus) { }
+
     void SetEdge(wxSashEdgePosition edge) { m_edge = edge; }
     wxSashEdgePosition GetEdge() const { return m_edge; }
 
@@ -229,19 +240,21 @@ public:
     void SetDragStatus(wxSashDragStatus status) { m_dragStatus = status; }
     wxSashDragStatus GetDragStatus() const { return m_dragStatus; }
 
+    virtual wxEvent *Clone() const { return new wxSashEvent(*this); }
+
 private:
     wxSashEdgePosition  m_edge;
     wxRect              m_dragRect;
     wxSashDragStatus    m_dragStatus;
 
 private:
-    DECLARE_DYNAMIC_CLASS_NO_COPY(wxSashEvent)
+    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxSashEvent)
 };
 
 typedef void (wxEvtHandler::*wxSashEventFunction)(wxSashEvent&);
 
 #define wxSashEventHandler(func) \
-    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxSashEventFunction, &func)
+    wxEVENT_HANDLER_CAST(wxSashEventFunction, func)
 
 #define EVT_SASH_DRAGGED(id, fn) \
     wx__DECLARE_EVT1(wxEVT_SASH_DRAGGED, id, wxSashEventHandler(fn))

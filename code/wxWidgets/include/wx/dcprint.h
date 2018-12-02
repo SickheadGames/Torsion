@@ -5,24 +5,38 @@
 // Modified by:
 // Created:
 // Copyright:   (c) Julian Smart
-// RCS-ID:      $Id: dcprint.h,v 1.8 2005/05/04 18:51:56 JS Exp $
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_DCPRINT_H_BASE_
 #define _WX_DCPRINT_H_BASE_
 
-#if defined(__WXPALMOS__)
-#include "wx/palmos/dcprint.h"
-#elif defined(__WXMSW__)
-#include "wx/msw/dcprint.h"
-#endif
-#if defined(__WXPM__)
-#include "wx/os2/dcprint.h"
-#endif
-#if defined(__WXMAC__)
-#include "wx/mac/dcprint.h"
-#endif
+#include "wx/defs.h"
 
-#endif
-    // _WX_DCPRINT_H_BASE_
+#if wxUSE_PRINTING_ARCHITECTURE
+
+#include "wx/dc.h"
+
+//-----------------------------------------------------------------------------
+// wxPrinterDC
+//-----------------------------------------------------------------------------
+
+class WXDLLIMPEXP_CORE wxPrinterDC : public wxDC
+{
+public:
+    wxPrinterDC();
+    wxPrinterDC(const wxPrintData& data);
+
+    wxRect GetPaperRect() const;
+    int GetResolution() const;
+
+protected:
+    wxPrinterDC(wxDCImpl *impl) : wxDC(impl) { }
+
+private:
+    DECLARE_DYNAMIC_CLASS(wxPrinterDC)
+};
+
+#endif // wxUSE_PRINTING_ARCHITECTURE
+
+#endif // _WX_DCPRINT_H_BASE_

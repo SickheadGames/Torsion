@@ -4,24 +4,19 @@
 // Author:      Wlodzimierz ABX Skiba
 // Modified by:
 // Created:     30.08.2004
-// RCS-ID:      $Id: textctrlce.h,v 1.5 2005/01/19 16:25:09 ABX Exp $
 // Copyright:   (c) Wlodzimierz Skiba
-// License:     wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_TEXTCTRLCE_H_
 #define _WX_TEXTCTRLCE_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "textctrlce.h"
-#endif
-
 #include "wx/dynarray.h"
 
-class WXDLLEXPORT wxTextCtrl;
+class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
 WX_DEFINE_EXPORTED_ARRAY_PTR(wxTextCtrl *, wxArrayTextSpins);
 
-class WXDLLEXPORT wxTextCtrl : public wxTextCtrlBase
+class WXDLLIMPEXP_CORE wxTextCtrl : public wxTextCtrlBase
 {
 public:
     // creation
@@ -40,7 +35,7 @@ public:
 
         Create(parent, id, value, pos, size, style, validator, name);
     }
-    ~wxTextCtrl();
+    virtual ~wxTextCtrl();
 
     bool Create(wxWindow *parent, wxWindowID id,
                 const wxString& value = wxEmptyString,
@@ -54,7 +49,9 @@ public:
     // ----------------------------------
 
     virtual wxString GetValue() const;
-    virtual void SetValue(const wxString& value);
+    virtual void SetValue(const wxString& value) { DoSetValue(value, SetValue_SendEvent); }
+
+    virtual void ChangeValue(const wxString &value) { DoSetValue(value); }
 
     virtual wxString GetRange(long from, long to) const;
 
@@ -189,9 +186,11 @@ protected:
     // false if we hit the limit set by SetMaxLength() and so didn't change it
     bool AdjustSpaceLimit();
 
+    void DoSetValue(const wxString &value, int flags = 0);
+
     // replace the contents of the selection or of the entire control with the
     // given text
-    void DoWriteText(const wxString& text, bool selectionOnly = true);
+    void DoWriteText(const wxString& text, int flags = SetValue_SelectionOnly);
 
     // set the selection possibly without scrolling the caret into view
     void DoSetSelection(long from, long to, bool scrollCaret = true);

@@ -1,20 +1,15 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        helpdata.h
+// Name:        wx/html/helpdata.h
 // Purpose:     wxHtmlHelpData
 // Notes:       Based on htmlhelp.cpp, implementing a monolithic
 //              HTML Help controller class,  by Vaclav Slavik
 // Author:      Harm van der Heijden and Vaclav Slavik
-// RCS-ID:      $Id: helpdata.h,v 1.35 2005/05/31 09:18:24 JS Exp $
 // Copyright:   (c) Harm van der Heijden and Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_HELPDATA_H_
 #define _WX_HELPDATA_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "helpdata.h"
-#endif
 
 #include "wx/defs.h"
 
@@ -26,7 +21,7 @@
 #include "wx/dynarray.h"
 #include "wx/font.h"
 
-class WXDLLIMPEXP_HTML wxHtmlHelpData;
+class WXDLLIMPEXP_FWD_HTML wxHtmlHelpData;
 
 //--------------------------------------------------------------------------------
 // helper classes & structs
@@ -101,33 +96,10 @@ struct WXDLLIMPEXP_HTML wxHtmlHelpDataItem
 WX_DECLARE_USER_EXPORTED_OBJARRAY(wxHtmlHelpDataItem, wxHtmlHelpDataItems,
                                   WXDLLIMPEXP_HTML);
 
-#if WXWIN_COMPATIBILITY_2_4
-// old interface to contents and index:
-struct wxHtmlContentsItem
-{
-    wxHtmlContentsItem();
-    wxHtmlContentsItem(const wxHtmlHelpDataItem& d);
-    wxHtmlContentsItem& operator=(const wxHtmlContentsItem& d);
-    ~wxHtmlContentsItem();
-
-    int m_Level;
-    int m_ID;
-    wxChar *m_Name;
-    wxChar *m_Page;
-    wxHtmlBookRecord *m_Book;
-
-    // returns full filename of m_Page, i.e. with book's basePath prepended
-    wxString GetFullPath() const { return m_Book->GetFullPath(m_Page); }
-
-private:
-    bool m_autofree;
-};
-#endif
-
 
 //------------------------------------------------------------------------------
 // wxHtmlSearchEngine
-//                  This class takes input streams and scans them for occurence
+//                  This class takes input streams and scans them for occurrence
 //                  of keyword(s)
 //------------------------------------------------------------------------------
 
@@ -135,7 +107,7 @@ class WXDLLIMPEXP_HTML wxHtmlSearchEngine : public wxObject
 {
 public:
     wxHtmlSearchEngine() : wxObject() {}
-    ~wxHtmlSearchEngine() {}
+    virtual ~wxHtmlSearchEngine() {}
 
     // Sets the keyword we will be searching for
     virtual void LookFor(const wxString& keyword, bool case_sensitive, bool whole_words_only);
@@ -149,7 +121,7 @@ private:
     bool m_CaseSensitive;
     bool m_WholeWords;
 
-    DECLARE_NO_COPY_CLASS(wxHtmlSearchEngine)
+    wxDECLARE_NO_COPY_CLASS(wxHtmlSearchEngine);
 };
 
 
@@ -172,9 +144,6 @@ public:
     const wxString& GetName() { return m_Name; }
 
     const wxHtmlHelpDataItem *GetCurItem() const { return m_CurItem; }
-#if WXWIN_COMPATIBILITY_2_4
-    wxDEPRECATED( wxHtmlContentsItem* GetContentsItem() );
-#endif
 
 private:
     wxHtmlHelpData* m_Data;
@@ -187,7 +156,7 @@ private:
     int m_MaxIndex;  // number of files we search
     // For progress bar: 100*curindex/maxindex = % complete
 
-    DECLARE_NO_COPY_CLASS(wxHtmlSearchStatus)
+    wxDECLARE_NO_COPY_CLASS(wxHtmlSearchStatus);
 };
 
 class WXDLLIMPEXP_HTML wxHtmlHelpData : public wxObject
@@ -197,7 +166,7 @@ class WXDLLIMPEXP_HTML wxHtmlHelpData : public wxObject
 
 public:
     wxHtmlHelpData();
-    ~wxHtmlHelpData();
+    virtual ~wxHtmlHelpData();
 
     // Sets directory where temporary files are stored.
     // These temp files are index & contents file in binary (much faster to read)
@@ -227,14 +196,6 @@ public:
     const wxHtmlHelpDataItems& GetContentsArray() const { return m_contents; }
     const wxHtmlHelpDataItems& GetIndexArray() const { return m_index; }
 
-#if WXWIN_COMPATIBILITY_2_4
-    // deprecated interface, new interface is arrays-based (see above)
-    wxDEPRECATED( wxHtmlContentsItem* GetContents() );
-    wxDEPRECATED( int GetContentsCnt() );
-    wxDEPRECATED( wxHtmlContentsItem* GetIndex() );
-    wxDEPRECATED( int GetIndexCnt() );
-#endif
-
 protected:
     wxString m_tempPath;
 
@@ -243,15 +204,6 @@ protected:
 
     wxHtmlHelpDataItems m_contents; // list of all available books and pages
     wxHtmlHelpDataItems m_index; // list of index itesm
-
-#if WXWIN_COMPATIBILITY_2_4
-    // deprecated data structures, set only if GetContents(), GetIndex()
-    // called
-    wxHtmlContentsItem* m_cacheContents;
-    wxHtmlContentsItem* m_cacheIndex;
-private:
-    void CleanCompatibilityData();
-#endif
 
 protected:
     // Imports .hhp files (MS HTML Help Workshop)
@@ -262,7 +214,7 @@ protected:
     // Writes binary book
     bool SaveCachedBook(wxHtmlBookRecord *book, wxOutputStream *f);
 
-    DECLARE_NO_COPY_CLASS(wxHtmlHelpData)
+    wxDECLARE_NO_COPY_CLASS(wxHtmlHelpData);
 };
 
 #endif

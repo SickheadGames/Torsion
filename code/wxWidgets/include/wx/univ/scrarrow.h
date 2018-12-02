@@ -4,17 +4,12 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     22.01.01
-// RCS-ID:      $Id: scrarrow.h,v 1.9 2004/08/10 13:08:34 ABX Exp $
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_UNIV_SCRARROW_H_
 #define _WX_UNIV_SCRARROW_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univscrarrow.h"
-#endif
 
 // ----------------------------------------------------------------------------
 // wxScrollArrows is not a control but just a class containing the common
@@ -27,17 +22,17 @@
 // to derive from the wxControlWithArrows interface and implement its methods.
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxControlWithArrows;
-class WXDLLEXPORT wxDC;
-class WXDLLEXPORT wxMouseEvent;
-class WXDLLEXPORT wxRect;
-class WXDLLEXPORT wxRenderer;
+class WXDLLIMPEXP_FWD_CORE wxControlWithArrows;
+class WXDLLIMPEXP_FWD_CORE wxDC;
+class WXDLLIMPEXP_FWD_CORE wxMouseEvent;
+class WXDLLIMPEXP_FWD_CORE wxRect;
+class WXDLLIMPEXP_FWD_CORE wxRenderer;
 
 // ----------------------------------------------------------------------------
 // wxScrollArrows: an abstraction of scrollbar arrow
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxScrollArrows
+class WXDLLIMPEXP_CORE wxScrollArrows
 {
 public:
     enum Arrow
@@ -57,8 +52,9 @@ public:
                    bool scrollbarLike = false) const;
 
     // process a mouse move, enter or leave event, possibly calling
-    // wxControlWithArrows::SetArrowState() if wxControlWithArrows::HitTest()
-    // says that the mosue has left/entered an arrow
+    // wxControlWithArrows::SetArrowState() if
+    // wxControlWithArrows::HitTestArrow() says that the mouse has left/entered
+    // an arrow
     bool HandleMouseMove(const wxMouseEvent& event) const;
 
     // process a mouse click event
@@ -82,9 +78,11 @@ private:
 // wxControlWithArrows: interface implemented by controls using wxScrollArrows
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxControlWithArrows
+class WXDLLIMPEXP_CORE wxControlWithArrows
 {
 public:
+    virtual ~wxControlWithArrows() {}
+
     // get the renderer to use for drawing the arrows
     virtual wxRenderer *GetRenderer() const = 0;
 
@@ -103,7 +101,7 @@ public:
                               int flag, bool set = true) = 0;
 
     // hit testing: return on which arrow the point is (or Arrow_None)
-    virtual wxScrollArrows::Arrow HitTest(const wxPoint& pt) const = 0;
+    virtual wxScrollArrows::Arrow HitTestArrow(const wxPoint& pt) const = 0;
 
     // called when the arrow is pressed, return true to continue scrolling and
     // false to stop it

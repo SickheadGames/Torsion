@@ -1,20 +1,15 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        app.h
+// Name:        wx/x11/app.h
 // Purpose:     wxApp class
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id: app.h,v 1.31 2004/05/23 20:51:51 JS Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_APP_H_
-#define _WX_APP_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "app.h"
-#endif
+#ifndef _WX_X11_APP_H_
+#define _WX_X11_APP_H_
 
 // ----------------------------------------------------------------------------
 // headers
@@ -27,31 +22,28 @@
 // forward declarations
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxFrame;
-class WXDLLEXPORT wxWindow;
-class WXDLLEXPORT wxApp;
-class WXDLLEXPORT wxKeyEvent;
-class WXDLLEXPORT wxLog;
-class WXDLLEXPORT wxXVisualInfo;
+class WXDLLIMPEXP_FWD_CORE wxFrame;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxApp;
+class WXDLLIMPEXP_FWD_CORE wxKeyEvent;
+class WXDLLIMPEXP_FWD_BASE wxLog;
+class WXDLLIMPEXP_FWD_CORE wxXVisualInfo;
 
 // ----------------------------------------------------------------------------
 // the wxApp class for wxX11 - see wxAppBase for more details
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxApp : public wxAppBase
+class WXDLLIMPEXP_CORE wxApp : public wxAppBase
 {
-    DECLARE_DYNAMIC_CLASS(wxApp)
-
 public:
     wxApp();
-    ~wxApp();
+    virtual ~wxApp();
 
     // override base class (pure) virtuals
     // -----------------------------------
 
     virtual void Exit();
 
-    virtual bool Yield(bool onlyIfNeeded = FALSE);
     virtual void WakeUpIdle();
 
     virtual bool OnInitGui();
@@ -61,13 +53,6 @@ public:
 
     // Processes an X event.
     virtual bool ProcessXEvent(WXEvent* event);
-
-#ifdef __WXDEBUG__
-    virtual void OnAssert(const wxChar *file, int line, const wxChar* cond, const wxChar *msg);
-#endif // __WXDEBUG__
-
-protected:
-    bool                  m_showOnInit;
 
 public:
     // Implementation
@@ -93,16 +78,12 @@ public:
     PangoContext* GetPangoContext();
 #endif
 
-    wxXVisualInfo* GetVisualInfo(WXDisplay* display)
+    wxXVisualInfo* GetVisualInfo(WXDisplay* WXUNUSED(display))
     {
         // this should be implemented correctly for wxBitmap to work
         // with multiple display
         return m_visualInfo;
     }
-
-    // We need this before creating the app
-    static   WXDisplay* GetDisplay() { return ms_display; }
-    static   WXDisplay* ms_display;
 
 public:
     static long           sm_lastMessageTime;
@@ -114,14 +95,12 @@ public:
 #endif
 
 protected:
-    bool                  m_keepGoing;
-
     WXWindow              m_topLevelWidget;
     WXColormap            m_mainColormap;
     long                  m_maxRequestSize;
 
-    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS(wxApp)
 };
 
-#endif // _WX_APP_H_
+#endif // _WX_X11_APP_H_
 

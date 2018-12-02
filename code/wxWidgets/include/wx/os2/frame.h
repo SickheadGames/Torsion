@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        frame.h
+// Name:        wx/os2/frame.h
 // Purpose:     wxFrame class
 // Author:      David Webster
 // Modified by:
 // Created:     10/27/99
-// RCS-ID:      $Id: frame.h,v 1.39 2004/05/23 20:51:38 JS Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,7 +16,7 @@
 //
 #include "wx/os2/wxrsc.h"
 
-class WXDLLEXPORT wxFrame : public wxFrameBase
+class WXDLLIMPEXP_CORE wxFrame : public wxFrameBase
 {
 public:
     // construction
@@ -81,7 +80,7 @@ public:
     // Status bar
 #if wxUSE_STATUSBAR
     virtual wxStatusBar* OnCreateStatusBar( int             nNumber = 1
-                                           ,long            lStyle = wxST_SIZEGRIP
+                                           ,long            lStyle = wxSTB_DEFAULT_STYLE
                                            ,wxWindowID      vId = 0
                                            ,const wxString& rsName = wxStatusLineNameStr
                                           );
@@ -93,9 +92,9 @@ public:
 
     // TODO: should this go into a wxFrameworkSettings class perhaps?
     static void UseNativeStatusBar(bool bUseNative)
-        { m_bUseNativeStatusBar = bUseNative; };
+        { m_bUseNativeStatusBar = bUseNative; }
     static bool UsesNativeStatusBar()
-        { return m_bUseNativeStatusBar; };
+        { return m_bUseNativeStatusBar; }
 #endif // wxUSE_STATUSBAR
 
     WXHMENU GetWinMenu() const { return m_hMenu; }
@@ -124,8 +123,6 @@ public:
     WXHWND GetToolTipCtrl(void) const { return m_hWndToolTip; }
     void   SetToolTipCtrl(WXHWND hHwndTT) { m_hWndToolTip = hHwndTT; }
 #endif // tooltips
-
-    virtual void SendSizeEvent(void);
 
     void      SetClient(WXHWND    c_Hwnd);
     void      SetClient(wxWindow* c_Window);
@@ -217,6 +214,8 @@ private:
     DECLARE_DYNAMIC_CLASS(wxFrame)
 };
 
+MRESULT EXPENTRY wxFrameWndProc(HWND  hWnd,ULONG ulMsg, MPARAM wParam, MPARAM lParam);
+MRESULT EXPENTRY wxFrameMainWndProc(HWND  hWnd,ULONG ulMsg, MPARAM wParam, MPARAM lParam);
 #endif
     // _WX_FRAME_H_
 

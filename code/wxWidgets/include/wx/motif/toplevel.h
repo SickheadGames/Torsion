@@ -4,17 +4,12 @@
 // Author:      Mattia Barbon
 // Modified by:
 // Created:     12/10/2002
-// RCS-ID:      $Id: toplevel.h,v 1.13 2005/09/19 10:36:18 VZ Exp $
 // Copyright:   (c) Mattia Barbon
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef __MOTIFTOPLEVELH__
 #define __MOTIFTOPLEVELH__
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "toplevel.h"
-#endif
 
 class WXDLLIMPEXP_CORE wxTopLevelWindowMotif : public wxTopLevelWindowBase
 {
@@ -56,10 +51,6 @@ public:
     virtual wxString GetTitle() const { return m_title; }
     virtual void SetTitle( const wxString& title ) { m_title = title; }
 
-    virtual void DoSetSizeHints( int minW, int minH,
-                               int maxW = -1, int maxH = -1,
-                               int incW = -1, int incH = -1 );
-
     virtual bool SetShape( const wxRegion& region );
 
     WXWidget GetShellWidget() const;
@@ -70,16 +61,13 @@ protected:
     void PreDestroy();
 
     virtual void DoGetPosition(int* x, int* y) const;
+    virtual void DoSetSizeHints(int minW, int minH,
+                                int maxW, int maxH,
+                                int incW, int incH);
 
 private:
-#if wxCHECK_VERSION(2,7,0)
-    // DoDestroy() is not used anywhere else, DoCreate() should also be renamed
-    // in src/motif/dialog.cpp, frame.cpp and toplevel.cp
-    #error "Remove DoDestroy() and rename DoCreate() to XmDoCreateTLW(), they were only kept for binary backwards compatibility"
-#endif
-
     // really create the Motif widget for TLW
-    virtual bool DoCreate(wxWindow* parent,
+    virtual bool XmDoCreateTLW(wxWindow* parent,
                                wxWindowID id,
                                const wxString& title,
                                const wxPoint& pos,
@@ -87,7 +75,6 @@ private:
                                long style,
                                const wxString& name) = 0;
 
-    virtual void DoDestroy() { }
 
     wxString m_title;
 };

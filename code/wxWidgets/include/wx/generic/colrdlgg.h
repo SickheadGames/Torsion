@@ -4,22 +4,15 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: colrdlgg.h,v 1.18 2005/05/04 18:52:32 JS Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef __COLORDLGH_G__
-#define __COLORDLGH_G__
+#ifndef _WX_COLORDLGG_H_
+#define _WX_COLORDLGG_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "colrdlgg.h"
-#endif
-
-#include "wx/setup.h"
 #include "wx/gdicmn.h"
 #include "wx/dialog.h"
-#include "wx/cmndata.h"
 
 #define wxID_ADD_CUSTOM     3000
 
@@ -29,21 +22,21 @@
     #define wxID_GREEN_SLIDER   3002
     #define wxID_BLUE_SLIDER    3003
 
-    class WXDLLEXPORT wxSlider;
+    class WXDLLIMPEXP_FWD_CORE wxSlider;
 
 #endif // wxUSE_SLIDER
 
-class WXDLLEXPORT wxGenericColourDialog : public wxDialog
+class WXDLLIMPEXP_CORE wxGenericColourDialog : public wxDialog
 {
 public:
     wxGenericColourDialog();
     wxGenericColourDialog(wxWindow *parent,
-                          wxColourData *data = (wxColourData *) NULL);
+                          wxColourData *data = NULL);
     virtual ~wxGenericColourDialog();
 
-    bool Create(wxWindow *parent, wxColourData *data = (wxColourData *) NULL);
+    bool Create(wxWindow *parent, wxColourData *data = NULL);
 
-    wxColourData &GetColourData() { return colourData; }
+    wxColourData &GetColourData() { return m_colourData; }
 
     virtual int ShowModal();
 
@@ -74,46 +67,45 @@ public:
     void OnCloseWindow(wxCloseEvent& event);
 
 protected:
-    wxColourData colourData;
-    wxWindow *dialogParent;
+    wxColourData m_colourData;
 
     // Area reserved for grids of colours
-    wxRect standardColoursRect;
-    wxRect customColoursRect;
-    wxRect singleCustomColourRect;
+    wxRect m_standardColoursRect;
+    wxRect m_customColoursRect;
+    wxRect m_singleCustomColourRect;
 
     // Size of each colour rectangle
-    wxPoint smallRectangleSize;
+    wxPoint m_smallRectangleSize;
 
     // For single customizable colour
-    wxPoint customRectangleSize;
+    wxPoint m_customRectangleSize;
 
     // Grid spacing (between rectangles)
-    int gridSpacing;
+    int m_gridSpacing;
 
     // Section spacing (between left and right halves of dialog box)
-    int sectionSpacing;
+    int m_sectionSpacing;
 
     // 48 'standard' colours
-    wxColour standardColours[48];
+    wxColour m_standardColours[48];
 
     // 16 'custom' colours
-    wxColour customColours[16];
+    wxColour m_customColours[16];
 
     // Which colour is selected? An index into one of the two areas.
-    int colourSelection;
-    int whichKind; // 1 for standard colours, 2 for custom colours,
+    int m_colourSelection;
+    int m_whichKind; // 1 for standard colours, 2 for custom colours,
 
 #if wxUSE_SLIDER
-    wxSlider *redSlider;
-    wxSlider *greenSlider;
-    wxSlider *blueSlider;
+    wxSlider *m_redSlider;
+    wxSlider *m_greenSlider;
+    wxSlider *m_blueSlider;
 #endif // wxUSE_SLIDER
 
-    int buttonY;
+    int m_buttonY;
 
-    int okButtonX;
-    int customButtonX;
+    int m_okButtonX;
+    int m_customButtonX;
 
     //  static bool colourDialogCancelled;
 
@@ -121,4 +113,4 @@ protected:
     DECLARE_DYNAMIC_CLASS(wxGenericColourDialog)
 };
 
-#endif
+#endif // _WX_COLORDLGG_H_

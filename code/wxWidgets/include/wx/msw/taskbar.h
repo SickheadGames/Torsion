@@ -5,82 +5,66 @@
 // Author:      Julian Smart
 // Modified by: Vaclav Slavik
 // Created:     24/3/98
-// RCS-ID:      $Id: taskbar.h,v 1.24 2004/09/07 06:00:52 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////
 
-#ifndef _TASKBAR_H_
-#define _TASKBAR_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "taskbar.h"
-#endif
+#ifndef _WX_TASKBAR_H_
+#define _WX_TASKBAR_H_
 
 #include "wx/icon.h"
 
 // private helper class:
-class WXDLLIMPEXP_ADV wxTaskBarIconWindow;
+class WXDLLIMPEXP_FWD_ADV wxTaskBarIconWindow;
 
-class WXDLLIMPEXP_ADV wxTaskBarIcon: public wxTaskBarIconBase
+class WXDLLIMPEXP_ADV wxTaskBarIcon : public wxTaskBarIconBase
 {
-    DECLARE_DYNAMIC_CLASS_NO_COPY(wxTaskBarIcon)
 public:
-    wxTaskBarIcon();
+    wxTaskBarIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE);
     virtual ~wxTaskBarIcon();
 
-// Accessors
-    inline bool IsOk() const { return true; }
-    inline bool IsIconInstalled() const { return m_iconAdded; }
+    // Accessors
+    bool IsOk() const { return true; }
+    bool IsIconInstalled() const { return m_iconAdded; }
 
-// Operations
+    // Operations
     bool SetIcon(const wxIcon& icon, const wxString& tooltip = wxEmptyString);
     bool RemoveIcon(void);
-    bool PopupMenu(wxMenu *menu); //, int x, int y);
+    bool PopupMenu(wxMenu *menu);
 
-#if WXWIN_COMPATIBILITY_2_4
-    wxDEPRECATED( bool IsOK() const );
+    // MSW-specific class methods
 
-// Overridables
-    virtual void OnMouseMove(wxEvent&);
-    virtual void OnLButtonDown(wxEvent&);
-    virtual void OnLButtonUp(wxEvent&);
-    virtual void OnRButtonDown(wxEvent&);
-    virtual void OnRButtonUp(wxEvent&);
-    virtual void OnLButtonDClick(wxEvent&);
-    virtual void OnRButtonDClick(wxEvent&);
-#endif
+#if wxUSE_TASKBARICON_BALLOONS
+    // show a balloon notification (the icon must have been already initialized
+    // using SetIcon)
+    //
+    // title and text are limited to 63 and 255 characters respectively, msec
+    // is the timeout, in milliseconds, before the balloon disappears (will be
+    // clamped down to the allowed 10-30s range by Windows if it's outside it)
+    // and flags can include wxICON_ERROR/INFO/WARNING to show a corresponding
+    // icon
+    //
+    // return true if balloon was shown, false on error (incorrect parameters
+    // or function unsupported by OS)
+    bool ShowBalloon(const wxString& title,
+                     const wxString& text,
+                     unsigned msec = 0,
+                     int flags = 0);
+#endif // wxUSE_TASKBARICON_BALLOONS
 
-// Implementation
 protected:
     friend class wxTaskBarIconWindow;
+
     long WindowProc(unsigned int msg, unsigned int wParam, long lParam);
     void RegisterWindowMessages();
 
-// Data members
-protected:
+
     wxTaskBarIconWindow *m_win;
     bool                 m_iconAdded;
     wxIcon               m_icon;
     wxString             m_strTooltip;
 
-#if WXWIN_COMPATIBILITY_2_4
-    // non-virtual default event handlers to forward events to the virtuals
-    void _OnMouseMove(wxTaskBarIconEvent&);
-    void _OnLButtonDown(wxTaskBarIconEvent&);
-    void _OnLButtonUp(wxTaskBarIconEvent&);
-    void _OnRButtonDown(wxTaskBarIconEvent&);
-    void _OnRButtonUp(wxTaskBarIconEvent&);
-    void _OnLButtonDClick(wxTaskBarIconEvent&);
-    void _OnRButtonDClick(wxTaskBarIconEvent&);
-
-    DECLARE_EVENT_TABLE()
-#endif
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxTaskBarIcon)
 };
 
-#if WXWIN_COMPATIBILITY_2_4
-inline bool wxTaskBarIcon::IsOK() const { return IsOk(); }
-#endif
-
-#endif
-    // _TASKBAR_H_
+#endif // _WX_TASKBAR_H_

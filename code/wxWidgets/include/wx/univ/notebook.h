@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     01.02.01
-// RCS-ID:      $Id: notebook.h,v 1.21 2005/08/26 08:21:43 JS Exp $
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,28 +11,24 @@
 #ifndef _WX_UNIV_NOTEBOOK_H_
 #define _WX_UNIV_NOTEBOOK_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univnotebook.h"
-#endif
-
 #include "wx/arrstr.h"
 
-class WXDLLEXPORT wxSpinButton;
+class WXDLLIMPEXP_FWD_CORE wxSpinButton;
 
 // ----------------------------------------------------------------------------
 // the actions supported by this control
 // ----------------------------------------------------------------------------
 
 // change the page: to the next/previous/given one
-#define wxACTION_NOTEBOOK_NEXT      _T("nexttab")
-#define wxACTION_NOTEBOOK_PREV      _T("prevtab")
-#define wxACTION_NOTEBOOK_GOTO      _T("gototab")
+#define wxACTION_NOTEBOOK_NEXT      wxT("nexttab")
+#define wxACTION_NOTEBOOK_PREV      wxT("prevtab")
+#define wxACTION_NOTEBOOK_GOTO      wxT("gototab")
 
 // ----------------------------------------------------------------------------
 // wxNotebook
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxNotebook : public wxNotebookBase
+class WXDLLIMPEXP_CORE wxNotebook : public wxNotebookBase
 {
 public:
     // ctors and such
@@ -67,8 +62,10 @@ public:
     // implement wxNotebookBase pure virtuals
     // --------------------------------------
 
-    virtual int SetSelection(size_t nPage);
-    virtual int GetSelection() const { return (int) m_sel; }
+    virtual int SetSelection(size_t nPage) { return DoSetSelection(nPage, SetSelection_SendEvent); }
+
+    // changes selected page without sending events
+    int ChangeSelection(size_t nPage) { return DoSetSelection(nPage); }
 
     virtual bool SetPageText(size_t nPage, const wxString& strText);
     virtual wxString GetPageText(size_t nPage) const;
@@ -88,7 +85,7 @@ public:
                             wxNotebookPage *pPage,
                             const wxString& strText,
                             bool bSelect = false,
-                            int imageId = -1);
+                            int imageId = NO_IMAGE);
 
     // style tests
     // -----------
@@ -115,6 +112,12 @@ public:
                                long numArg = 0l,
                                const wxString& strArg = wxEmptyString);
 
+    static wxInputHandler *GetStdInputHandler(wxInputHandler *handlerDef);
+    virtual wxInputHandler *DoGetStdInputHandler(wxInputHandler *handlerDef)
+    {
+        return GetStdInputHandler(handlerDef);
+    }
+
     // refresh the currently selected tab
     void RefreshCurrent();
 
@@ -126,11 +129,12 @@ protected:
     void DoDrawTab(wxDC& dc, const wxRect& rect, size_t n);
 
     // resizing
-    virtual wxSize DoGetBestClientSize() const;
     virtual void DoMoveWindow(int x, int y, int width, int height);
     virtual void DoSetSize(int x, int y,
                            int width, int height,
                            int sizeFlags = wxSIZE_AUTO);
+
+    int DoSetSelection(size_t nPage, int flags = 0);
 
     // common part of all ctors
     void Init();
@@ -182,7 +186,7 @@ protected:
 
     // return true if the tab has an associated image
     bool HasImage(int page) const
-        { return m_imageList && m_images[page] != -1; }
+        { return HasImageList() && m_images[page] != -1; }
 
     // get the part of the notebook reserved for the pages (slightly larger
     // than GetPageRect() as we draw a border and leave marginin between)
@@ -195,16 +199,13 @@ protected:
     wxSize GetSizeForPage(const wxSize& size) const;
 
     // scroll the tabs so that the first page shown becomes the given one
-    void ScrollTo(int page);
+    void ScrollTo(size_t page);
 
     // scroll the tabs so that the first page shown becomes the given one
-    void ScrollLastTo(int page);
+    void ScrollLastTo(size_t page);
 
     // the pages titles
     wxArrayString m_titles;
-
-    // the current selection
-    size_t m_sel;
 
     // the spin button to change the pages
     wxSpinButton *m_spinbtn;
@@ -244,29 +245,6 @@ protected:
     wxSize m_sizePad;
 
     DECLARE_DYNAMIC_CLASS(wxNotebook)
-};
-
-// ----------------------------------------------------------------------------
-// wxStdNotebookInputHandler: translates SPACE and ENTER keys and the left mouse
-// click into button press/release actions
-// ----------------------------------------------------------------------------
-
-class WXDLLEXPORT wxStdNotebookInputHandler : public wxStdInputHandler
-{
-public:
-    wxStdNotebookInputHandler(wxInputHandler *inphand);
-
-    virtual bool HandleKey(wxInputConsumer *consumer,
-                           const wxKeyEvent& event,
-                           bool pressed);
-    virtual bool HandleMouse(wxInputConsumer *consumer,
-                             const wxMouseEvent& event);
-    virtual bool HandleMouseMove(wxInputConsumer *consumer, const wxMouseEvent& event);
-    virtual bool HandleFocus(wxInputConsumer *consumer, const wxFocusEvent& event);
-    virtual bool HandleActivation(wxInputConsumer *consumer, bool activated);
-
-protected:
-    void HandleFocusChange(wxInputConsumer *consumer);
 };
 
 #endif // _WX_UNIV_NOTEBOOK_H_

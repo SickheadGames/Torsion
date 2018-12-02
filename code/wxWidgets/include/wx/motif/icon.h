@@ -1,40 +1,34 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        icon.h
+// Name:        wx/motif/icon.h
 // Purpose:     wxIcon class
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id: icon.h,v 1.23 2005/09/13 16:04:10 VZ Exp $
 // Copyright:   (c) Julian Smart
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_ICON_H_
 #define _WX_ICON_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "icon.h"
-#endif
-
 #include "wx/bitmap.h"
 
 // Icon
-class WXDLLEXPORT wxIcon : public wxBitmap
+class WXDLLIMPEXP_CORE wxIcon : public wxBitmap
 {
 public:
     wxIcon();
-
-    // Copy constructors
-    inline wxIcon(const wxIcon& icon) { Ref(icon); }
 
     // Initialize with XBM data
     wxIcon(const char bits[], int width, int height);
 
     // Initialize with XPM data
-    wxIcon(const char **data);
+    wxIcon(const char* const* data);
+#ifdef wxNEEDS_CHARPP
     wxIcon(char **data);
+#endif
 
-    wxIcon(const wxString& name, wxBitmapType type = wxBITMAP_TYPE_XPM,
+    wxIcon(const wxString& name, wxBitmapType type = wxICON_DEFAULT_TYPE,
            int desiredWidth = -1, int desiredHeight = -1)
     {
         LoadFile(name, type, desiredWidth, desiredHeight);
@@ -45,29 +39,20 @@ public:
         LoadFile(loc.GetFileName(), wxBITMAP_TYPE_ANY);
     }
 
-    ~wxIcon();
+    virtual ~wxIcon();
 
     bool LoadFile(const wxString& name, wxBitmapType type,
-                  int desiredWidth, int desiredHeight = -1);
+                  int desiredWidth, int desiredHeight);
 
-    // unhide base class LoadFile()
+    // unhide the base class version
     virtual bool LoadFile(const wxString& name,
-                          wxBitmapType type = wxBITMAP_TYPE_XPM)
-    {
-        return LoadFile(name, type, -1, -1);
-    }
+                          wxBitmapType flags = wxICON_DEFAULT_TYPE)
+        { return LoadFile(name, flags); }
 
     // create from bitmap (which should have a mask unless it's monochrome):
     // there shouldn't be any implicit bitmap -> icon conversion (i.e. no
     // ctors, assignment operators...), but it's ok to have such function
     void CopyFromBitmap(const wxBitmap& bmp);
-
-    wxIcon& operator = (const wxIcon& icon)
-        { if (this != &icon) Ref(icon); return *this; }
-    bool operator == (const wxIcon& icon) const
-        { return m_refData == icon.m_refData; }
-    bool operator != (const wxIcon& icon) const
-        { return !(*this == icon); }
 
 
     DECLARE_DYNAMIC_CLASS(wxIcon)

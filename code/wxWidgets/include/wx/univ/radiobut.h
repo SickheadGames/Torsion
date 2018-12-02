@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     10.09.00
-// RCS-ID:      $Id: radiobut.h,v 1.11 2004/05/23 20:51:46 JS Exp $
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,17 +11,13 @@
 #ifndef _WX_UNIV_RADIOBUT_H_
 #define _WX_UNIV_RADIOBUT_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univradiobut.h"
-#endif
-
 #include "wx/checkbox.h"
 
 // ----------------------------------------------------------------------------
 // wxRadioButton
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxRadioButton : public wxCheckBox
+class WXDLLIMPEXP_CORE wxRadioButton : public wxCheckBox
 {
 public:
     // constructors
@@ -55,6 +50,8 @@ public:
     virtual void ChangeValue(bool value);
 
 protected:
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
+
     // implement our own drawing
     virtual void DoDraw(wxControlRenderer *renderer);
 

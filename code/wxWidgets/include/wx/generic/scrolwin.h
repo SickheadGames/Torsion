@@ -1,107 +1,53 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/generic/scrolwin.h
-// Purpose:     wxGenericScrolledWindow class
-// Author:      Julian Smart
-// Modified by:
-// Created:     01/02/97
-// RCS-ID:      $Id: scrolwin.h,v 1.43 2005/06/21 20:16:03 MBN Exp $
-// Copyright:   (c) Julian Smart
+// Purpose:     generic wxScrollHelper
+// Author:      Vadim Zeitlin
+// Created:     2008-12-24 (replacing old file with the same name)
+// Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_GENERIC_SCROLLWIN_H_
 #define _WX_GENERIC_SCROLLWIN_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "genscrolwin.h"
-#endif
-
 // ----------------------------------------------------------------------------
-// headers and constants
+// generic wxScrollHelper implementation
 // ----------------------------------------------------------------------------
 
-#include "wx/window.h"
-#include "wx/panel.h"
-
-extern WXDLLEXPORT_DATA(const wxChar*) wxPanelNameStr;
-
-// default scrolled window style
-#ifndef wxScrolledWindowStyle
-    #define wxScrolledWindowStyle (wxHSCROLL | wxVSCROLL)
-#endif
-
-// avoid triggering this stupid VC++ warning
-#ifdef __VISUALC__
-    #if _MSC_VER > 1100
-        #pragma warning(push)
-    #endif
-    #pragma warning(disable:4355) // 'this' used in base member initializer list
-#endif
-
-// ----------------------------------------------------------------------------
-// wxGenericScrolledWindow
-// ----------------------------------------------------------------------------
-
-class WXDLLEXPORT wxGenericScrolledWindow : public wxPanel,
-                                            public wxScrollHelper
+class WXDLLIMPEXP_CORE wxScrollHelper : public wxScrollHelperBase
 {
 public:
-    wxGenericScrolledWindow() : wxScrollHelper(this) { }
-    wxGenericScrolledWindow(wxWindow *parent,
-                     wxWindowID winid = wxID_ANY,
-                     const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxDefaultSize,
-                     long style = wxScrolledWindowStyle,
-                     const wxString& name = wxPanelNameStr)
-        : wxScrollHelper(this)
-    {
-        Create(parent, winid, pos, size, style, name);
-    }
+    wxScrollHelper(wxWindow *winToScroll);
 
-    virtual ~wxGenericScrolledWindow();
-
-    bool Create(wxWindow *parent,
-                wxWindowID winid,
-                const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize,
-                long style = wxScrolledWindowStyle,
-                const wxString& name = wxPanelNameStr);
-
-    virtual void PrepareDC(wxDC& dc) { DoPrepareDC(dc); }
-
-    // lay out the window and its children
-    virtual bool Layout();
-
-    virtual void DoSetVirtualSize(int x, int y);
-
-    // wxWindow's GetBestVirtualSize returns the actual window size,
-    // whereas we want to return the virtual size
-    virtual wxSize GetBestVirtualSize() const;
-
-    // Return the size best suited for the current window
-    // (this isn't a virtual size, this is a sensible size for the window)
-    virtual wxSize DoGetBestSize() const;
+    // implement base class pure virtuals
+    virtual void AdjustScrollbars();
+    virtual bool IsScrollbarShown(int orient) const;
 
 protected:
-    // this is needed for wxEVT_PAINT processing hack described in
-    // wxScrollHelperEvtHandler::ProcessEvent()
-    void OnPaint(wxPaintEvent& event);
-
-    // we need to return a special WM_GETDLGCODE value to process just the
-    // arrows but let the other navigation characters through
-#ifdef __WXMSW__
-    virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam);
-#endif // __WXMSW__
+    virtual void DoScroll(int x, int y);
+    virtual void DoShowScrollbars(wxScrollbarVisibility horz,
+                                  wxScrollbarVisibility vert);
 
 private:
-    DECLARE_DYNAMIC_CLASS_NO_COPY(wxGenericScrolledWindow)
-    DECLARE_EVENT_TABLE()
+    // helper of AdjustScrollbars(): does the work for the single scrollbar
+    //
+    // notice that the parameters passed by non-const references are modified
+    // by this function
+    void DoAdjustScrollbar(int orient,
+                           int clientSize,
+                           int virtSize,
+                           int pixelsPerUnit,
+                           int& scrollUnits,
+                           int& scrollPosition,
+                           int& scrollLinesPerPage,
+                           wxScrollbarVisibility visibility);
+
+
+    wxScrollbarVisibility m_xVisibility,
+                          m_yVisibility;
+
+    wxDECLARE_NO_COPY_CLASS(wxScrollHelper);
 };
 
-#if defined(__VISUALC__) && (_MSC_VER > 1100)
-    #pragma warning(pop)
-#endif
-
-#endif
-    // _WX_GENERIC_SCROLLWIN_H_
+#endif // _WX_GENERIC_SCROLLWIN_H_
 

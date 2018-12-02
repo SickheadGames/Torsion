@@ -10,11 +10,14 @@
 
 #include <wx/image.h>
 #include <wx/rawbmp.h>
+#include <wx/msw/private.h>
 
 
 #ifdef _DEBUG 
    #define new DEBUG_NEW 
 #endif 
+
+
 
 
 VSMenuItem::VSMenuItem( wxMenu* parentMenu, int id, const wxString& text, const wxString& helpString, wxItemKind kind, wxMenu* subMenu )
@@ -46,19 +49,19 @@ bool VSMenuItem::OnMeasureItem( size_t *pwidth, size_t *pheight )
    {
       wxMemoryDC dc;
 
-      wxString strMenuText = m_strName.BeforeFirst('\t');
+      wxString strMenuText = GetName().BeforeFirst('\t');
       wxString str = wxStripMenuCodes(strMenuText);
 
-      dc.SetFont(GetFontToUse());
+      dc.SetFont(GetFont());
       dc.GetTextExtent(str, (long *)pwidth, (long *)pheight);
       dc.SetFont( wxNullFont );
 
       // If we have an accelerator then measure 
       // it seperately.
-      if ( !m_strAccel.empty() )
+      if ( ! GetAccel() )
       {
          long w, h;
-         dc.GetTextExtent( m_strAccel, &w, &h );
+         dc.GetTextExtent( GetAccel()->ToString(), &w, &h );  //maybe ?? TO_WATCH
 
          if ( *pheight < h )
             *pheight = h;
@@ -145,7 +148,7 @@ bool VSMenuItem::OnDrawItem( wxDC& dc, const wxRect& rc, wxODAction act, wxODSta
    }
    DWORD colMargin = GetSysColor(COLOR_BTNFACE);
 
-   HDC hdc = GetHdcOf(dc);
+   HDC hdc = ((HDC)(dc).GetHDC());  //they removed it , dont know why
    COLORREF colOldText = ::SetTextColor(hdc, colText),
             colOldBack = ::SetBkColor(hdc, colBack);
 
@@ -218,10 +221,10 @@ bool VSMenuItem::OnDrawItem( wxDC& dc, const wxRect& rc, wxODAction act, wxODSta
       int nPrevMode = SetBkMode(hdc, TRANSPARENT);
 
       // Set the font.
-      const wxFont& fontToUse = GetFontToUse();
+      const wxFont& fontToUse = GetFont();
       SelectInHDC selFont(hdc, GetHfontOf(fontToUse));
 
-      wxString strMenuText = m_strName.BeforeFirst('\t');
+      wxString strMenuText = GetName().BeforeFirst('\t');
 
       SIZE sizeRect;
       ::GetTextExtentPoint32(hdc, strMenuText.c_str(), strMenuText.Length(), &sizeRect);
@@ -233,17 +236,17 @@ bool VSMenuItem::OnDrawItem( wxDC& dc, const wxRect& rc, wxODAction act, wxODSta
       ::DrawText( hdc, strMenuText.c_str(), strMenuText.length(), &textRect, DT_LEFT | DT_TOP );
 
       // De have an accelerator to draw?
-      if ( !m_strAccel.empty() )
+      if ( !GetAccel() )
       {
             int accel_width, accel_height;
-            dc.GetTextExtent(m_strAccel, &accel_width, &accel_height);
+            dc.GetTextExtent(GetAccel()->ToString(), &accel_width, &accel_height);
 
             RECT accRect = {
                               rc.GetRight() - accel_width - 16,
                               rc.GetTop() + ( ( rc.GetHeight() / 2 ) - ( sizeRect.cy / 2 ) ) - 1,
                               rc.GetRight() - 16,
                               rc.GetBottom() };
-            ::DrawText( hdc, m_strAccel.c_str(), m_strAccel.length(), &accRect, DT_RIGHT | DT_TOP );
+            ::DrawText( hdc, GetAccel()->ToString(), GetAccel()->ToString().length(), &accRect, DT_RIGHT | DT_TOP );
 
             // right align accel string with right edge of menu ( offset by the
             // margin width )

@@ -4,17 +4,12 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     27/07/03
-// RCS-ID:      $Id: flags.h,v 1.8 2004/09/14 12:08:17 ABX Exp $
 // Copyright:   (c) 2003 Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_SETH__
 #define _WX_SETH__
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "flags.h"
-#endif
 
 // wxBitset should be applied to an enum, then this can be used like
 // bitwise operators but keeps the type safety and information, the
@@ -157,13 +152,25 @@ private :
     unsigned long m_data;
 };
 
-#define WX_DEFINE_FLAGS( flags ) \
-    class WXDLLEXPORT flags \
+#if wxUSE_EXTENDED_RTTI
+
+#define wxDEFINE_FLAGS( flags ) \
+    class WXDLLIMPEXP_BASE flags \
     {\
     public : \
         flags(long data=0) :m_data(data) {} \
         long m_data ;\
         bool operator ==(const flags &rhs) const { return m_data == rhs.m_data; }\
     } ;
+
+#else
+
+#define wxDEFINE_FLAGS( flags )
+
+#endif
+
+#if WXWIN_COMPATIBILITY_2_8
+    #define WX_DEFINE_FLAGS     wxDEFINE_FLAGS
+#endif
 
 #endif

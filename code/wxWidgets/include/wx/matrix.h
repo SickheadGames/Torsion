@@ -1,23 +1,19 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        matrix.h
-// Purpose:     wxTransformMatrix class. NOT YET USED
-// Author:      Chris Breeze, Julian Smart
+// Name:         wx/matrix.h
+// Purpose:      wxTransformMatrix class. NOT YET USED
+// Author:       Chris Breeze, Julian Smart
 // Modified by:  Klaas Holwerda
-// Created:     01/02/97
-// RCS-ID:      $Id: matrix.h,v 1.13 2004/09/17 22:23:53 ABX Exp $
-// Copyright:   (c) Julian Smart, Chris Breeze
-// Licence:     wxWindows licence
+// Created:      01/02/97
+// Copyright:    (c) Julian Smart, Chris Breeze
+// Licence:      wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_MATRIXH__
 #define _WX_MATRIXH__
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "matrix.h"
-#endif
-
 //! headerfiles="matrix.h wx/object.h"
 #include "wx/object.h"
+#include "wx/math.h"
 
 //! codefiles="matrix.cpp"
 
@@ -35,7 +31,7 @@
 //  at a certain coordinate and angle within another parent picture.
 //  At all times m_isIdentity is set if the matrix itself is an Identity matrix.
 //  It is used where possible to optimize calculations.
-class WXDLLEXPORT wxTransformMatrix: public wxObject
+class WXDLLIMPEXP_CORE wxTransformMatrix: public wxObject
 {
 public:
     wxTransformMatrix(void);
@@ -52,8 +48,8 @@ public:
     void SetValue(int col, int row, double value);
 
     void operator = (const wxTransformMatrix& mat);
-    bool operator == (const wxTransformMatrix& mat);
-    bool operator != (const wxTransformMatrix& mat);
+    bool operator == (const wxTransformMatrix& mat) const;
+    bool operator != (const wxTransformMatrix& mat) const;
 
     //multiply every element by t
     wxTransformMatrix&          operator*=(const double& t);
@@ -97,7 +93,7 @@ public:
     // Is the matrix the identity matrix?
     // Only returns a flag, which is set whenever an operation
     // is done.
-    inline bool IsIdentity(void) const { return m_isIdentity; };
+    inline bool IsIdentity(void) const { return m_isIdentity; }
 
     // This does an actual check.
     inline bool IsIdentity1(void) const ;
@@ -218,15 +214,15 @@ inline double wxTransformMatrix::TransformY(double y) const
 inline bool wxTransformMatrix::IsIdentity1(void) const
 {
     return
-     (m_matrix[0][0] == 1.0 &&
-      m_matrix[1][1] == 1.0 &&
-      m_matrix[2][2] == 1.0 &&
-      m_matrix[1][0] == 0.0 &&
-      m_matrix[2][0] == 0.0 &&
-      m_matrix[0][1] == 0.0 &&
-      m_matrix[2][1] == 0.0 &&
-      m_matrix[0][2] == 0.0 &&
-      m_matrix[1][2] == 0.0) ;
+    ( wxIsSameDouble(m_matrix[0][0], 1.0) &&
+      wxIsSameDouble(m_matrix[1][1], 1.0) &&
+      wxIsSameDouble(m_matrix[2][2], 1.0) &&
+      wxIsSameDouble(m_matrix[1][0], 0.0) &&
+      wxIsSameDouble(m_matrix[2][0], 0.0) &&
+      wxIsSameDouble(m_matrix[0][1], 0.0) &&
+      wxIsSameDouble(m_matrix[2][1], 0.0) &&
+      wxIsSameDouble(m_matrix[0][2], 0.0) &&
+      wxIsSameDouble(m_matrix[1][2], 0.0) );
 }
 
 // Calculates the determinant of a 2 x 2 matrix
@@ -235,5 +231,4 @@ inline double wxCalculateDet(double a11, double a21, double a12, double a22)
     return a11 * a22 - a12 * a21;
 }
 
-#endif
-    // _WX_MATRIXH__
+#endif // _WX_MATRIXH__

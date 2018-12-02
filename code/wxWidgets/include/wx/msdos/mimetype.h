@@ -1,20 +1,15 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        wx/mac/mimetype.h
+// Name:        wx/msdos/mimetype.h
 // Purpose:     classes and functions to manage MIME types
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     23.09.98
-// RCS-ID:      $Id: mimetype.h,v 1.1 2005/04/25 09:57:23 MW Exp $
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence (part of wxExtra library)
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _MIMETYPE_IMPL_H
 #define _MIMETYPE_IMPL_H
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "mimetype.h"
-#endif
 
 #include "wx/defs.h"
 #include "wx/mimetype.h"
@@ -24,7 +19,7 @@ class wxMimeTypesManagerImpl
 {
 public :
     wxMimeTypesManagerImpl() { }
- 
+
     // load all data into memory - done when it is needed for the first time
     void Initialize(int mailcapStyles = wxMAILCAP_STANDARD,
                     const wxString& extraDir = wxEmptyString);
@@ -38,10 +33,6 @@ public :
     wxFileType *GetFileTypeFromMimeType(const wxString& mimeType);
 
     size_t EnumAllFileTypes(wxArrayString& mimetypes);
-
-    // this are NOPs under MacOS
-    bool ReadMailcap(const wxString& WXUNUSED(filename), bool WXUNUSED(fallback) = TRUE) { return TRUE; }
-    bool ReadMimeTypes(const wxString& WXUNUSED(filename)) { return TRUE; }
 
     void AddFallback(const wxFileTypeInfo& ft) { m_fallbacks.Add(ft); }
 
@@ -66,7 +57,7 @@ public:
     // index 1 the type / * match
     // if built with GetFileTypeFromExtension, index 0 has the mimetype for
     // the first extension found, index 1 for the second and so on
-    
+
     void Init(wxMimeTypesManagerImpl *manager, size_t index)
     { m_manager = manager; m_index.Add(index); }
 
@@ -107,7 +98,7 @@ public:
  private:
     // helper function
     bool GetCommand(wxString *command, const char *verb) const;
-    
+
     wxMimeTypesManagerImpl *m_manager;
     wxArrayInt              m_index; // in the wxMimeTypesManagerImpl arrays
     wxString m_strFileType, m_ext;

@@ -1,0 +1,300 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6A1EC3A9-9AB3-4F16-B983-0145510FD809}</ProjectGuid>
+    <RootNamespace>Torsion</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.25431.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>C:\Projects\Torsion\media\</OutDir>
+    <IntDir>Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\..\Media\</OutDir>
+    <IntDir>Release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\wxWidgets\include\msvc;..\wxWidgets\include;..\tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WXUSINGDLL;wxMSVC_VERSION_AUTO;_UNICODE;UNICODE;WIN32;_DEBUG;_WINDOWS;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>tinyxml2d_stc.lib;comctl32.lib;wxbase30ud.lib;wxmsw30ud_core.lib;wxmsw30ud_adv.lib;wxbase30ud_net.lib;wxmsw30ud_stc.lib;wxmsw30ud_propgrid.lib;wxregexud.lib;ws2_32.lib;rpcrt4.lib;winmm.lib;Shell32.lib;User32.lib;Gdi32.lib;advapi32.lib;wsock32.lib;wxpngd.lib;wxzlibd.lib;wxjpegd.lib;wxtiffd.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\wxWidgets\lib\vc140_dll;..\wxWidgets\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)torsion_d.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapFileName>$(OutDir)torsion_d.map</MapFileName>
+      <MapExports>true</MapExports>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Link>
+    <PreBuildEvent>
+      <Message>Updating Build Number</Message>
+      <Command>UpdateBuildNumber BuildVersion.h ..\..\Installer\Torsion.iss</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\wxWidgets\include;..\wxWidgets\lib\mswd;..\wxWidgets\contrib\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>comctl32.lib;wxbase26.lib;wxmsw26_core.lib;wxmsw26_adv.lib;wxbase26_net.lib;wxmsw26_stc.lib;wxmsw27_propgrid.lib;wxregex.lib;wxjpeg.lib;Ws2_32.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)torsion.exe</OutputFile>
+      <AdditionalLibraryDirectories>..\wxWidgets\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)torsion.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapFileName>$(OutDir)torsion.map</MapFileName>
+      <MapExports>true</MapExports>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PreBuildEvent>
+      <Message>Updating Build Number</Message>
+      <Command>UpdateBuildNumber BuildVersion.h ..\..\Installer\Torsion.iss</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AboutDlg.h" />
+    <ClInclude Include="AppPrefs.h" />
+    <ClInclude Include="AutoComp.h" />
+    <ClInclude Include="AutoCompClass.h" />
+    <ClInclude Include="AutoCompData.h" />
+    <ClInclude Include="AutoCompExports.h" />
+    <ClInclude Include="AutoCompFunction.h" />
+    <ClInclude Include="AutoCompManager.h" />
+    <ClInclude Include="AutoCompPage.h" />
+    <ClInclude Include="AutoCompText.h" />
+    <ClInclude Include="AutoCompThread.h" />
+    <ClInclude Include="AutoCompUtil.h" />
+    <ClInclude Include="AutoCompVar.h" />
+    <ClInclude Include="Bookmark.h" />
+    <ClInclude Include="Breakpoint.h" />
+    <ClInclude Include="BreakpointPropertyDlg.h" />
+    <ClInclude Include="BreakpointsPanel.h" />
+    <ClInclude Include="BuildExportsDlg.h" />
+    <ClInclude Include="BuildExportsThread.h" />
+    <ClInclude Include="BuildVersion.h" />
+    <ClInclude Include="CallTipInfo.h" />
+    <ClInclude Include="ClientWindow.h" />
+    <ClInclude Include="CodeBrowserCtrl.h" />
+    <ClInclude Include="CodeBrowserPanel.h" />
+    <ClInclude Include="ColourHLS.h" />
+    <ClInclude Include="ConfigDlg.h" />
+    <ClInclude Include="ConnectDlg.h" />
+    <ClInclude Include="CRC.h" />
+    <ClInclude Include="Debugger.h" />
+    <ClInclude Include="DirWatcher.h" />
+    <ClInclude Include="DirWatcherWin9x.h" />
+    <ClInclude Include="DirWatcherWinNT.h" />
+    <ClInclude Include="DocManager.h" />
+    <ClInclude Include="ExternalToolsDlg.h" />
+    <ClInclude Include="FileTypeImageList.h" />
+    <ClInclude Include="FileWatcher.h" />
+    <ClInclude Include="FindInFilesDlg.h" />
+    <ClInclude Include="FindReplaceDlg.h" />
+    <ClInclude Include="FindResultsCtrl.h" />
+    <ClInclude Include="FindSymbolDlg.h" />
+    <ClInclude Include="FindThread.h" />
+    <ClInclude Include="FunctionCall.h" />
+    <ClInclude Include="GotoDefDialog.h" />
+    <ClInclude Include="Icons.h" />
+    <ClInclude Include="Identifiers.h" />
+    <ClInclude Include="ImageUtil.h" />
+    <ClInclude Include="MainFrame.h" />
+    <ClInclude Include="OutputCtrl.h" />
+    <ClInclude Include="OutputPanel.h" />
+    <ClInclude Include="Platform.h" />
+    <ClInclude Include="PreCompiled.h" />
+    <ClInclude Include="PreCompiler.h" />
+    <ClInclude Include="ProjectConfig.h" />
+    <ClInclude Include="ProjectCtrl.h" />
+    <ClInclude Include="ProjectDlg.h" />
+    <ClInclude Include="ProjectDoc.h" />
+    <ClInclude Include="ProjectPanel.h" />
+    <ClInclude Include="ProjectView.h" />
+    <ClInclude Include="ReloadFile.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ScriptCtrl.h" />
+    <ClInclude Include="ScriptDoc.h" />
+    <ClInclude Include="ScriptFrame.h" />
+    <ClInclude Include="ScriptPrintout.h" />
+    <ClInclude Include="ScriptScanner.h" />
+    <ClInclude Include="ScriptView.h" />
+    <ClInclude Include="ScrollMapCtrl.h" />
+    <ClInclude Include="SettingsDlg.h" />
+    <ClInclude Include="ShellMenu.h" />
+    <ClInclude Include="shNotebook.h" />
+    <ClInclude Include="StackDump.h" />
+    <ClInclude Include="ToolCommand.h" />
+    <ClInclude Include="TorsionApp.h" />
+    <ClInclude Include="tsComboBox.h" />
+    <ClInclude Include="tsMenu.h" />
+    <ClInclude Include="tsMenuBar.h" />
+    <ClInclude Include="tsSashLayoutWindow.h" />
+    <ClInclude Include="tsShellExecute.h" />
+    <ClInclude Include="tsStatusBar.h" />
+    <ClInclude Include="tsToolBar.h" />
+    <ClInclude Include="UpdateChecker.h" />
+    <ClInclude Include="VSMenuItem.h" />
+    <ClInclude Include="WatchCtrl.h" />
+    <ClInclude Include="WatchVar.h" />
+    <ClInclude Include="XmlFile.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AboutDlg.cpp" />
+    <ClCompile Include="AppPrefs.cpp" />
+    <ClCompile Include="AutoCompClass.cpp" />
+    <ClCompile Include="AutoCompData.cpp" />
+    <ClCompile Include="AutoCompExports.cpp" />
+    <ClCompile Include="AutoCompFunction.cpp" />
+    <ClCompile Include="AutoCompManager.cpp" />
+    <ClCompile Include="AutoCompPage.cpp" />
+    <ClCompile Include="AutoCompText.cpp" />
+    <ClCompile Include="AutoCompThread.cpp" />
+    <ClCompile Include="AutoCompVar.cpp" />
+    <ClCompile Include="Bookmark.cpp" />
+    <ClCompile Include="Breakpoint.cpp" />
+    <ClCompile Include="BreakpointPropertyDlg.cpp" />
+    <ClCompile Include="BreakpointsPanel.cpp" />
+    <ClCompile Include="BuildExportsDlg.cpp" />
+    <ClCompile Include="BuildExportsThread.cpp" />
+    <ClCompile Include="CallTipInfo.cpp" />
+    <ClCompile Include="ClientWindow.cpp" />
+    <ClCompile Include="CodeBrowserCtrl.cpp" />
+    <ClCompile Include="CodeBrowserPanel.cpp" />
+    <ClCompile Include="ColourHLS.cpp" />
+    <ClCompile Include="ConfigDlg.cpp" />
+    <ClCompile Include="ConnectDlg.cpp" />
+    <ClCompile Include="CRC.cpp" />
+    <ClCompile Include="Debugger.cpp" />
+    <ClCompile Include="DirWatcher.cpp" />
+    <ClCompile Include="DirWatcherWin9x.cpp" />
+    <ClCompile Include="DirWatcherWinNT.cpp" />
+    <ClCompile Include="DocManager.cpp" />
+    <ClCompile Include="ExternalToolsDlg.cpp" />
+    <ClCompile Include="FileTypeImageList.cpp" />
+    <ClCompile Include="FileWatcher.cpp" />
+    <ClCompile Include="FindInFilesDlg.cpp" />
+    <ClCompile Include="FindReplaceDlg.cpp" />
+    <ClCompile Include="FindResultsCtrl.cpp" />
+    <ClCompile Include="FindSymbolDlg.cpp" />
+    <ClCompile Include="FindThread.cpp" />
+    <ClCompile Include="FunctionCall.cpp" />
+    <ClCompile Include="GotoDefDialog.cpp" />
+    <ClCompile Include="Icons.cpp" />
+    <ClCompile Include="ImageUtil.cpp" />
+    <ClCompile Include="MainFrame.cpp" />
+    <ClCompile Include="OutputCtrl.cpp" />
+    <ClCompile Include="OutputPanel.cpp" />
+    <ClCompile Include="PlatformWin.cpp" />
+    <ClCompile Include="PreCompiler.cpp" />
+    <ClCompile Include="ProjectConfig.cpp" />
+    <ClCompile Include="ProjectCtrl.cpp" />
+    <ClCompile Include="ProjectDlg.cpp" />
+    <ClCompile Include="ProjectDoc.cpp" />
+    <ClCompile Include="ProjectPanel.cpp" />
+    <ClCompile Include="ProjectView.cpp" />
+    <ClCompile Include="ReloadFile.cpp" />
+    <ClCompile Include="ScriptCtrl.cpp" />
+    <ClCompile Include="ScriptDoc.cpp" />
+    <ClCompile Include="ScriptFrame.cpp" />
+    <ClCompile Include="ScriptPrintout.cpp" />
+    <ClCompile Include="ScriptScanner.cpp" />
+    <ClCompile Include="ScriptView.cpp" />
+    <ClCompile Include="ScrollMapCtrl.cpp" />
+    <ClCompile Include="SettingsDlg.cpp" />
+    <ClCompile Include="ShellMenu.cpp" />
+    <ClCompile Include="shNotebook.cpp" />
+    <ClCompile Include="StackDump.cpp" />
+    <ClCompile Include="ToolCommand.cpp" />
+    <ClCompile Include="TorsionApp.cpp" />
+    <ClCompile Include="tsComboBox.cpp" />
+    <ClCompile Include="tsMenu.cpp" />
+    <ClCompile Include="tsMenuBar.cpp" />
+    <ClCompile Include="tsSashLayoutWindow.cpp" />
+    <ClCompile Include="tsShellExecute.cpp" />
+    <ClCompile Include="tsStatusBar.cpp" />
+    <ClCompile Include="tsToolBar.cpp" />
+    <ClCompile Include="UpdateChecker.cpp" />
+    <ClCompile Include="VSMenuItem.cpp" />
+    <ClCompile Include="WatchCtrl.cpp" />
+    <ClCompile Include="WatchVar.cpp" />
+    <ClCompile Include="XmlFile.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icons\torque_script.ico" />
+    <Image Include="icons\torsion.ico" />
+    <Image Include="icons\torsion_project.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Torsion.rc">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\wxWidgets\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\wxWidgets\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Torsion.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\docs\ChangeLog.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     24.06.2003 (extracted from src/unix/utilsunx.cpp)
-// RCS-ID:      $Id: pipe.h,v 1.7 2004/06/21 12:36:34 VZ Exp $
 // Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -13,6 +12,7 @@
 #define _WX_UNIX_PIPE_H_
 
 #include <unistd.h>
+#include <fcntl.h>
 
 #include "wx/log.h"
 #include "wx/intl.h"
@@ -44,12 +44,22 @@ public:
     {
         if ( pipe(m_fds) == -1 )
         {
-            wxLogSysError(_("Pipe creation failed"));
+            wxLogSysError(wxGetTranslation("Pipe creation failed"));
 
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
+    }
+
+    // switch the given end of the pipe to non-blocking IO
+    bool MakeNonBlocking(Direction which)
+    {
+        const int flags = fcntl(m_fds[which], F_GETFL, 0);
+        if ( flags == -1 )
+            return false;
+
+        return fcntl(m_fds[which], F_SETFL, flags | O_NONBLOCK) == 0;
     }
 
     // return TRUE if we were created successfully
@@ -74,7 +84,10 @@ public:
         for ( size_t n = 0; n < WXSIZEOF(m_fds); n++ )
         {
             if ( m_fds[n] != INVALID_FD )
+            {
                 close(m_fds[n]);
+                m_fds[n] = INVALID_FD;
+            }
         }
     }
 
@@ -84,28 +97,6 @@ public:
 private:
     int m_fds[2];
 };
-
-#if wxUSE_STREAMS
-
-#include "wx/wfstream.h"
-
-// ----------------------------------------------------------------------------
-// wxPipeInputStream: stream for reading from a pipe
-// ----------------------------------------------------------------------------
-
-class wxPipeInputStream : public wxFileInputStream
-{
-public:
-    wxPipeInputStream(int fd) : wxFileInputStream(fd) { }
-
-    // return TRUE if the pipe is still opened
-    bool IsOpened() const { return !Eof(); }
-
-    // return TRUE if we have anything to read, don't block
-    virtual bool CanRead() const;
-};
-
-#endif // wxUSE_STREAMS
 
 #endif // _WX_UNIX_PIPE_H_
 

@@ -4,7 +4,6 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/04/13
-// RCS-ID:      $Id: string.h,v 1.4 2004/05/23 20:50:42 JS Exp $
 // Copyright:   (c) 2003 David Elliott
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,7 +24,7 @@
 inline NSString* wxNSStringWithWxString(const wxString &wxstring)
 {
 #if wxUSE_UNICODE
-    return [NSString stringWithUTF8String: wxstring.mb_str(wxConvUTF8)];
+    return [NSString stringWithUTF8String: wxstring.utf8_str()];
 #else
     return [NSString stringWithCString: wxstring.c_str() length:wxstring.Len()];
 #endif // wxUSE_UNICODE
@@ -35,7 +34,7 @@ inline NSString* wxNSStringWithWxString(const wxString &wxstring)
 inline NSString* wxInitNSStringWithWxString(NSString *nsstring, const wxString &wxstring)
 {
 #if wxUSE_UNICODE
-    return [nsstring initWithUTF8String: wxstring.mb_str(wxConvUTF8)];
+    return [nsstring initWithUTF8String: wxstring.utf8_str()];
 #else
     return [nsstring initWithCString: wxstring.c_str() length:wxstring.Len()];
 #endif // wxUSE_UNICODE
@@ -44,7 +43,7 @@ inline NSString* wxInitNSStringWithWxString(NSString *nsstring, const wxString &
 inline wxString wxStringWithNSString(NSString *nsstring)
 {
 #if wxUSE_UNICODE
-    return wxString([nsstring UTF8String], wxConvUTF8);
+    return wxString::FromUTF8Unchecked([nsstring UTF8String]);
 #else
     return wxString([nsstring lossyCString]);
 #endif // wxUSE_UNICODE

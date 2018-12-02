@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     12.09.00
-// RCS-ID:      $Id: checklst.h,v 1.13 2004/08/10 13:08:33 ABX Exp $
 // Copyright:   (c) Vadim Zeitlin
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,21 +11,17 @@
 #ifndef _WX_UNIV_CHECKLST_H_
 #define _WX_UNIV_CHECKLST_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univchecklst.h"
-#endif
-
 // ----------------------------------------------------------------------------
 // actions
 // ----------------------------------------------------------------------------
 
-#define wxACTION_CHECKLISTBOX_TOGGLE _T("toggle")
+#define wxACTION_CHECKLISTBOX_TOGGLE wxT("toggle")
 
 // ----------------------------------------------------------------------------
 // wxCheckListBox
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxCheckListBox : public wxCheckListBoxBase
+class WXDLLIMPEXP_CORE wxCheckListBox : public wxCheckListBoxBase
 {
 public:
     // ctors
@@ -74,22 +69,25 @@ public:
                 const wxString& name = wxListBoxNameStr);
 
     // implement check list box methods
-    virtual bool IsChecked(size_t item) const;
-    virtual void Check(size_t item, bool check = true);
+    virtual bool IsChecked(unsigned int item) const;
+    virtual void Check(unsigned int item, bool check = true);
 
     // and input handling
     virtual bool PerformAction(const wxControlAction& action,
                                long numArg = -1l,
                                const wxString& strArg = wxEmptyString);
 
-    // override all methods which add/delete items to update m_checks array as
-    // well
-    virtual void Delete(int n);
+    static wxInputHandler *GetStdInputHandler(wxInputHandler *handlerDef);
+    virtual wxInputHandler *DoGetStdInputHandler(wxInputHandler *handlerDef)
+    {
+        return GetStdInputHandler(handlerDef);
+    }
 
 protected:
-    virtual int DoAppend(const wxString& item);
-    virtual void DoInsertItems(const wxArrayString& items, int pos);
-    virtual void DoSetItems(const wxArrayString& items, void **clientData);
+    // override all methods which add/delete items to update m_checks array as
+    // well
+    virtual void OnItemInserted(unsigned int pos);
+    virtual void DoDeleteOneItem(unsigned int n);
     virtual void DoClear();
 
     // draw the check items instead of the usual ones
@@ -109,21 +107,4 @@ private:
     DECLARE_DYNAMIC_CLASS(wxCheckListBox)
 };
 
-// ----------------------------------------------------------------------------
-// wxStdCheckListBoxInputHandler
-// ----------------------------------------------------------------------------
-
-class WXDLLEXPORT wxStdCheckListboxInputHandler : public wxStdListboxInputHandler
-{
-public:
-    wxStdCheckListboxInputHandler(wxInputHandler *inphand);
-
-    virtual bool HandleKey(wxInputConsumer *consumer,
-                           const wxKeyEvent& event,
-                           bool pressed);
-    virtual bool HandleMouse(wxInputConsumer *consumer,
-                             const wxMouseEvent& event);
-};
-
 #endif // _WX_UNIV_CHECKLST_H_
-

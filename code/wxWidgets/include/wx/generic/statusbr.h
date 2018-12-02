@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by: VZ at 05.02.00 to derive from wxStatusBarBase
 // Created:     01/02/97
-// RCS-ID:      $Id: statusbr.h,v 1.26 2005/01/21 18:26:01 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,118 +11,109 @@
 #ifndef _WX_GENERIC_STATUSBR_H_
 #define _WX_GENERIC_STATUSBR_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "statusbr.h"
-#endif
+#include "wx/defs.h"
+
+#if wxUSE_STATUSBAR
 
 #include "wx/pen.h"
-#include "wx/font.h"
-#include "wx/statusbr.h"
 #include "wx/arrstr.h"
 
-extern WXDLLEXPORT_DATA(const wxChar*) wxPanelNameStr;
 
-class WXDLLEXPORT wxStatusBarGeneric : public wxStatusBarBase
+// ----------------------------------------------------------------------------
+// wxStatusBarGeneric
+// ----------------------------------------------------------------------------
+
+class WXDLLIMPEXP_CORE wxStatusBarGeneric : public wxStatusBarBase
 {
 public:
-  wxStatusBarGeneric() { Init(); }
-  wxStatusBarGeneric(wxWindow *parent,
-              wxWindowID winid,
-              const wxPoint& pos = wxDefaultPosition,
-              const wxSize& size = wxDefaultSize,
-              long style = wxFULL_REPAINT_ON_RESIZE,
-              const wxString& name = wxPanelNameStr)
-  {
-      Init();
+    wxStatusBarGeneric() { Init(); }
+    wxStatusBarGeneric(wxWindow *parent,
+                       wxWindowID winid = wxID_ANY,
+                       long style = wxSTB_DEFAULT_STYLE,
+                       const wxString& name = wxStatusBarNameStr)
+    {
+        Init();
 
-      Create(parent, winid, pos, size, style, name);
-  }
-  wxStatusBarGeneric(wxWindow *parent,
-                     wxWindowID winid,
-                     long style,
-                     const wxString& name = wxPanelNameStr)
-  {
-      Init();
+        Create(parent, winid, style, name);
+    }
 
-      Create(parent, winid, style, name);
-  }
+    virtual ~wxStatusBarGeneric();
 
-  virtual ~wxStatusBarGeneric();
+    bool Create(wxWindow *parent, wxWindowID winid = wxID_ANY,
+                long style = wxSTB_DEFAULT_STYLE,
+                const wxString& name = wxStatusBarNameStr);
 
-  bool Create(wxWindow *parent, wxWindowID winid,
-              const wxPoint& WXUNUSED(pos) = wxDefaultPosition,
-              const wxSize& WXUNUSED(size) = wxDefaultSize,
-              long style = wxFULL_REPAINT_ON_RESIZE,
-              const wxString& name = wxPanelNameStr)
-  {
-      return Create(parent, winid, style, name);
-  }
+    // implement base class methods
+    virtual void SetStatusWidths(int n, const int widths_field[]);
+    virtual bool GetFieldRect(int i, wxRect& rect) const;
+    virtual void SetMinHeight(int height);
 
-  bool Create(wxWindow *parent, wxWindowID winid,
-              long style,
-              const wxString& name = wxPanelNameStr);
+    virtual int GetBorderX() const { return m_borderX; }
+    virtual int GetBorderY() const { return m_borderY; }
 
-  // Create status line
-  virtual void SetFieldsCount(int number = 1,
-                              const int *widths = (const int *) NULL);
 
-  // Set status line text
-  virtual void SetStatusText(const wxString& text, int number = 0);
-  virtual wxString GetStatusText(int number = 0) const;
+    // implementation only (not part of wxStatusBar public API):
 
-  // Set status line widths
-  virtual void SetStatusWidths(int n, const int widths_field[]);
-
-  // Get the position and size of the field's internal bounding rectangle
-  virtual bool GetFieldRect(int i, wxRect& rect) const;
-
-  // sets the minimal vertical size of the status bar
-  virtual void SetMinHeight(int height);
-
-  virtual int GetBorderX() const { return m_borderX; }
-  virtual int GetBorderY() const { return m_borderY; }
-
-  ////////////////////////////////////////////////////////////////////////
-  // Implementation
-
-  virtual void DrawFieldText(wxDC& dc, int i);
-  virtual void DrawField(wxDC& dc, int i);
-
-  void SetBorderX(int x);
-  void SetBorderY(int y);
-
-  void OnPaint(wxPaintEvent& event);
-
-  void OnLeftDown(wxMouseEvent& event);
-  void OnRightDown(wxMouseEvent& event);
-
-  virtual void InitColours();
-
-  // Responds to colour changes
-  void OnSysColourChanged(wxSysColourChangedEvent& event);
+    int GetFieldFromPoint(const wxPoint& point) const;
 
 protected:
-  // common part of all ctors
-  void Init();
+    virtual void DoUpdateStatusText(int number);
 
-  wxArrayString     m_statusStrings;
+    // event handlers
+    void OnPaint(wxPaintEvent& event);
+    void OnSize(wxSizeEvent& event);
 
-  // the last known width of the client rect (used to rebuild cache)
-  int               m_lastClientWidth;
-  // the widths of the status bar panes in pixels
-  wxArrayInt        m_widthsAbs;
+    void OnLeftDown(wxMouseEvent& event);
+    void OnRightDown(wxMouseEvent& event);
 
-  int               m_borderX;
-  int               m_borderY;
-  wxPen             m_mediumShadowPen;
-  wxPen             m_hilightPen;
+    // Responds to colour changes
+    void OnSysColourChanged(wxSysColourChangedEvent& event);
 
-  virtual wxSize DoGetBestSize() const;
+protected:
+
+    virtual void DrawFieldText(wxDC& dc, const wxRect& rc, int i, int textHeight);
+    virtual void DrawField(wxDC& dc, int i, int textHeight);
+
+    void SetBorderX(int x);
+    void SetBorderY(int y);
+
+    virtual void InitColours();
+
+    // true if the status bar shows the size grip: for this it must have
+    // wxSTB_SIZEGRIP style and the window it is attached to must be resizable
+    // and not maximized
+    bool ShowsSizeGrip() const;
+
+    // returns the position and the size of the size grip
+    wxRect GetSizeGripRect() const;
+
+    // common part of all ctors
+    void Init();
+
+    // the last known size, fields widths must be updated whenever it's out of
+    // date
+    wxSize m_lastClientSize;
+
+    // the absolute widths of the status bar panes in pixels
+    wxArrayInt        m_widthsAbs;
+
+    int               m_borderX;
+    int               m_borderY;
+
+    wxPen             m_mediumShadowPen;
+    wxPen             m_hilightPen;
+
+    virtual wxSize DoGetBestSize() const;
 
 private:
-  DECLARE_EVENT_TABLE()
-  DECLARE_DYNAMIC_CLASS_NO_COPY(wxStatusBarGeneric)
+    // Update m_lastClientSize and m_widthsAbs from the current size.
+    void DoUpdateFieldWidths();
+
+    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxStatusBarGeneric)
 };
+
+#endif // wxUSE_STATUSBAR
 
 #endif
     // _WX_GENERIC_STATUSBR_H_

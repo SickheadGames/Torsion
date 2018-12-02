@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     23.06.2003
-// RCS-ID:      $Id: apptbase.h,v 1.5 2004/09/26 16:28:51 VZ Exp $
 // Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,42 +11,56 @@
 #ifndef _WX_UNIX_APPTBASE_H_
 #define _WX_UNIX_APPTBASE_H_
 
-struct wxExecuteData;
-class wxPipe;
+#include "wx/evtloop.h"
+#include "wx/evtloopsrc.h"
+
+class wxExecuteData;
+class wxFDIOManager;
+class wxEventLoopSourcesManagerBase;
 
 // ----------------------------------------------------------------------------
 // wxAppTraits: the Unix version adds extra hooks needed by Unix code
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxAppTraits : public wxAppTraitsBase
+class WXDLLIMPEXP_BASE wxAppTraits : public wxAppTraitsBase
 {
 public:
     // wxExecute() support methods
     // ---------------------------
 
-    // called before starting the child process and creates the pipe used for
-    // detecting the process termination asynchronously in GUI, does nothing in
-    // wxBase
+    // Wait for the process termination and return its exit code or -1 on error.
     //
-    // if it returns false, we should return from wxExecute() with an error
-    virtual bool CreateEndProcessPipe(wxExecuteData& execData) = 0;
+    // Notice that this is only used when execData.flags contains wxEXEC_SYNC
+    // and does not contain wxEXEC_NOEVENTS, i.e. when we need to really wait
+    // until the child process exit and dispatch the events while doing it.
+    virtual int WaitForChild(wxExecuteData& execData);
 
-    // test if the given descriptor is the end of the pipe create by the
-    // function above
-    virtual bool IsWriteFDOfEndProcessPipe(wxExecuteData& execData, int fd) = 0;
+#if wxUSE_SOCKETS
+    // return a pointer to the object which should be used to integrate
+    // monitoring of the file descriptors to the event loop (currently this is
+    // used for the sockets only but should be used for arbitrary event loop
+    // sources in the future)
+    //
+    // this object may be different for the console and GUI applications
+    //
+    // the pointer is not deleted by the caller as normally it points to a
+    // static variable
+    virtual wxFDIOManager *GetFDIOManager();
+#endif // wxUSE_SOCKETS
 
-    // ensure that the write end of the pipe is not closed by wxPipe dtor
-    virtual void DetachWriteFDOfEndProcessPipe(wxExecuteData& execData) = 0;
+#if wxUSE_CONSOLE_EVENTLOOP
+    // Return a non-NULL pointer to the object responsible for managing the
+    // event loop sources in this kind of application.
+    virtual wxEventLoopSourcesManagerBase* GetEventLoopSourcesManager();
+#endif // wxUSE_CONSOLE_EVENTLOOP
 
-    // wait for the process termination, return whatever wxExecute() must
-    // return
-    virtual int WaitForChild(wxExecuteData& execData) = 0;
-
-
-    // wxThread helpers
-    // ----------------
-
-    // TODO
+protected:
+    // Wait for the process termination by running the given event loop until
+    // this happens.
+    //
+    // This is used by the public WaitForChild() after creating the event loop
+    // of the appropriate kind.
+    int RunLoopUntilChildExit(wxExecuteData& execData, wxEventLoopBase& loop);
 };
 
 #endif // _WX_UNIX_APPTBASE_H_

@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     25.08.00
-// RCS-ID:      $Id: bmpbuttn.h,v 1.10 2004/08/10 13:08:33 ABX Exp $
 // Copyright:   (c) Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,11 +11,7 @@
 #ifndef _WX_UNIV_BMPBUTTN_H_
 #define _WX_UNIV_BMPBUTTN_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univbmpbuttn.h"
-#endif
-
-class WXDLLEXPORT wxBitmapButton : public wxBitmapButtonBase
+class WXDLLIMPEXP_CORE wxBitmapButton : public wxBitmapButtonBase
 {
 public:
     wxBitmapButton() { }
@@ -44,7 +39,7 @@ public:
 
     virtual void SetMargins(int x, int y)
     {
-        SetImageMargins(x, y);
+        SetBitmapMargins(x, y);
 
         wxBitmapButtonBase::SetMargins(x, y);
     }
@@ -63,8 +58,8 @@ protected:
     // called when one of the bitmap is changed by user
     virtual void OnSetBitmap();
 
-    // set bitmap to the given one if it's ok or to m_bmpNormal and return
-    // true if the bitmap really changed
+    // set bitmap to the given one if it's ok or to the normal bitmap and
+    // return true if the bitmap really changed
     bool ChangeBitmap(const wxBitmap& bmp);
 
 private:

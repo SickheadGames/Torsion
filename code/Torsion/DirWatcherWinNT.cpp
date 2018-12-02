@@ -4,11 +4,26 @@
 
 #include "PreCompiled.h"
 #include "DirWatcherWinNT.h"
+#include <windows.h>
+#include <string>
+#include <vector>
 
+using namespace std;
 
 #ifdef _DEBUG 
    #define new DEBUG_NEW 
 #endif 
+
+static string utf16ToUTF8(const wstring &s)
+{
+	const int size = ::WideCharToMultiByte(CP_UTF8, 0, s.c_str(), -1, NULL, 0, 0, NULL);
+
+	vector<char> buf(size);
+	::WideCharToMultiByte(CP_UTF8, 0, s.c_str(), -1, &buf[0], size, 0, NULL);
+
+	return string(&buf[0]);
+}
+
 
 
 DirWatcherWinNT::DirWatcherWinNT( size_t bufferSize )
@@ -107,6 +122,9 @@ int DirWatcherWinNT::GetSignaled( wxArrayString* signaled )
    int signals = 0;
    wxChar* curr = m_Buffer;
    wxChar file[MAX_PATH];
+
+   
+   string utf8String = utf16ToUTF8(file);
    wxFileName fixup;
    wxString dir;
    for ( ; bytes != 0; )
@@ -117,7 +135,7 @@ int DirWatcherWinNT::GetSignaled( wxArrayString* signaled )
       const size_t chars = fni->FileNameLength / sizeof( WCHAR );
       WideCharToMultiByte( CP_ACP, WC_NO_BEST_FIT_CHARS, 
          fni->FileName, chars, 
-         file, MAX_PATH, NULL, NULL );
+		  const_cast<char *>(utf8String.c_str()), MAX_PATH, NULL, NULL );
       file[ chars ] = 0;
 
       // Look to see if this is an excluded file/folder.
@@ -209,3 +227,4 @@ void DirWatcherWinNT::Clear( )
    ::ZeroMemory( &m_Overlapped, sizeof( m_Overlapped ) );
    ::ZeroMemory( m_Buffer, m_BufferSize );
 }
+

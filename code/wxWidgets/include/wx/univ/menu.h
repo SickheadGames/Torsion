@@ -4,17 +4,12 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     05.05.01
-// RCS-ID:      $Id: menu.h,v 1.19 2005/05/06 13:42:32 MW Exp $
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_UNIV_MENU_H_
 #define _WX_UNIV_MENU_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univmenu.h"
-#endif
 
 #if wxUSE_ACCEL
     #include "wx/accel.h"
@@ -23,18 +18,18 @@
 #include "wx/dynarray.h"
 
 // fwd declarations
-class WXDLLEXPORT wxMenuInfo;
+class WXDLLIMPEXP_FWD_CORE wxMenuInfo;
 WX_DECLARE_EXPORTED_OBJARRAY(wxMenuInfo, wxMenuInfoArray);
 
-class WXDLLEXPORT wxMenuGeometryInfo;
-class WXDLLEXPORT wxPopupMenuWindow;
-class WXDLLEXPORT wxRenderer;
+class WXDLLIMPEXP_FWD_CORE wxMenuGeometryInfo;
+class WXDLLIMPEXP_FWD_CORE wxPopupMenuWindow;
+class WXDLLIMPEXP_FWD_CORE wxRenderer;
 
 // ----------------------------------------------------------------------------
 // wxMenu
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxMenu : public wxMenuBase
+class WXDLLIMPEXP_CORE wxMenu : public wxMenuBase
 {
 public:
     // ctors and dtor
@@ -142,7 +137,7 @@ private:
 // wxMenuBar
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxMenuBar : public wxMenuBarBase
+class WXDLLIMPEXP_CORE wxMenuBar : public wxMenuBarBase
 {
 public:
     // ctors and dtor
@@ -159,8 +154,8 @@ public:
     virtual void EnableTop(size_t pos, bool enable);
     virtual bool IsEnabledTop(size_t pos) const;
 
-    virtual void SetLabelTop(size_t pos, const wxString& label);
-    virtual wxString GetLabelTop(size_t pos) const;
+    virtual void SetMenuLabel(size_t pos, const wxString& label);
+    virtual wxString GetMenuLabel(size_t pos) const;
 
     virtual void Attach(wxFrame *frame);
     virtual void Detach();

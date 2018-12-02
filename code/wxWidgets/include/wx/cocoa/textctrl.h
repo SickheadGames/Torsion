@@ -4,7 +4,6 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/03/16
-// RCS-ID:      $Id:
 // Copyright:   (c) 2003 David Elliott
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,7 +16,7 @@
 // ========================================================================
 // wxTextCtrl
 // ========================================================================
-class WXDLLEXPORT wxTextCtrl : public wxTextCtrlBase, protected wxCocoaNSTextField
+class WXDLLIMPEXP_CORE wxTextCtrl : public wxTextCtrlBase, protected wxCocoaNSTextField
 {
     DECLARE_DYNAMIC_CLASS(wxTextCtrl)
     DECLARE_EVENT_TABLE()
@@ -50,12 +49,12 @@ public:
 // ------------------------------------------------------------------------
 protected:
     virtual void Cocoa_didChangeText(void);
+    virtual void CocoaTarget_action(void);
 // ------------------------------------------------------------------------
 // Implementation
 // ------------------------------------------------------------------------
 public:
     virtual wxString GetValue() const;
-    virtual void SetValue(const wxString& value);
 
     virtual int GetLineLength(long lineNo) const;
     virtual wxString GetLineText(long lineNo) const;
@@ -116,6 +115,8 @@ public:
 
 protected:
     virtual wxSize DoGetBestSize() const;
+
+    virtual void DoSetValue(const wxString& value, int flags = 0);
 };
 
 #endif // __WX_COCOA_TEXTCTRL_H__

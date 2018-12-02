@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        privx.h
+// Name:        wx/x11/privx.h
 // Purpose:     Private declarations common to X11 and Motif ports
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id: privx.h,v 1.15 2005/08/02 18:16:50 MW Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -26,23 +25,20 @@
 #pragma message enable nosimpint
 #endif
 
-class WXDLLIMPEXP_CORE wxMouseEvent;
-class WXDLLIMPEXP_CORE wxKeyEvent;
-class WXDLLIMPEXP_CORE wxWindow;
-class WXDLLIMPEXP_CORE wxRegion;
+class WXDLLIMPEXP_FWD_CORE wxMouseEvent;
+class WXDLLIMPEXP_FWD_CORE wxKeyEvent;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxRegion;
 
 // ----------------------------------------------------------------------------
 // key events related functions
 // ----------------------------------------------------------------------------
 
-extern int wxCharCodeXToWX(KeySym keySym);
-extern KeySym wxCharCodeWXToX(int id);
-
-int wxGetBestMatchingPixel(Display *display, XColor *desiredColor, Colormap cmap);
+WXPixel wxGetBestMatchingPixel(Display *display, XColor *desiredColor, Colormap cmap);
 Pixmap XCreateInsensitivePixmap( Display *display, Pixmap pixmap );
 
 extern XColor g_itemColors[];
-extern int wxComputeColours (Display *display, wxColour * back, wxColour * fore);
+extern int wxComputeColours (Display *display, const wxColour * back, const wxColour * fore);
 
 // For convenience
 inline Display* wxGlobalDisplay() { return (Display*) wxGetDisplay(); }
@@ -67,12 +63,7 @@ void wxAllocNearestColor(Display *display,Colormap colormap,XColor *xcolor);
 void wxAllocColor(Display *display,Colormap colormap,XColor *xcolor);
 
 // For debugging
-#ifdef __WXDEBUG__
 wxString wxGetXEventName(XEvent& event);
-#endif
-
-// Is the window visible?
-bool wxWindowIsVisible(Window win);
 
 #if wxUSE_NANOX
 #define XEventGetWindow(event) event->general.wid
@@ -148,7 +139,7 @@ bool wxWindowIsVisible(Window win);
 
 bool wxDoSetShape( Display* xdisplay, Window xwindow, const wxRegion& region );
 
-class WXDLLEXPORT wxXVisualInfo
+class WXDLLIMPEXP_CORE wxXVisualInfo
 {
 public:
     wxXVisualInfo();
@@ -169,7 +160,7 @@ public:
     int                   m_visualRedPrec;
     int                   m_visualGreenPrec;
     int                   m_visualBluePrec;
-    
+
     unsigned char        *m_colorCube;
 };
 

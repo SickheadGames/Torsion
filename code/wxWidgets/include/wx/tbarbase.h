@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: tbarbase.h,v 1.57 2005/02/28 17:20:12 VZ Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,10 +15,6 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "tbarbase.h"
-#endif
-
 #include "wx/defs.h"
 
 #if wxUSE_TOOLBAR
@@ -28,17 +23,17 @@
 #include "wx/list.h"
 #include "wx/control.h"
 
-class WXDLLEXPORT wxToolBarBase;
-class WXDLLEXPORT wxToolBarToolBase;
-class WXDLLEXPORT wxImage;
+class WXDLLIMPEXP_FWD_CORE wxToolBarBase;
+class WXDLLIMPEXP_FWD_CORE wxToolBarToolBase;
+class WXDLLIMPEXP_FWD_CORE wxImage;
 
 // ----------------------------------------------------------------------------
 // constants
 // ----------------------------------------------------------------------------
 
-extern WXDLLEXPORT_DATA(const wxChar*) wxToolBarNameStr;
-extern WXDLLEXPORT_DATA(const wxSize) wxDefaultSize;
-extern WXDLLEXPORT_DATA(const wxPoint) wxDefaultPosition;
+extern WXDLLIMPEXP_DATA_CORE(const char) wxToolBarNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const wxSize) wxDefaultSize;
+extern WXDLLIMPEXP_DATA_CORE(const wxPoint) wxDefaultPosition;
 
 enum wxToolBarToolStyle
 {
@@ -58,58 +53,54 @@ enum wxToolBarToolStyle
 // for the applications status bar.
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxToolBarToolBase : public wxObject
+class WXDLLIMPEXP_CORE wxToolBarToolBase : public wxObject
 {
 public:
     // ctors & dtor
     // ------------
 
-    wxToolBarToolBase(wxToolBarBase *tbar = (wxToolBarBase *)NULL,
+    // generic ctor for any kind of tool
+    wxToolBarToolBase(wxToolBarBase *tbar = NULL,
                       int toolid = wxID_SEPARATOR,
                       const wxString& label = wxEmptyString,
                       const wxBitmap& bmpNormal = wxNullBitmap,
                       const wxBitmap& bmpDisabled = wxNullBitmap,
                       wxItemKind kind = wxITEM_NORMAL,
-                      wxObject *clientData = (wxObject *) NULL,
+                      wxObject *clientData = NULL,
                       const wxString& shortHelpString = wxEmptyString,
                       const wxString& longHelpString = wxEmptyString)
         : m_label(label),
           m_shortHelpString(shortHelpString),
           m_longHelpString(longHelpString)
     {
-        m_tbar = tbar;
-        m_id = toolid;
-        if (m_id == wxID_ANY)
-            m_id = wxNewId();
+        Init
+        (
+            tbar,
+            toolid == wxID_SEPARATOR ? wxTOOL_STYLE_SEPARATOR
+                                     : wxTOOL_STYLE_BUTTON,
+            toolid == wxID_ANY ? wxWindow::NewControlId()
+                               : toolid,
+            kind
+        );
+
         m_clientData = clientData;
 
         m_bmpNormal = bmpNormal;
         m_bmpDisabled = bmpDisabled;
-
-        m_kind = kind;
-
-        m_enabled = true;
-        m_toggled = false;
-
-        m_toolStyle = toolid == wxID_SEPARATOR ? wxTOOL_STYLE_SEPARATOR
-                                           : wxTOOL_STYLE_BUTTON;
     }
 
-    wxToolBarToolBase(wxToolBarBase *tbar, wxControl *control)
+    // ctor for controls only
+    wxToolBarToolBase(wxToolBarBase *tbar,
+                      wxControl *control,
+                      const wxString& label)
+        : m_label(label)
     {
-        m_tbar = tbar;
+        Init(tbar, wxTOOL_STYLE_CONTROL, control->GetId(), wxITEM_MAX);
+
         m_control = control;
-        m_id = control->GetId();
-
-        m_kind = wxITEM_MAX;    // invalid value
-
-        m_enabled = true;
-        m_toggled = false;
-
-        m_toolStyle = wxTOOL_STYLE_CONTROL;
     }
 
-    ~wxToolBarToolBase(){}
+    virtual ~wxToolBarToolBase();
 
     // accessors
     // ---------
@@ -119,23 +110,32 @@ public:
 
     wxControl *GetControl() const
     {
-        wxASSERT_MSG( IsControl(), _T("this toolbar tool is not a control") );
+        wxASSERT_MSG( IsControl(), wxT("this toolbar tool is not a control") );
 
         return m_control;
     }
 
     wxToolBarBase *GetToolBar() const { return m_tbar; }
 
-    // style
+    // style/kind
+    bool IsStretchable() const { return m_stretchable; }
     bool IsButton() const { return m_toolStyle == wxTOOL_STYLE_BUTTON; }
     bool IsControl() const { return m_toolStyle == wxTOOL_STYLE_CONTROL; }
     bool IsSeparator() const { return m_toolStyle == wxTOOL_STYLE_SEPARATOR; }
+    bool IsStretchableSpace() const { return IsSeparator() && IsStretchable(); }
     int GetStyle() const { return m_toolStyle; }
     wxItemKind GetKind() const
     {
-        wxASSERT_MSG( IsButton(), _T("only makes sense for buttons") );
+        wxASSERT_MSG( IsButton(), wxT("only makes sense for buttons") );
 
         return m_kind;
+    }
+
+    void MakeStretchable()
+    {
+        wxASSERT_MSG( IsSeparator(), "only separators can be stretchable" );
+
+        m_stretchable = true;
     }
 
     // state
@@ -169,16 +169,16 @@ public:
     }
 
     // modifiers: return true if the state really changed
-    bool Enable(bool enable);
-    bool Toggle(bool toggle);
-    bool SetToggle(bool toggle);
-    bool SetShortHelp(const wxString& help);
-    bool SetLongHelp(const wxString& help);
+    virtual bool Enable(bool enable);
+    virtual bool Toggle(bool toggle);
+    virtual bool SetToggle(bool toggle);
+    virtual bool SetShortHelp(const wxString& help);
+    virtual bool SetLongHelp(const wxString& help);
 
     void Toggle() { Toggle(!IsToggled()); }
 
-    void SetNormalBitmap(const wxBitmap& bmp) { m_bmpNormal = bmp; }
-    void SetDisabledBitmap(const wxBitmap& bmp) { m_bmpDisabled = bmp; }
+    virtual void SetNormalBitmap(const wxBitmap& bmp) { m_bmpNormal = bmp; }
+    virtual void SetDisabledBitmap(const wxBitmap& bmp) { m_bmpDisabled = bmp; }
 
     virtual void SetLabel(const wxString& label) { m_label = label; }
 
@@ -195,24 +195,45 @@ public:
     }
 
     // add tool to/remove it from a toolbar
-    virtual void Detach() { m_tbar = (wxToolBarBase *)NULL; }
+    virtual void Detach() { m_tbar = NULL; }
     virtual void Attach(wxToolBarBase *tbar) { m_tbar = tbar; }
 
-    // compatibility only, don't use
-#if WXWIN_COMPATIBILITY_2_2
-    wxDEPRECATED( const wxBitmap& GetBitmap1() const );
-    wxDEPRECATED( const wxBitmap& GetBitmap2() const );
-
-    wxDEPRECATED( void SetBitmap1(const wxBitmap& bmp) );
-    wxDEPRECATED( void SetBitmap2(const wxBitmap& bmp) );
-#endif // WXWIN_COMPATIBILITY_2_2
+#if wxUSE_MENUS
+    // these methods are only for tools of wxITEM_DROPDOWN kind (but even such
+    // tools can have a NULL associated menu)
+    virtual void SetDropdownMenu(wxMenu *menu);
+    wxMenu *GetDropdownMenu() const { return m_dropdownMenu; }
+#endif
 
 protected:
+    // common part of all ctors
+    void Init(wxToolBarBase *tbar,
+              wxToolBarToolStyle style,
+              int toolid,
+              wxItemKind kind)
+    {
+        m_tbar = tbar;
+        m_toolStyle = style;
+        m_id = toolid;
+        m_kind = kind;
+
+        m_clientData = NULL;
+
+        m_stretchable = false;
+        m_toggled = false;
+        m_enabled = true;
+
+#if wxUSE_MENUS
+        m_dropdownMenu = NULL;
+#endif
+
+    }
+
     wxToolBarBase *m_tbar;  // the toolbar to which we belong (may be NULL)
 
     // tool parameters
-    int m_toolStyle;    // see enum wxToolBarToolStyle
-    int m_id;           // the tool id, wxID_SEPARATOR for separator
+    wxToolBarToolStyle m_toolStyle;
+    wxWindowIDRef m_id; // the tool id, wxID_SEPARATOR for separator
     wxItemKind m_kind;  // for normal buttons may be wxITEM_NORMAL/CHECK/RADIO
 
     // as controls have their own client data, no need to waste memory
@@ -221,6 +242,9 @@ protected:
         wxObject         *m_clientData;
         wxControl        *m_control;
     };
+
+    // true if this tool is stretchable: currently is only value for separators
+    bool m_stretchable;
 
     // tool state
     bool m_toggled;
@@ -237,6 +261,10 @@ protected:
     wxString m_shortHelpString;
     wxString m_longHelpString;
 
+#if wxUSE_MENUS
+    wxMenu *m_dropdownMenu;
+#endif
+
     DECLARE_DYNAMIC_CLASS_NO_COPY(wxToolBarToolBase)
 };
 
@@ -247,7 +275,7 @@ WX_DECLARE_EXPORTED_LIST(wxToolBarToolBase, wxToolBarToolsList);
 // the base class for all toolbars
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxToolBarBase : public wxControl
+class WXDLLIMPEXP_CORE wxToolBarBase : public wxControl
 {
 public:
     wxToolBarBase();
@@ -329,13 +357,17 @@ public:
     virtual wxToolBarToolBase *AddTool (wxToolBarToolBase *tool);
     virtual wxToolBarToolBase *InsertTool (size_t pos, wxToolBarToolBase *tool);
 
-    // add an arbitrary control to the toolbar (notice that
-    // the control will be deleted by the toolbar and that it will also adjust
-    // its position/size)
+    // add an arbitrary control to the toolbar (notice that the control will be
+    // deleted by the toolbar and that it will also adjust its position/size)
     //
+    // the label is optional and, if specified, will be shown near the control
     // NB: the control should have toolbar as its parent
-    virtual wxToolBarToolBase *AddControl(wxControl *control);
-    virtual wxToolBarToolBase *InsertControl(size_t pos, wxControl *control);
+    virtual wxToolBarToolBase *
+    AddControl(wxControl *control, const wxString& label = wxEmptyString);
+
+    virtual wxToolBarToolBase *
+    InsertControl(size_t pos, wxControl *control,
+                  const wxString& label = wxEmptyString);
 
     // get the control with the given id or return NULL
     virtual wxControl *FindControl( int toolid );
@@ -343,6 +375,12 @@ public:
     // add a separator to the toolbar
     virtual wxToolBarToolBase *AddSeparator();
     virtual wxToolBarToolBase *InsertSeparator(size_t pos);
+
+    // add a stretchable space to the toolbar: this is similar to a separator
+    // except that it's always blank and that all the extra space the toolbar
+    // has is [equally] distributed among the stretchable spaces in it
+    virtual wxToolBarToolBase *AddStretchableSpace();
+    virtual wxToolBarToolBase *InsertStretchableSpace(size_t pos);
 
     // remove the tool from the toolbar: the caller is responsible for actually
     // deleting the pointer
@@ -357,6 +395,9 @@ public:
 
     // must be called after all buttons have been created to finish toolbar
     // initialisation
+    //
+    // derived class versions should call the base one first, before doing
+    // platform-specific stuff
     virtual bool Realize();
 
     // tools state
@@ -384,6 +425,12 @@ public:
     virtual wxString GetToolShortHelp(int toolid) const;
     virtual void SetToolLongHelp(int toolid, const wxString& helpString);
     virtual wxString GetToolLongHelp(int toolid) const;
+
+    virtual void SetToolNormalBitmap(int WXUNUSED(id),
+                                     const wxBitmap& WXUNUSED(bitmap)) {}
+    virtual void SetToolDisabledBitmap(int WXUNUSED(id),
+                                       const wxBitmap& WXUNUSED(bitmap)) {}
+
 
     // margins/packing/separation
     // --------------------------
@@ -415,17 +462,17 @@ public:
     // get/set the size of the bitmaps used by the toolbar: should be called
     // before adding any tools to the toolbar
     virtual void SetToolBitmapSize(const wxSize& size)
-        { m_defaultWidth = size.x; m_defaultHeight = size.y; };
+        { m_defaultWidth = size.x; m_defaultHeight = size.y; }
     virtual wxSize GetToolBitmapSize() const
         { return wxSize(m_defaultWidth, m_defaultHeight); }
 
     // the button size in some implementations is bigger than the bitmap size:
     // get the total button size (by default the same as bitmap size)
     virtual wxSize GetToolSize() const
-        { return GetToolBitmapSize(); } ;
+        { return GetToolBitmapSize(); }
 
     // returns a (non separator) tool containing the point (x, y) or NULL if
-    // there is no tool at this point (corrdinates are client)
+    // there is no tool at this point (coordinates are client)
     virtual wxToolBarToolBase *FindToolForPosition(wxCoord x,
                                                    wxCoord y) const = 0;
 
@@ -433,13 +480,17 @@ public:
     wxToolBarToolBase *FindById(int toolid) const;
 
     // return true if this is a vertical toolbar, otherwise false
-    bool IsVertical() const { return HasFlag(wxTB_VERTICAL); }
+    bool IsVertical() const;
 
+    // these methods allow to access tools by their index in the toolbar
+    size_t GetToolsCount() const { return m_tools.GetCount(); }
+    const wxToolBarToolBase *GetToolByPos(int pos) const { return m_tools[pos]; }
 
+#if WXWIN_COMPATIBILITY_2_8
     // the old versions of the various methods kept for compatibility
     // don't use in the new code!
     // --------------------------------------------------------------
-
+    wxDEPRECATED_INLINE(
     wxToolBarToolBase *AddTool(int toolid,
                                const wxBitmap& bitmap,
                                const wxBitmap& bmpDisabled,
@@ -447,23 +498,23 @@ public:
                                wxObject *clientData = NULL,
                                const wxString& shortHelpString = wxEmptyString,
                                const wxString& longHelpString = wxEmptyString)
-    {
+    ,
         return AddTool(toolid, wxEmptyString,
                        bitmap, bmpDisabled,
                        toggle ? wxITEM_CHECK : wxITEM_NORMAL,
                        shortHelpString, longHelpString, clientData);
-    }
-
+    )
+    wxDEPRECATED_INLINE(
     wxToolBarToolBase *AddTool(int toolid,
                                const wxBitmap& bitmap,
                                const wxString& shortHelpString = wxEmptyString,
                                const wxString& longHelpString = wxEmptyString)
-    {
+    ,
         return AddTool(toolid, wxEmptyString,
                        bitmap, wxNullBitmap, wxITEM_NORMAL,
                        shortHelpString, longHelpString, NULL);
-    }
-
+    )
+    wxDEPRECATED_INLINE(
     wxToolBarToolBase *AddTool(int toolid,
                                const wxBitmap& bitmap,
                                const wxBitmap& bmpDisabled,
@@ -473,12 +524,12 @@ public:
                                wxObject *clientData = NULL,
                                const wxString& shortHelp = wxEmptyString,
                                const wxString& longHelp = wxEmptyString)
-    {
+    ,
         return DoAddTool(toolid, wxEmptyString, bitmap, bmpDisabled,
                          toggle ? wxITEM_CHECK : wxITEM_NORMAL,
                          shortHelp, longHelp, clientData, xPos, yPos);
-    }
-
+    )
+    wxDEPRECATED_INLINE(
     wxToolBarToolBase *InsertTool(size_t pos,
                                   int toolid,
                                   const wxBitmap& bitmap,
@@ -487,11 +538,12 @@ public:
                                   wxObject *clientData = NULL,
                                   const wxString& shortHelp = wxEmptyString,
                                   const wxString& longHelp = wxEmptyString)
-    {
+    ,
         return InsertTool(pos, toolid, wxEmptyString, bitmap, bmpDisabled,
                           toggle ? wxITEM_CHECK : wxITEM_NORMAL,
                           shortHelp, longHelp, clientData);
-    }
+    )
+#endif // WXWIN_COMPATIBILITY_2_8
 
     // event handlers
     // --------------
@@ -514,10 +566,35 @@ public:
     // use GetToolMargins() instead
     wxSize GetMargins() const { return GetToolMargins(); }
 
+    // Tool factories,
+    // helper functions to create toolbar tools
+    // -------------------------
+    virtual wxToolBarToolBase *CreateTool(int toolid,
+                                          const wxString& label,
+                                          const wxBitmap& bmpNormal,
+                                          const wxBitmap& bmpDisabled = wxNullBitmap,
+                                          wxItemKind kind = wxITEM_NORMAL,
+                                          wxObject *clientData = NULL,
+                                          const wxString& shortHelp = wxEmptyString,
+                                          const wxString& longHelp = wxEmptyString) = 0;
+
+    virtual wxToolBarToolBase *CreateTool(wxControl *control,
+                                          const wxString& label) = 0;
+
+    // this one is not virtual but just a simple helper/wrapper around
+    // CreateTool() for separators
+    wxToolBarToolBase *CreateSeparator()
+    {
+        return CreateTool(wxID_SEPARATOR,
+                          wxEmptyString,
+                          wxNullBitmap, wxNullBitmap,
+                          wxITEM_SEPARATOR, NULL,
+                          wxEmptyString, wxEmptyString);
+    }
+
+    
     // implementation only from now on
     // -------------------------------
-
-    size_t GetToolsCount() const { return m_tools.GetCount(); }
 
     // Do the toolbar button updates (check for EVT_UPDATE_UI handlers)
     virtual void UpdateWindowUI(long flags = wxUPDATE_UI_NONE) ;
@@ -525,7 +602,15 @@ public:
     // don't want toolbars to accept the focus
     virtual bool AcceptsFocus() const { return false; }
 
+#if wxUSE_MENUS
+    // Set dropdown menu
+    bool SetDropdownMenu(int toolid, wxMenu *menu);
+#endif
+
 protected:
+    // choose the default border for this window
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
+
     // to implement in derived classes
     // -------------------------------
 
@@ -562,23 +647,34 @@ protected:
     // called when the tools "can be toggled" flag changes
     virtual void DoSetToggle(wxToolBarToolBase *tool, bool toggle) = 0;
 
-    // the functions to create toolbar tools
-    virtual wxToolBarToolBase *CreateTool(int toolid,
-                                          const wxString& label,
-                                          const wxBitmap& bmpNormal,
-                                          const wxBitmap& bmpDisabled,
-                                          wxItemKind kind,
-                                          wxObject *clientData,
-                                          const wxString& shortHelp,
-                                          const wxString& longHelp) = 0;
-
-    virtual wxToolBarToolBase *CreateTool(wxControl *control) = 0;
 
     // helper functions
     // ----------------
 
+    // call this from derived class ctor/Create() to ensure that we have either
+    // wxTB_HORIZONTAL or wxTB_VERTICAL style, there is a lot of existing code
+    // which randomly checks either one or the other of them and gets confused
+    // if neither is set (and making one of them 0 is not an option neither as
+    // then the existing tests would break down)
+    void FixupStyle();
+
     // un-toggle all buttons in the same radio group
     void UnToggleRadioGroup(wxToolBarToolBase *tool);
+
+    // make the size of the buttons big enough to fit the largest bitmap size
+    void AdjustToolBitmapSize();
+
+    // calls InsertTool() and deletes the tool if inserting it failed
+    wxToolBarToolBase *DoInsertNewTool(size_t pos, wxToolBarToolBase *tool)
+    {
+        if ( !InsertTool(pos, tool) )
+        {
+            delete tool;
+            return NULL;
+        }
+
+        return tool;
+    }
 
     // the list of all our tools
     wxToolBarToolsList m_tools;
@@ -600,11 +696,17 @@ protected:
 
 private:
     DECLARE_EVENT_TABLE()
-    DECLARE_NO_COPY_CLASS(wxToolBarBase)
+    wxDECLARE_NO_COPY_CLASS(wxToolBarBase);
 };
 
-// Helper function for creating the image for disabled buttons
-bool wxCreateGreyedImage(const wxImage& in, wxImage& out) ;
+// deprecated function for creating the image for disabled buttons, use
+// wxImage::ConvertToGreyscale() instead
+#if WXWIN_COMPATIBILITY_2_8
+
+wxDEPRECATED( bool wxCreateGreyedImage(const wxImage& in, wxImage& out) );
+
+#endif // WXWIN_COMPATIBILITY_2_8
+
 
 #endif // wxUSE_TOOLBAR
 

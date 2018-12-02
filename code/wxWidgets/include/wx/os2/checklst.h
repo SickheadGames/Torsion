@@ -5,7 +5,6 @@
 // Author:      David Webster
 // Modified by:
 // Created:     10/13/99
-// RCS-ID:      $Id: checklst.h,v 1.14.4.1 2005/09/29 10:50:54 ABX Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,7 +18,7 @@
 
 class wxOwnerDrawn; // so the compiler knows, it is a class.
 
-class WXDLLEXPORT wxCheckListBox : public wxCheckListBoxBase
+class WXDLLIMPEXP_CORE wxCheckListBox : public wxCheckListBoxBase
 {
 public:
     //
@@ -49,17 +48,15 @@ public:
     //
     // Override base class virtuals
     //
-    virtual void Delete(int n);
+    virtual void Delete(unsigned int n);
 
     virtual bool SetFont(const wxFont &rFont);
 
     //
     // Items may be checked
     //
-    bool IsChecked(size_t uiIndex) const;
-    void Check( size_t uiIndex
-               ,bool   bCheck = true
-              );
+    bool IsChecked(unsigned int uiIndex) const;
+    void Check(unsigned int uiIndex, bool bCheck = true);
 
     //
     // Accessors
@@ -74,8 +71,6 @@ protected:
     virtual wxOwnerDrawn* CreateItem(size_t n);
     virtual long          OS2OnMeasure(WXMEASUREITEMSTRUCT* pItem);
 
-    virtual void DoInsertItems(const wxArrayString& items, int pos);
-
     //
     // Pressing space or clicking the check box toggles the item
     //
@@ -83,7 +78,7 @@ protected:
     void OnLeftClick(wxMouseEvent& rEvent);
 
 private:
-    size_t                          m_nItemHeight;  // height of checklistbox items (the same for all)
+    size_t m_nItemHeight;  // height of checklistbox items (the same for all)
 
     DECLARE_DYNAMIC_CLASS(wxCheckListBox)
     DECLARE_EVENT_TABLE()

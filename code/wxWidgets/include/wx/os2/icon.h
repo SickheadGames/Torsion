@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        icon.h
+// Name:        wx/os2/icon.h
 // Purpose:     wxIcon class
 // Author:      David Webster
 // Modified by:
 // Created:     10/09/99
-// RCS-ID:      $Id: icon.h,v 1.13 2004/11/11 18:59:36 VZ Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -22,10 +21,10 @@
 #define wxIconRefDataBase   wxGDIImageRefData
 #define wxIconBase          wxGDIImage
 
-class WXDLLEXPORT wxIconRefData: public wxIconRefDataBase
+class WXDLLIMPEXP_CORE wxIconRefData: public wxIconRefDataBase
 {
 public:
-    wxIconRefData() { };
+    wxIconRefData() { }
     virtual ~wxIconRefData() { Free(); }
 
     virtual void Free();
@@ -35,22 +34,21 @@ public:
 // Icon
 // ---------------------------------------------------------------------------
 
-class WXDLLEXPORT wxIcon: public wxIconBase
+class WXDLLIMPEXP_CORE wxIcon: public wxIconBase
 {
 public:
     wxIcon();
-
-    // Copy constructors
-    inline wxIcon(const wxIcon& icon) { Ref(icon); }
 
     wxIcon( const char bits[]
            ,int        nWidth
            ,int        nHeight
           );
-    inline wxIcon(const char** ppData) { CreateIconFromXpm(ppData); }
-    inline wxIcon(char** ppData) { CreateIconFromXpm((const char**)ppData); }
+    wxIcon(const char* const* ppData) { CreateIconFromXpm(ppData); }
+#ifdef wxNEEDS_CHARPP
+    wxIcon(char** ppData) { CreateIconFromXpm(const_cast<const char* const*>(ppData)); }
+#endif
     wxIcon( const wxString& rName
-           ,long            lFlags = wxBITMAP_TYPE_ICO_RESOURCE
+           ,wxBitmapType    lFlags = wxICON_DEFAULT_TYPE
            ,int             nDesiredWidth = -1
            ,int             nDesiredHeight = -1
           );
@@ -59,26 +57,19 @@ public:
         LoadFile(loc.GetFileName(), wxBITMAP_TYPE_ICO);
     }
 
-    ~wxIcon();
+    virtual ~wxIcon();
 
     bool LoadFile( const wxString& rName
-                  ,long            lFlags = wxBITMAP_TYPE_ICO_RESOURCE
+                  ,wxBitmapType    lFlags = wxICON_DEFAULT_TYPE
                   ,int             nDesiredWidth = -1
                   ,int             nDesiredHeight = -1
                  );
-
-    inline wxIcon& operator = (const wxIcon& rIcon)
-       { if (*this != rIcon) Ref(rIcon); return *this; }
-    inline bool operator == (const wxIcon& rIcon) const
-       { return m_refData == rIcon.m_refData; }
-    inline bool operator != (const wxIcon& rIcon) const
-       { return m_refData != rIcon.m_refData; }
 
     wxIconRefData *GetIconData() const { return (wxIconRefData *)m_refData; }
 
     inline void SetHICON(WXHICON hIcon) { SetHandle((WXHANDLE)hIcon); }
     inline WXHICON GetHICON() const { return (WXHICON)GetHandle(); }
-    inline bool    IsXpm(void) const { return m_bIsXpm; };
+    inline bool    IsXpm(void) const { return m_bIsXpm; }
     inline const wxBitmap& GetXpmSrc(void) const { return m_vXpmSrc; }
 
     void CopyFromBitmap(const wxBitmap& rBmp);
@@ -87,7 +78,7 @@ protected:
     {
         return new wxIconRefData;
     }
-    void    CreateIconFromXpm(const char **ppData);
+    void    CreateIconFromXpm(const char* const* ppData);
 
 private:
     bool                            m_bIsXpm;

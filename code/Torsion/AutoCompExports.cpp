@@ -6,15 +6,41 @@
 #include "AutoCompExports.h"
 
 #include "AutoCompUtil.h"
-#include "MarkupSTL.h"
+#include "XmlFile.h"
 
 #include <wx/regex.h>
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
+#include <string>
 
 #ifdef _DEBUG 
    #define new DEBUG_NEW 
 #endif 
+
+enum XMLError {
+	XML_SUCCESS = 0,
+	XML_NO_ATTRIBUTE,
+	XML_WRONG_ATTRIBUTE_TYPE,
+	XML_ERROR_FILE_NOT_FOUND,
+	XML_ERROR_FILE_COULD_NOT_BE_OPENED,
+	XML_ERROR_FILE_READ_ERROR,
+	UNUSED_XML_ERROR_ELEMENT_MISMATCH,	// remove at next major version
+	XML_ERROR_PARSING_ELEMENT,
+	XML_ERROR_PARSING_ATTRIBUTE,
+	UNUSED_XML_ERROR_IDENTIFYING_TAG,	// remove at next major version
+	XML_ERROR_PARSING_TEXT,
+	XML_ERROR_PARSING_CDATA,
+	XML_ERROR_PARSING_COMMENT,
+	XML_ERROR_PARSING_DECLARATION,
+	XML_ERROR_PARSING_UNKNOWN,
+	XML_ERROR_EMPTY_DOCUMENT,
+	XML_ERROR_MISMATCHED_ELEMENT,
+	XML_ERROR_PARSING,
+	XML_CAN_NOT_CONVERT_TEXT,
+	XML_NO_TEXT_NODE,
+
+	XML_ERROR_COUNT
+};
 
 
 AutoCompExports::AutoCompExports( const wxString& name )
@@ -505,91 +531,136 @@ bool AutoCompExports::SaveXml( const wxString& path ) const
 	if ( !File.Open( path, wxFile::write ) )
 		return false;
 
-   CMarkupSTL xml;
+   tinyxml2::XMLDocument xml;
 
-   xml.AddElem( "exports" );
-   xml.IntoElem();
+   tinyxml2::XMLNode* node = xml.NewElement( "exports" );
+   xml.InsertEndChild(node);
 
    _SaveClasses( xml, m_Classes );
    _SaveFunctions( xml, "function", m_Functions );
 
-   xml.OutOfElem();
-
-   const std::string& buffer = xml.GetDoc();
+   
+   tinyxml2::XMLPrinter printer;
+   xml.Print(&printer);
+ 
+   const std::string& buffer = printer.CStr();
 	bool noerror = File.Write( buffer.c_str(), buffer.length() ) == buffer.length();
 
    File.Close();
    return noerror;
 }
 
-void AutoCompExports::_SaveClasses( CMarkupSTL& xml, const AutoCompClassArray& classes )
+void AutoCompExports::_SaveClasses( tinyxml2::XMLDocument& xml, const AutoCompClassArray& classes )
 {
    for ( int i=0; i < classes.GetCount(); i++ ) {
 
       AutoCompClass* class_ = classes[i];
       wxASSERT( class_ );
 
-      xml.AddElem( "class" );
-      xml.IntoElem();
+ 	  tinyxml2::XMLNode* node = xml.NewElement("class");
+	  xml.InsertEndChild(node);
 
       wxASSERT( !class_->GetName().IsEmpty() );
 
-      xml.AddElem( "name", class_->GetName() );
-      if ( !class_->GetBase().IsEmpty() )
-         xml.AddElem( "base", class_->GetBase() );
-      if ( !class_->GetDesc().IsEmpty() )
-         xml.AddElem( "desc", class_->GetDesc() );
+	  tinyxml2::XMLNode* node2 = xml.NewElement("name");
+	  node->InsertEndChild(node2);
+	  node2->SetValue(class_->GetName());
+     // xml.AddElem( "name", class_->GetName() );
+
+
+	  if (!class_->GetBase().IsEmpty()) {
+		  tinyxml2::XMLNode* node3 = xml.NewElement("base");
+		  node->InsertEndChild(node3);
+		  node3->SetValue(class_->GetName());
+
+		  //xml.AddElem("base", class_->GetBase());
+	  }
+         
+	  if (!class_->GetDesc().IsEmpty()) {
+
+		  //xml.AddElem("desc", class_->GetDesc());
+	  }
+      
 
       _SaveFunctions( xml, "method", class_->GetFunctions() );
       _SaveVars( xml, "field", class_->GetVars() );
 
-      xml.OutOfElem();
+   //   xml.OutOfElem();
    }
 }
 
-void AutoCompExports::_SaveFunctions( CMarkupSTL& xml, const wxString& elem, const AutoCompFunctionArray& functions )
+void AutoCompExports::_SaveFunctions( tinyxml2::XMLDocument& xml, const wxString& elem, const AutoCompFunctionArray& functions )
 {
    for ( int i=0; i < functions.GetCount(); i++ ) {
 
       AutoCompFunction* func = functions[i];
       wxASSERT( func );
 
-      xml.AddElem( elem );
-      xml.IntoElem();
+
+	  tinyxml2::XMLNode* node = xml.NewElement(elem);
+     // xml.AddElem( elem );
+     // xml.IntoElem();
 
       wxASSERT( !func->GetName().IsEmpty() );
 
-      xml.AddElem( "name", func->GetName() );
+	  tinyxml2::XMLNode* node2 = xml.NewElement("name");
+	  node2->SetValue(func->GetName());
+	  node->InsertEndChild(node2);
+
+      //xml.AddElem( "name", func->GetName() );
 
       //if ( !func->GetReturn().IsEmpty() )
       //   xml.AddElem( "return", func->GetReturn() );
-      if ( !func->GetArgs().IsEmpty() )
-         xml.AddElem( "args", func->GetArgs() );
-      if ( !func->GetDesc().IsEmpty() )
-         xml.AddElem( "desc", func->GetDesc() );
+	  if (!func->GetArgs().IsEmpty()) {
+		  tinyxml2::XMLNode* node3 = xml.NewElement("args");
+		  node3->SetValue(func->GetArgs());
+		  node->InsertEndChild(node3);
 
-      xml.OutOfElem();
+		  //   xml.AddElem( "args", func->GetArgs() );
+	  }
+      
+	  if (!func->GetDesc().IsEmpty()) {
+		  tinyxml2::XMLNode* node4 = xml.NewElement("desc");
+		  node4->SetValue(func->GetDesc());
+		  node->InsertEndChild(node4);
+	  //   xml.AddElem( "desc", func->GetDesc() );
+	  }
+      
+
+ //     xml.OutOfElem();
    }
 }
 
 
-void AutoCompExports::_SaveVars( CMarkupSTL& xml, const wxString& elem, const AutoCompVarArray& vars )
+void AutoCompExports::_SaveVars( tinyxml2::XMLDocument& xml, const wxString& elem, const AutoCompVarArray& vars )
 {
    for ( int i=0; i < vars.GetCount(); i++ ) {
 
       AutoCompVar* var = vars[i];
       wxASSERT( var );
 
-      xml.AddElem( elem );
-      xml.IntoElem();
+	  tinyxml2::XMLNode* node = xml.NewElement(elem);
+	  xml.InsertEndChild(node);
+//      xml.AddElem( elem );
+//      xml.IntoElem();
 
       wxASSERT( !var->m_Name.IsEmpty() );
-      xml.AddElem( "name", var->m_Name );
 
-      if ( !var->m_Desc.IsEmpty() )
-         xml.AddElem( "desc", var->m_Desc );
+	  tinyxml2::XMLNode* node2 = xml.NewElement("name");
+	  node2->SetValue(var->m_Name);
+	  node->InsertEndChild(node2);
 
-      xml.OutOfElem();
+     // xml.AddElem( "name", var->m_Name );
+
+	  if (!var->m_Desc.IsEmpty()) {
+		  tinyxml2::XMLNode* node3 = xml.NewElement("desc");
+		  node3->SetValue(var->m_Desc);
+		  node->InsertEndChild(node3);
+		  //xml.AddElem("desc", var->m_Desc);
+	  }
+      
+
+ //     xml.OutOfElem();
    }
 }
 
@@ -604,61 +675,71 @@ bool AutoCompExports::LoadXml( const wxString& path )
    char* Buffer = new char[ Length+1 ];
 	File.Read( Buffer, Length );
 	Buffer[ Length ] = 0;
-   CMarkupSTL xml;
-   bool error = xml.SetDoc( Buffer );
+    tinyxml2::XMLDocument *xml = new tinyxml2::XMLDocument();
+
+       
+   tinyxml2::XMLError error = xml->Parse( Buffer );
 	delete [] Buffer;   
 
-   if ( !error ) {
-      wxASSERT_MSG( error, xml.GetError().c_str() );
+   if (error != XML_SUCCESS ) {
+      wxASSERT_MSG( true, "Error parsing XML text !! Error code:"+error );
       return false;
    }
 
-   if ( !xml.FindElem( "exports" ) )
+   if ( !xml->FirstChildElement( "exports" ) )
       return false;
 
-   xml.IntoElem();
+   //xml.IntoElem();
 
-   xml.ResetMainPos();
+  // xml.ResetMainPos();
    _LoadClasses( xml, m_Classes );
    AutoCompClass::SetDatablocks( &m_Classes );
 
-   xml.ResetMainPos();
+  // xml.ResetMainPos();
    _LoadFunctions( xml, "function", m_Functions );
 
    return true;
 }
 
-void AutoCompExports::_LoadClasses( CMarkupSTL& xml, AutoCompClassArray& objects )
+void AutoCompExports::_LoadClasses( tinyxml2::XMLDocument *xml, AutoCompClassArray& objects )
 {
    // Now grab the classes.
-   while ( xml.FindElem( "class" ) ) 
+	
+	tinyxml2::XMLElement *element = xml->NextSiblingElement("class");
+
+   while (element)
    {
-      xml.IntoElem();
+      //xml.IntoElem();
 
       // Get the class name... else there is nothing to add.
-      if ( !xml.FindElem( "name" ) ) 
+	   tinyxml2::XMLElement *nm = element->NextSiblingElement("name");
+
+      if (nm)
       {
-         xml.OutOfElem();
+        // xml.OutOfElem();
          continue;
       }
 
-      wxString name = xml.GetData().c_str();
+      wxString name = element->GetText();
+
       if ( name.IsEmpty() ) 
       {
-         xml.OutOfElem();
+       //  xml.OutOfElem();
          continue;
       }
 
       wxString base;
-      xml.ResetMainPos();
-      if ( xml.FindElem( "base" ) )
-         base = xml.GetData().c_str();
+    //  xml.ResetMainPos();
+	  tinyxml2::XMLElement *bz = element->NextSiblingElement("base");
+
+      if (bz)
+         base = bz->GetText();
 
       // Do we already have this one?
       if ( AutoCompClass::Find( name, objects ) )
       {
          // TODO: What can be do but skip it?
-         xml.OutOfElem();
+       //  xml.OutOfElem();
          continue;
       }
 
@@ -667,45 +748,56 @@ void AutoCompExports::_LoadClasses( CMarkupSTL& xml, AutoCompClassArray& objects
       objects.Add( object );
 
       // Look for a description.
-      xml.ResetMainPos();
-      if ( xml.FindElem( "desc" ) )
-         object->SetDesc( xml.GetData().c_str() );
+  //    xml.ResetMainPos();
+
+	  tinyxml2::XMLElement *dez = element->NextSiblingElement("desc");
+
+      if (dez)
+         object->SetDesc(dez->GetText());
 
       // Load the methods.
-      xml.ResetMainPos();
+   //   xml.ResetMainPos();
       AutoCompFunctionArray functions( CmpNameNoCase );
       _LoadFunctions( xml, "method", functions );
       object->AddFunctions( &functions );
       wxASSERT( functions.IsEmpty() );
 
       // Load member vars.
-      xml.ResetMainPos();
+    //  xml.ResetMainPos();
       AutoCompVarArray vars( CmpNameNoCase );
       _LoadVars( xml, "field", vars );
       object->AddVars( &vars );
       wxASSERT( vars.IsEmpty() );
 
-      xml.OutOfElem();
+      //xml.OutOfElem();
+
+	  element = xml->NextSiblingElement("class");
 
    } // while ( xml.FindElem( elem.c_str() ) )
 }
 
-void AutoCompExports::_LoadFunctions( CMarkupSTL& xml, const wxString& elem, AutoCompFunctionArray& functions )
+void AutoCompExports::_LoadFunctions( tinyxml2::XMLDocument *xml, const wxString& elem, AutoCompFunctionArray& functions )
 {
-   while ( xml.FindElem( elem.c_str() ) )
-   {
-      xml.IntoElem();
 
-      if ( !xml.FindElem( "name" ) ) 
+	tinyxml2::XMLElement *element = xml->NextSiblingElement(elem.c_str());
+
+	
+
+   while (element)
+   {
+     // xml.IntoElem();
+	   tinyxml2::XMLElement *nm = element->NextSiblingElement("name");
+
+      if ( !nm ) 
       {
-         xml.OutOfElem();
+       //  xml.OutOfElem();
          continue;
       }
 
-      wxString name = xml.GetData().c_str();
+      wxString name = nm->GetText();
       if ( name.IsEmpty() ) 
       {
-         xml.OutOfElem();
+      //   xml.OutOfElem();
          continue;
       }
 
@@ -713,7 +805,7 @@ void AutoCompExports::_LoadFunctions( CMarkupSTL& xml, const wxString& elem, Aut
       if ( AutoCompFunction::Find( name, functions ) )
       {
          // TODO: What can be do but skip it?
-         xml.OutOfElem();
+       //  xml.OutOfElem();
          continue;
       }
 
@@ -724,33 +816,44 @@ void AutoCompExports::_LoadFunctions( CMarkupSTL& xml, const wxString& elem, Aut
       //if ( xml.FindElem( "return" ) )
       //   func->SetReturn( xml.GetData().c_str() );
 
-      xml.ResetMainPos();
-      if ( xml.FindElem( "args" ) )
-         func->SetArgs( xml.GetData().c_str() );
+     // xml.ResetMainPos();
 
-      xml.ResetMainPos();
-      if ( xml.FindElem( "desc" ) )
-         func->SetDesc( xml.GetData().c_str() );
+	  tinyxml2::XMLElement *argz = element->NextSiblingElement("args");
 
-      xml.OutOfElem();
+      if (argz)
+         func->SetArgs(argz->GetText());
 
+    //  xml.ResetMainPos();
+
+	  tinyxml2::XMLElement *dez = element->NextSiblingElement("desc");
+      if (dez)
+         func->SetDesc(dez->GetText());
+
+   //   xml.OutOfElem();
+
+
+	  element = xml->NextSiblingElement(elem.c_str());
    } // while ( xml.FindElem( elem.c_str() ) )
 }
 
-void AutoCompExports::_LoadVars( CMarkupSTL& xml, const wxString& elem, AutoCompVarArray& vars )
+void AutoCompExports::_LoadVars( tinyxml2::XMLDocument  *xml, const wxString& elem, AutoCompVarArray& vars )
 {
-   while ( xml.FindElem( elem.c_str() ) ) {
+	tinyxml2::XMLElement *element = xml->NextSiblingElement(elem.c_str());
 
-      xml.IntoElem();
+   while (element) {
 
-      if ( !xml.FindElem( "name" ) ) {
-         xml.OutOfElem();
+     // xml.IntoElem();
+	   tinyxml2::XMLElement *nm = element->NextSiblingElement("name");
+
+
+      if ( !nm) {
+       //  xml.OutOfElem();
          continue;
       }
 
-      wxString name = xml.GetData().c_str();
+      wxString name = nm->GetText();
       if ( name.IsEmpty() ) {
-         xml.OutOfElem();
+       //  xml.OutOfElem();
          continue;
       }
 
@@ -758,19 +861,22 @@ void AutoCompExports::_LoadVars( CMarkupSTL& xml, const wxString& elem, AutoComp
       if ( AutoCompVar::Find( name, vars ) )
       {
          // TODO: What can be do but skip it?
-         xml.OutOfElem();
+        // xml.OutOfElem();
          continue;
       }
 
       AutoCompVar* var = new AutoCompVar( name );
       vars.Add( var );
 
-      xml.ResetMainPos();
-      if ( xml.FindElem( "desc" ) )
-         var->m_Desc = xml.GetData().c_str();
+     // xml.ResetMainPos();
+	  tinyxml2::XMLElement *dez = element->NextSiblingElement("desc");
 
-      xml.OutOfElem();
+      if (dez)
+         var->m_Desc = dez->GetText();
 
+      //xml.OutOfElem();
+
+	  element = xml->NextSiblingElement(elem.c_str());
    } // while ( xml.FindElem( elem.c_str() ) )
 }
 

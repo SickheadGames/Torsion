@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        helpwin.h
+// Name:        wx/msw/helpwin.h
 // Purpose:     Help system: WinHelp implementation
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id: helpwin.h,v 1.13 2004/10/13 14:04:19 ABX Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,23 +11,19 @@
 #ifndef _WX_HELPWIN_H_
 #define _WX_HELPWIN_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "helpwin.h"
-#endif
-
 #include "wx/wx.h"
 
 #if wxUSE_HELP
 
 #include "wx/helpbase.h"
 
-class WXDLLEXPORT wxWinHelpController: public wxHelpControllerBase
+class WXDLLIMPEXP_CORE wxWinHelpController: public wxHelpControllerBase
 {
-    DECLARE_CLASS(wxWinHelpController)
+    DECLARE_DYNAMIC_CLASS(wxWinHelpController)
 
 public:
-    wxWinHelpController() {}
-    ~wxWinHelpController() {}
+    wxWinHelpController(wxWindow* parentWindow = NULL): wxHelpControllerBase(parentWindow) {}
+    virtual ~wxWinHelpController() {}
 
     // Must call this to set the filename
     virtual bool Initialize(const wxString& file);

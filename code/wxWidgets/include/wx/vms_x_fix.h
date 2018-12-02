@@ -2,7 +2,7 @@
  *                                                                         *
  * Author : Jouk Jansen (joukj@hrem.stm.tudelft.nl)                        *
  *                                                                         *
- * Last revision : 11 July 2005                                            *
+ * Last revision : 7 October 2005                                          *
  *                                                                         *
  * Repair definitions of Runtime library functions when compiling with     *
  * /name=(as_is) on OpenVMS                                                *
@@ -390,6 +390,7 @@
 #define XextAddDisplay XEXTADDDISPLAY
 #define XextFindDisplay XEXTFINDDISPLAY
 #define XextRemoveDisplay XEXTREMOVEDISPLAY
+#define XkbSetDetectableAutoRepeat XKBSETDETECTABLEAUTOREPEAT
 #define XmActivateProtocol XMACTIVATEPROTOCOL
 #define XmAddProtocolCallback XMADDPROTOCOLCALLBACK
 #define XmAddProtocols XMADDPROTOCOLS
@@ -688,7 +689,7 @@
 #define XtCallCallbackList XTCALLCALLBACKLIST
 #define XtCallCallbacks XTCALLCALLBACKS
 #define XtCallConverter XTCALLCONVERTER
-#define XtCalloc XTCALLOC 
+#define XtCalloc XTCALLOC
 #ifndef NOXTDISPLAY
 #define XtClass XTCLASS
 #endif
@@ -797,7 +798,7 @@
 #define XtSetTypeConverter XTSETTYPECONVERTER
 #define XtSetValues XTSETVALUES
 #define XtShellStrings XTSHELLSTRINGS
-#define XtStringConversionWarning XTSTRINGCONVERSIONWARNING 
+#define XtStringConversionWarning XTSTRINGCONVERSIONWARNING
 #define XtStrings XTSTRINGS
 #define XtToolkitInitialize XTTOOLKITINITIALIZE
 #define XtTranslateCoords XTTRANSLATECOORDS
@@ -836,11 +837,11 @@
 #define _XEatData _XEATDATA
 #define _XFlush _XFLUSH
 #define _XFreeTemp _XFREETEMP
-#define _XGetAsyncReply _XGETASYNCREPLY 
+#define _XGetAsyncReply _XGETASYNCREPLY
 #define _XInitImageFuncPtrs _XINITIMAGEFUNCPTRS
 #define _XRead _XREAD
 #define _XReadPad _XREADPAD
-#define _XRegisterFilterByType _XREGISTERFILTERBYTYPE 
+#define _XRegisterFilterByType _XREGISTERFILTERBYTYPE
 #define _XReply _XREPLY
 #define _XSend _XSEND
 #define _XUnregisterFilter _XUNREGISTERFILTER
@@ -1192,12 +1193,14 @@
 #define xmToggleButtonGadgetClass XMTOGGLEBUTTONGADGETCLASS
 #define xmToggleButtonWidgetClass XMTOGGLEBUTTONWIDGETCLASS
 
-#define SetReqLen(req,n,badlen) \
+#if (__VMS_VER < 80200000)
+# define SetReqLen(req,n,badlen) \
     if ((req->length + n) > (unsigned)65535) { \
-	    n = badlen; \
-	    req->length += n; \
+        n = badlen; \
+        req->length += n; \
     } else \
-	req->length += n
+    req->length += n
+#endif
 
 #ifdef __cplusplus
 extern "C" {

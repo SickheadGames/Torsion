@@ -1,27 +1,22 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        radiobut.h
+// Name:        wx/motif/radiobut.h
 // Purpose:     wxRadioButton class
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: radiobut.h,v 1.13 2004/05/23 20:51:23 JS Exp $
 // Copyright:   (c) Julian Smart
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_RADIOBUT_H_
 #define _WX_RADIOBUT_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "radiobut.h"
-#endif
-
-class WXDLLEXPORT wxRadioButton: public wxControl
+class WXDLLIMPEXP_CORE wxRadioButton: public wxControl
 {
     DECLARE_DYNAMIC_CLASS(wxRadioButton)
 public:
     wxRadioButton();
-    ~wxRadioButton() { RemoveFromCycle(); }
+    virtual ~wxRadioButton() { RemoveFromCycle(); }
 
     inline wxRadioButton(wxWindow *parent, wxWindowID id,
         const wxString& label,
@@ -32,19 +27,19 @@ public:
     {
         Create(parent, id, label, pos, size, style, validator, name);
     }
-    
+
     bool Create(wxWindow *parent, wxWindowID id,
         const wxString& label,
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize, long style = 0,
         const wxValidator& validator = wxDefaultValidator,
         const wxString& name = wxRadioButtonNameStr);
-    
+
     virtual void SetValue(bool val);
     virtual bool GetValue() const ;
-    
+
     void Command(wxCommandEvent& event);
-    
+
     // Implementation
     virtual void ChangeBackgroundColour();
 
@@ -52,6 +47,8 @@ public:
     // clears the selection in the radiobuttons in the cycle
     // and returns the old selection (if any)
     wxRadioButton* ClearSelections();
+protected:
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
 private:
     wxRadioButton* AddInCycle(wxRadioButton* cycle);
     void RemoveFromCycle();

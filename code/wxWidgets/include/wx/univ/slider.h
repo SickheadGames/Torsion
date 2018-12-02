@@ -4,17 +4,12 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     09.02.01
-// RCS-ID:      $Id: slider.h,v 1.12.2.1 2005/09/25 20:46:44 MW Exp $
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_UNIV_SLIDER_H_
 #define _WX_UNIV_SLIDER_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "univslider.h"
-#endif
 
 #include "wx/univ/scrthumb.h"
 
@@ -24,23 +19,23 @@
 
 // our actions are the same as scrollbars
 
-#define wxACTION_SLIDER_START       _T("start")     // to the beginning
-#define wxACTION_SLIDER_END         _T("end")       // to the end
-#define wxACTION_SLIDER_LINE_UP     _T("lineup")    // one line up/left
-#define wxACTION_SLIDER_PAGE_UP     _T("pageup")    // one page up/left
-#define wxACTION_SLIDER_LINE_DOWN   _T("linedown")  // one line down/right
-#define wxACTION_SLIDER_PAGE_DOWN   _T("pagedown")  // one page down/right
-#define wxACTION_SLIDER_PAGE_CHANGE _T("pagechange")// change page by numArg
+#define wxACTION_SLIDER_START       wxT("start")     // to the beginning
+#define wxACTION_SLIDER_END         wxT("end")       // to the end
+#define wxACTION_SLIDER_LINE_UP     wxT("lineup")    // one line up/left
+#define wxACTION_SLIDER_PAGE_UP     wxT("pageup")    // one page up/left
+#define wxACTION_SLIDER_LINE_DOWN   wxT("linedown")  // one line down/right
+#define wxACTION_SLIDER_PAGE_DOWN   wxT("pagedown")  // one page down/right
+#define wxACTION_SLIDER_PAGE_CHANGE wxT("pagechange")// change page by numArg
 
-#define wxACTION_SLIDER_THUMB_DRAG      _T("thumbdrag")
-#define wxACTION_SLIDER_THUMB_MOVE      _T("thumbmove")
-#define wxACTION_SLIDER_THUMB_RELEASE   _T("thumbrelease")
+#define wxACTION_SLIDER_THUMB_DRAG      wxT("thumbdrag")
+#define wxACTION_SLIDER_THUMB_MOVE      wxT("thumbmove")
+#define wxACTION_SLIDER_THUMB_RELEASE   wxT("thumbrelease")
 
 // ----------------------------------------------------------------------------
 // wxSlider
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxSlider : public wxSliderBase,
+class WXDLLIMPEXP_CORE wxSlider : public wxSliderBase,
                              public wxControlWithThumb
 {
 public:
@@ -81,7 +76,6 @@ public:
     virtual void SetThumbLength(int lenPixels);
     virtual int GetThumbLength() const;
 
-    virtual void SetTickFreq(int n, int WXUNUSED(dummy) = 0);
     virtual int GetTickFreq() const { return m_tickFreq; }
 
     // wxUniv-specific methods
@@ -122,8 +116,18 @@ public:
     virtual void OnPageScrollStart();
     virtual bool OnPageScroll(int pageInc);
 
-    // for wxStdSliderButtonInputHandler
+    // for wxStdSliderInputHandler
     wxScrollThumb& GetThumb() { return m_thumb; }
+
+    virtual bool PerformAction(const wxControlAction& action,
+                               long numArg = 0,
+                               const wxString& strArg = wxEmptyString);
+
+    static wxInputHandler *GetStdInputHandler(wxInputHandler *handlerDef);
+    virtual wxInputHandler *DoGetStdInputHandler(wxInputHandler *handlerDef)
+    {
+        return GetStdInputHandler(handlerDef);
+    }
 
 protected:
     enum
@@ -131,14 +135,13 @@ protected:
         INVALID_THUMB_VALUE = -0xffff
     };
 
+    // Platform-specific implementation of SetTickFreq
+    virtual void DoSetTickFreq(int freq);
+
     // overridden base class virtuals
     virtual wxSize DoGetBestClientSize() const;
     virtual void DoDraw(wxControlRenderer *renderer);
     virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
-
-    virtual bool PerformAction(const wxControlAction& action,
-                               long numArg = 0,
-                               const wxString& strArg = wxEmptyString);
 
     // event handlers
     void OnSize(wxSizeEvent& event);
@@ -219,31 +222,6 @@ private:
 
     DECLARE_EVENT_TABLE()
     DECLARE_DYNAMIC_CLASS(wxSlider)
-};
-
-// ----------------------------------------------------------------------------
-// wxStdSliderButtonInputHandler: default slider input handling
-// ----------------------------------------------------------------------------
-
-class WXDLLEXPORT wxStdSliderButtonInputHandler : public wxStdInputHandler
-{
-public:
-    // default ctor
-    wxStdSliderButtonInputHandler(wxInputHandler *inphand)
-        : wxStdInputHandler(inphand)
-    {
-    }
-
-    // base class methods
-    virtual bool HandleKey(wxInputConsumer *consumer,
-                           const wxKeyEvent& event,
-                           bool pressed);
-    virtual bool HandleMouse(wxInputConsumer *consumer,
-                             const wxMouseEvent& event);
-    virtual bool HandleMouseMove(wxInputConsumer *consumer,
-                                 const wxMouseEvent& event);
-
-    virtual bool HandleFocus(wxInputConsumer *consumer, const wxFocusEvent& event);
 };
 
 #endif // _WX_UNIV_SLIDER_H_

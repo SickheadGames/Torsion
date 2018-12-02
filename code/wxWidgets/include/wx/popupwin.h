@@ -4,30 +4,25 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     06.01.01
-// RCS-ID:      $Id: popupwin.h,v 1.36 2005/07/21 17:08:28 ABX Exp $
 // Copyright:   (c) 2001 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
-// License:     wxWindows licence
+// Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_POPUPWIN_H_BASE_
 #define _WX_POPUPWIN_H_BASE_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "popupwinbase.h"
-#endif
-
 #include "wx/defs.h"
 
 #if wxUSE_POPUPWIN
 
-#include "wx/window.h"
+#include "wx/nonownedwnd.h"
 
 // ----------------------------------------------------------------------------
 // wxPopupWindow: a special kind of top level window used for popup menus,
 // combobox popups and such.
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxPopupWindowBase : public wxWindow
+class WXDLLIMPEXP_CORE wxPopupWindowBase : public wxNonOwnedWindow
 {
 public:
     wxPopupWindowBase() { }
@@ -51,7 +46,7 @@ public:
 
     virtual bool IsTopLevel() const { return true; }
 
-    DECLARE_NO_COPY_CLASS(wxPopupWindowBase)
+    wxDECLARE_NO_COPY_CLASS(wxPopupWindowBase);
 };
 
 
@@ -60,14 +55,18 @@ public:
     #include "wx/msw/popupwin.h"
 #elif defined(__WXPM__)
     #include "wx/os2/popupwin.h"
-#elif defined(__WXGTK__)
+#elif defined(__WXGTK20__)
     #include "wx/gtk/popupwin.h"
+#elif defined(__WXGTK__)
+    #include "wx/gtk1/popupwin.h"
 #elif defined(__WXX11__)
     #include "wx/x11/popupwin.h"
 #elif defined(__WXMOTIF__)
     #include "wx/motif/popupwin.h"
-#elif defined(__WXMGL__)
-    #include "wx/mgl/popupwin.h"
+#elif defined(__WXDFB__)
+    #include "wx/dfb/popupwin.h"
+#elif defined(__WXMAC__)
+    #include "wx/osx/popupwin.h"
 #else
     #error "wxPopupWindow is not supported under this platform."
 #endif
@@ -77,10 +76,10 @@ public:
 // when the user clicks mouse outside it or if it loses focus in any other way
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxPopupWindowHandler;
-class WXDLLEXPORT wxPopupFocusHandler;
+class WXDLLIMPEXP_FWD_CORE wxPopupWindowHandler;
+class WXDLLIMPEXP_FWD_CORE wxPopupFocusHandler;
 
-class WXDLLEXPORT wxPopupTransientWindow : public wxPopupWindow
+class WXDLLIMPEXP_CORE wxPopupTransientWindow : public wxPopupWindow
 {
 public:
     // ctors
@@ -104,11 +103,14 @@ public:
 
     // called when a mouse is pressed while the popup is shown: return true
     // from here to prevent its normal processing by the popup (which consists
-    // in dismissing it if the mouse is cilcked outside it)
+    // in dismissing it if the mouse is clicked outside it)
     virtual bool ProcessLeftDown(wxMouseEvent& event);
 
     // Overridden to grab the input on some plaforms
     virtual bool Show( bool show = true );
+
+    // Override to implement delayed destruction of this window.
+    virtual bool Destroy();
 
 protected:
     // common part of all ctors
@@ -127,8 +129,9 @@ protected:
     // get alerted when child gets deleted from under us
     void OnDestroy(wxWindowDestroyEvent& event);
 
-#ifdef __WXMSW__
-    // check if the mouse needs captured or released
+#if defined(__WXMSW__) ||(defined(__WXMAC__) && wxOSX_USE_COCOA_OR_CARBON)
+    // Check if the mouse needs to be captured or released: we must release
+    // when it's inside our window if we want the embedded controls to work.
     void OnIdle(wxIdleEvent& event);
 #endif
 
@@ -148,7 +151,7 @@ protected:
 
     DECLARE_EVENT_TABLE()
     DECLARE_DYNAMIC_CLASS(wxPopupTransientWindow)
-    DECLARE_NO_COPY_CLASS(wxPopupTransientWindow)
+    wxDECLARE_NO_COPY_CLASS(wxPopupTransientWindow);
 };
 
 #if wxUSE_COMBOBOX && defined(__WXUNIVERSAL__)
@@ -157,16 +160,16 @@ protected:
 // wxPopupComboWindow: wxPopupTransientWindow used by wxComboBox
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxComboBox;
-class WXDLLEXPORT wxComboControl;
+class WXDLLIMPEXP_FWD_CORE wxComboBox;
+class WXDLLIMPEXP_FWD_CORE wxComboCtrl;
 
-class WXDLLEXPORT wxPopupComboWindow : public wxPopupTransientWindow
+class WXDLLIMPEXP_CORE wxPopupComboWindow : public wxPopupTransientWindow
 {
 public:
     wxPopupComboWindow() { m_combo = NULL; }
-    wxPopupComboWindow(wxComboControl *parent);
+    wxPopupComboWindow(wxComboCtrl *parent);
 
-    bool Create(wxComboControl *parent);
+    bool Create(wxComboCtrl *parent);
 
     // position the window correctly relatively to the combo
     void PositionNearCombo();
@@ -179,7 +182,7 @@ protected:
     void OnKeyDown(wxKeyEvent& event);
 
     // the parent combobox
-    wxComboControl *m_combo;
+    wxComboCtrl *m_combo;
 
     DECLARE_EVENT_TABLE()
     DECLARE_DYNAMIC_CLASS(wxPopupComboWindow)

@@ -4,17 +4,12 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     20.02.01
-// RCS-ID:      $Id: gauge.h,v 1.23 2005/01/21 18:48:19 ABX Exp $
 // Copyright:   (c) 1996-2001 wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_GAUGE_H_BASE_
 #define _WX_GAUGE_H_BASE_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "gaugebase.h"
-#endif
 
 #include "wx/defs.h"
 
@@ -32,17 +27,26 @@
 // Win32 only, is default (and only) on some other platforms
 #define wxGA_SMOOTH          0x0020
 
-// obsolete style
-#define wxGA_PROGRESSBAR     0
+#if WXWIN_COMPATIBILITY_2_6
+    // obsolete style
+    #define wxGA_PROGRESSBAR     0
+#endif // WXWIN_COMPATIBILITY_2_6
 
+// GTK and Mac always have native implementation of the indeterminate mode
+// wxMSW has native implementation only if comctl32.dll >= 6.00
+#if !defined(__WXGTK20__) && !defined(__WXMAC__) && !defined(__WXCOCOA__)
+    #define wxGAUGE_EMULATE_INDETERMINATE_MODE 1
+#else
+    #define wxGAUGE_EMULATE_INDETERMINATE_MODE 0
+#endif
 
-extern WXDLLEXPORT_DATA(const wxChar*) wxGaugeNameStr;
+extern WXDLLIMPEXP_DATA_CORE(const char) wxGaugeNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxGauge: a progress bar
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxGaugeBase : public wxControl
+class WXDLLIMPEXP_CORE wxGaugeBase : public wxControl
 {
 public:
     wxGaugeBase() { m_rangeMax = m_gaugePos = 0; }
@@ -57,17 +61,20 @@ public:
                 const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = wxGaugeNameStr);
 
+    // determinate mode API
+
     // set/get the control range
     virtual void SetRange(int range);
     virtual int GetRange() const;
 
-    // position
     virtual void SetValue(int pos);
     virtual int GetValue() const;
 
+    // indeterminate mode API
+    virtual void Pulse();
+
     // simple accessors
     bool IsVertical() const { return HasFlag(wxGA_VERTICAL); }
-
 
     // appearance params (not implemented for most ports)
     virtual void SetShadowWidth(int w);
@@ -76,34 +83,37 @@ public:
     virtual void SetBezelFace(int w);
     virtual int GetBezelFace() const;
 
-    // overriden base class virtuals
+    // overridden base class virtuals
     virtual bool AcceptsFocus() const { return false; }
 
 protected:
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
+
     // the max position
     int m_rangeMax;
 
     // the current position
     int m_gaugePos;
 
-    DECLARE_NO_COPY_CLASS(wxGaugeBase)
+#if wxGAUGE_EMULATE_INDETERMINATE_MODE
+    int m_nDirection;       // can be wxRIGHT or wxLEFT
+#endif
+
+    wxDECLARE_NO_COPY_CLASS(wxGaugeBase);
 };
 
 #if defined(__WXUNIVERSAL__)
     #include "wx/univ/gauge.h"
 #elif defined(__WXMSW__)
-    #ifdef __WIN95__
-        #include "wx/msw/gauge95.h"
-        #define wxGauge wxGauge95
-    #else // !__WIN95__
-        // Gauge no longer supported on 16-bit Windows
-    #endif
+    #include "wx/msw/gauge.h"
 #elif defined(__WXMOTIF__)
     #include "wx/motif/gauge.h"
-#elif defined(__WXGTK__)
+#elif defined(__WXGTK20__)
     #include "wx/gtk/gauge.h"
+#elif defined(__WXGTK__)
+    #include "wx/gtk1/gauge.h"
 #elif defined(__WXMAC__)
-    #include "wx/mac/gauge.h"
+    #include "wx/osx/gauge.h"
 #elif defined(__WXCOCOA__)
     #include "wx/cocoa/gauge.h"
 #elif defined(__WXPM__)

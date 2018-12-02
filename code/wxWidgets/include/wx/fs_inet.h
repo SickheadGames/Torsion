@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        fs_inet.h
+// Name:        wx/fs_inet.h
 // Purpose:     HTTP and FTP file system
 // Author:      Vaclav Slavik
 // Copyright:   (c) 1999 Vaclav Slavik
@@ -8,10 +8,6 @@
 
 #ifndef _WX_FS_INET_H_
 #define _WX_FS_INET_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "fs_inet.h"
-#endif
 
 #include "wx/defs.h"
 

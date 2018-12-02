@@ -4,17 +4,12 @@
 // Author:      Vadim Zeitlin, Robert Roebling
 // Modified by:
 // Created:     26.05.99
-// RCS-ID:      $Id: dnd.h,v 1.33 2005/03/08 22:50:40 RR Exp $
 // Copyright:   (c) wxWidgets Team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_DND_H_BASE_
 #define _WX_DND_H_BASE_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "dndbase.h"
-#endif
 
 #include "wx/defs.h"
 
@@ -49,17 +44,16 @@ enum wxDragResult
     wxDragCancel    // the operation was cancelled by user (not an error)
 };
 
-inline WXDLLEXPORT bool wxIsDragResultOk(wxDragResult res)
-{
-    return res == wxDragCopy || res == wxDragMove || res == wxDragLink;
-}
+// return true if res indicates that something was done during a dnd operation,
+// i.e. is neither error nor none nor cancel
+WXDLLIMPEXP_CORE bool wxIsDragResultOk(wxDragResult res);
 
 // ----------------------------------------------------------------------------
 // wxDropSource is the object you need to create (and call DoDragDrop on it)
 // to initiate a drag-and-drop operation
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxDropSourceBase
+class WXDLLIMPEXP_CORE wxDropSourceBase
 {
 public:
     wxDropSourceBase(const wxCursor &cursorCopy = wxNullCursor,
@@ -68,10 +62,10 @@ public:
         : m_cursorCopy(cursorCopy),
           m_cursorMove(cursorMove),
           m_cursorStop(cursorStop)
-        { m_data = (wxDataObject *)NULL; }
+        { m_data = NULL; }
     virtual ~wxDropSourceBase() { }
 
-    // set the data which is transfered by drag and drop
+    // set the data which is transferred by drag and drop
     void SetData(wxDataObject& data)
       { m_data = &data; }
 
@@ -120,7 +114,7 @@ protected:
              m_cursorMove,
              m_cursorStop;
 
-    DECLARE_NO_COPY_CLASS(wxDropSourceBase)
+    wxDECLARE_NO_COPY_CLASS(wxDropSourceBase);
 };
 
 // ----------------------------------------------------------------------------
@@ -134,13 +128,13 @@ protected:
 // OnData() is called)
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxDropTargetBase
+class WXDLLIMPEXP_CORE wxDropTargetBase
 {
 public:
     // ctor takes a pointer to heap-allocated wxDataObject which will be owned
     // by wxDropTarget and deleted by it automatically. If you don't give it
     // here, you can use SetDataObject() later.
-    wxDropTargetBase(wxDataObject *dataObject = (wxDataObject*)NULL)
+    wxDropTargetBase(wxDataObject *dataObject = NULL)
         { m_dataObject = dataObject; m_defaultAction = wxDragNone; }
     // dtor deletes our data object
     virtual ~wxDropTargetBase()
@@ -208,7 +202,7 @@ protected:
     wxDataObject *m_dataObject;
     wxDragResult m_defaultAction;
 
-    DECLARE_NO_COPY_CLASS(wxDropTargetBase)
+    wxDECLARE_NO_COPY_CLASS(wxDropTargetBase);
 };
 
 // ----------------------------------------------------------------------------
@@ -222,10 +216,12 @@ protected:
     #include "wx/motif/dnd.h"
 #elif defined(__WXX11__)
     #include "wx/x11/dnd.h"
-#elif defined(__WXGTK__)
+#elif defined(__WXGTK20__)
     #include "wx/gtk/dnd.h"
+#elif defined(__WXGTK__)
+    #include "wx/gtk1/dnd.h"
 #elif defined(__WXMAC__)
-    #include "wx/mac/dnd.h"
+    #include "wx/osx/dnd.h"
 #elif defined(__WXPM__)
     #include "wx/os2/dnd.h"
 #endif
@@ -236,7 +232,7 @@ protected:
 
 // A simple wxDropTarget derived class for text data: you only need to
 // override OnDropText() to get something working
-class WXDLLEXPORT wxTextDropTarget : public wxDropTarget
+class WXDLLIMPEXP_CORE wxTextDropTarget : public wxDropTarget
 {
 public:
     wxTextDropTarget();
@@ -246,11 +242,11 @@ public:
     virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def);
 
 private:
-    DECLARE_NO_COPY_CLASS(wxTextDropTarget)
+    wxDECLARE_NO_COPY_CLASS(wxTextDropTarget);
 };
 
 // A drop target which accepts files (dragged from File Manager or Explorer)
-class WXDLLEXPORT wxFileDropTarget : public wxDropTarget
+class WXDLLIMPEXP_CORE wxFileDropTarget : public wxDropTarget
 {
 public:
     wxFileDropTarget();
@@ -262,7 +258,7 @@ public:
     virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def);
 
 private:
-    DECLARE_NO_COPY_CLASS(wxFileDropTarget)
+    wxDECLARE_NO_COPY_CLASS(wxFileDropTarget);
 };
 
 #endif // wxUSE_DRAG_AND_DROP

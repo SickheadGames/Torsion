@@ -4,9 +4,8 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/03/16
-// RCS-ID:      $Id:
 // Copyright:   (c) 2003 David Elliott
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WX_COCOA_CHECKBOX_H__
@@ -17,7 +16,7 @@
 // ========================================================================
 // wxCheckBox
 // ========================================================================
-class WXDLLEXPORT wxCheckBox: public wxCheckBoxBase , protected wxCocoaNSButton
+class WXDLLIMPEXP_CORE wxCheckBox: public wxCheckBoxBase , protected wxCocoaNSButton
 {
     DECLARE_DYNAMIC_CLASS(wxCheckBox)
     DECLARE_EVENT_TABLE()
@@ -59,7 +58,8 @@ public:
     virtual void SetValue(bool);
     virtual bool GetValue() const;
     virtual void SetLabel(const wxString& label);
-    virtual wxString GetLabel() const { return GetTitle(); }
+    virtual wxString GetLabel() const;
+
 protected:
     virtual void DoSet3StateValue(wxCheckBoxState state);
     virtual wxCheckBoxState DoGet3StateValue() const;

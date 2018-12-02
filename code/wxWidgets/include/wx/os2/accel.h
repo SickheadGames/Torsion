@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        accel.h
+// Name:        wx/os2/accel.h
 // Purpose:     wxAcceleratorTable class
 // Author:      David Webster
 // Modified by:
 // Created:     10/13/99
-// RCS-ID:      $Id: accel.h,v 1.11 2004/05/23 20:51:37 JS Exp $
 // Copyright:   (c) David Webster
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,7 +13,7 @@
 
 #include "wx/object.h"
 
-class WXDLLEXPORT wxAcceleratorTable;
+class WXDLLIMPEXP_FWD_CORE wxAcceleratorTable;
 
 // Hold Ctrl key down
 #define wxACCEL_ALT     0x01
@@ -28,7 +27,7 @@ class WXDLLEXPORT wxAcceleratorTable;
  // Hold no key down
 #define wxACCEL_NORMAL  0x00
 
-class WXDLLEXPORT wxAcceleratorTable: public wxObject
+class WXDLLIMPEXP_CORE wxAcceleratorTable: public wxObject
 {
 DECLARE_DYNAMIC_CLASS(wxAcceleratorTable)
 public:
@@ -38,20 +37,10 @@ public:
                        ,const wxAcceleratorEntry vaEntries[]
                       ); // Load from array
 
-    // Copy constructors
-    inline wxAcceleratorTable(const wxAcceleratorTable& rAccel) { Ref(rAccel); }
-    inline wxAcceleratorTable(const wxAcceleratorTable* pAccel) { if (pAccel) Ref(*pAccel); }
+    virtual ~wxAcceleratorTable();
 
-    ~wxAcceleratorTable();
-
-    inline wxAcceleratorTable& operator = (const wxAcceleratorTable& rAccel)
-    { if (*this == rAccel) return (*this); Ref(rAccel); return *this; };
-    inline bool operator== (const wxAcceleratorTable& rAccel) const
-    { return m_refData == rAccel.m_refData; };
-    inline bool operator!= (const wxAcceleratorTable& rAccel) const
-    { return m_refData != rAccel.m_refData; };
-
-    bool Ok() const;
+    bool Ok() const { return IsOk(); }
+    bool IsOk() const;
     void SetHACCEL(WXHACCEL hAccel);
     WXHACCEL GetHACCEL(void) const;
 
@@ -61,8 +50,8 @@ public:
                   ) const;
 };
 
-WXDLLEXPORT_DATA(extern wxAcceleratorTable) wxNullAcceleratorTable;
+WXDLLIMPEXP_DATA_CORE(extern wxAcceleratorTable) wxNullAcceleratorTable;
 
-WXDLLEXPORT wxString wxPMTextToLabel(const wxString& rsTitle);
+WXDLLIMPEXP_CORE wxString wxPMTextToLabel(const wxString& rsTitle);
 #endif
     // _WX_ACCEL_H_

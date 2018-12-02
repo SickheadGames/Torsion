@@ -4,9 +4,8 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/03/16
-// RCS-ID:      $Id:
 // Copyright:   (c) 2003 David Elliott
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WX_COCOA_CHECKLST_H__
@@ -17,7 +16,7 @@
 // ========================================================================
 // wxCheckListBox
 // ========================================================================
-class WXDLLEXPORT wxCheckListBox: public wxCheckListBoxBase //, protected wxCocoaNSTableView
+class WXDLLIMPEXP_CORE wxCheckListBox: public wxCheckListBoxBase //, protected wxCocoaNSTableView
 {
     DECLARE_DYNAMIC_CLASS(wxCheckListBox)
     DECLARE_EVENT_TABLE()
@@ -73,8 +72,8 @@ protected:
 // ------------------------------------------------------------------------
 public:
     // check list box specific methods
-    virtual bool IsChecked(size_t item) const;
-    virtual void Check(size_t item, bool check = TRUE);
+    virtual bool IsChecked(unsigned int item) const;
+    virtual void Check(unsigned int item, bool check = true);
 };
 
 #endif // __WX_COCOA_CHECKLST_H__

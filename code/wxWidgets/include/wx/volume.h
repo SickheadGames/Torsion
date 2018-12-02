@@ -4,28 +4,25 @@
 // Author:      George Policello
 // Modified by:
 // Created:     28 Jan 02
-// RCS-ID:      $Id: volume.h,v 1.14.4.1 2005/12/23 00:59:49 VZ Exp $
 // Copyright:   (c) 2002 George Policello
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // ----------------------------------------------------------------------------
-// wxFSVolume represents a volume/drive/mount point in a file system
+// wxFSVolume represents a volume/drive in a file system
 // ----------------------------------------------------------------------------
 
 #ifndef _WX_FSVOLUME_H_
 #define _WX_FSVOLUME_H_
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "fsvolume.h"
-#endif
-
 #include "wx/defs.h"
 
 #if wxUSE_FSVOLUME
 
+#include "wx/arrstr.h"
+
 // the volume flags
-enum
+enum wxFSVolumeFlags
 {
     // is the volume mounted?
     wxFS_VOL_MOUNTED = 0x0001,
@@ -146,4 +143,3 @@ typedef wxFSVolumeBase wxFSVolume;
 #endif // wxUSE_FSVOLUME
 
 #endif // _WX_FSVOLUME_H_
-

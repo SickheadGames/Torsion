@@ -4,17 +4,12 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     08/05/99
-// RCS-ID:
 // Copyright:   (c) 1999 Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_GEOMETRY_H_
 #define _WX_GEOMETRY_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "geometry.h"
-#endif
 
 #include "wx/defs.h"
 
@@ -24,8 +19,8 @@
 #include "wx/gdicmn.h"
 #include "wx/math.h"
 
-class WXDLLIMPEXP_BASE wxDataInputStream;
-class WXDLLIMPEXP_BASE wxDataOutputStream;
+class WXDLLIMPEXP_FWD_BASE wxDataInputStream;
+class WXDLLIMPEXP_FWD_BASE wxDataOutputStream;
 
 // clipping from Cohen-Sutherland
 
@@ -38,7 +33,7 @@ enum wxOutCode
     wxOutBottom = 0x04
 };
 
-class WXDLLEXPORT wxPoint2DInt
+class WXDLLIMPEXP_CORE wxPoint2DInt
 {
 public :
     inline wxPoint2DInt();
@@ -92,12 +87,12 @@ inline wxPoint2DInt operator+(const wxPoint2DInt& pt1 , const wxPoint2DInt& pt2)
 inline wxPoint2DInt operator-(const wxPoint2DInt& pt1 , const wxPoint2DInt& pt2);
 inline wxPoint2DInt operator*(const wxPoint2DInt& pt1 , const wxPoint2DInt& pt2);
 inline wxPoint2DInt operator*(wxInt32 n , const wxPoint2DInt& pt);
-inline wxPoint2DInt operator*(wxInt32 n , const wxPoint2DInt& pt);
+inline wxPoint2DInt operator*(wxDouble n , const wxPoint2DInt& pt);
 inline wxPoint2DInt operator*(const wxPoint2DInt& pt , wxInt32 n);
-inline wxPoint2DInt operator*(const wxPoint2DInt& pt , wxInt32 n);
+inline wxPoint2DInt operator*(const wxPoint2DInt& pt , wxDouble n);
 inline wxPoint2DInt operator/(const wxPoint2DInt& pt1 , const wxPoint2DInt& pt2);
 inline wxPoint2DInt operator/(const wxPoint2DInt& pt , wxInt32 n);
-inline wxPoint2DInt operator/(const wxPoint2DInt& pt , wxInt32 n);
+inline wxPoint2DInt operator/(const wxPoint2DInt& pt , wxDouble n);
 
 inline wxPoint2DInt::wxPoint2DInt()
 {
@@ -186,8 +181,11 @@ inline wxPoint2DInt wxPoint2DInt::operator-()
 
 inline wxPoint2DInt& wxPoint2DInt::operator=(const wxPoint2DInt& pt)
 {
-    m_x = pt.m_x;
-    m_y = pt.m_y;
+    if (this != &pt)
+    {
+        m_x = pt.m_x;
+        m_y = pt.m_y;
+    }
     return *this;
 }
 
@@ -207,15 +205,15 @@ inline wxPoint2DInt& wxPoint2DInt::operator-=(const wxPoint2DInt& pt)
 
 inline wxPoint2DInt& wxPoint2DInt::operator*=(const wxPoint2DInt& pt)
 {
-    m_x = m_x + pt.m_x;
-    m_y = m_y + pt.m_y;
+    m_x = m_x * pt.m_x;
+    m_y = m_y * pt.m_y;
     return *this;
 }
 
 inline wxPoint2DInt& wxPoint2DInt::operator/=(const wxPoint2DInt& pt)
 {
-    m_x = m_x - pt.m_x;
-    m_y = m_y - pt.m_y;
+    m_x = m_x / pt.m_x;
+    m_y = m_y / pt.m_y;
     return *this;
 }
 
@@ -252,7 +250,8 @@ inline wxPoint2DInt operator*(wxInt32 n , const wxPoint2DInt& pt)
 
 inline wxPoint2DInt operator*(wxDouble n , const wxPoint2DInt& pt)
 {
-    return wxPoint2DInt( (int) (pt.m_x * n) , (int) (pt.m_y * n) );
+    return wxPoint2DInt( static_cast<wxInt32>(pt.m_x * n) ,
+        static_cast<wxInt32>(pt.m_y * n) );
 }
 
 inline wxPoint2DInt operator*(const wxPoint2DInt& pt , wxInt32 n)
@@ -262,7 +261,8 @@ inline wxPoint2DInt operator*(const wxPoint2DInt& pt , wxInt32 n)
 
 inline wxPoint2DInt operator*(const wxPoint2DInt& pt , wxDouble n)
 {
-    return wxPoint2DInt( (int) (pt.m_x * n) , (int) (pt.m_y * n) );
+    return wxPoint2DInt( static_cast<wxInt32>(pt.m_x * n) ,
+        static_cast<wxInt32>(pt.m_y * n) );
 }
 
 inline wxPoint2DInt operator/(const wxPoint2DInt& pt1 , const wxPoint2DInt& pt2)
@@ -277,12 +277,13 @@ inline wxPoint2DInt operator/(const wxPoint2DInt& pt , wxInt32 n)
 
 inline wxPoint2DInt operator/(const wxPoint2DInt& pt , wxDouble n)
 {
-    return wxPoint2DInt( (int) (pt.m_x / n) , (int) (pt.m_y / n) );
+    return wxPoint2DInt( static_cast<wxInt32>(pt.m_x / n) ,
+        static_cast<wxInt32>(pt.m_y / n) );
 }
 
 // wxPoint2Ds represent a point or a vector in a 2d coordinate system
 
-class WXDLLEXPORT wxPoint2DDouble
+class WXDLLIMPEXP_CORE wxPoint2DDouble
 {
 public :
     inline wxPoint2DDouble();
@@ -383,6 +384,11 @@ inline void wxPoint2DDouble::SetVectorLength( wxDouble length )
     m_y = (m_y * length / before) ;
 }
 
+inline void wxPoint2DDouble::Normalize()
+{
+    SetVectorLength( 1 );
+}
+
 inline wxDouble wxPoint2DDouble::GetDistance( const wxPoint2DDouble &pt ) const
 {
     return sqrt( GetDistanceSquare( pt ) );
@@ -410,8 +416,11 @@ inline wxPoint2DDouble wxPoint2DDouble::operator-()
 
 inline wxPoint2DDouble& wxPoint2DDouble::operator=(const wxPoint2DDouble& pt)
 {
-    m_x = pt.m_x;
-    m_y = pt.m_y;
+    if (this != &pt)
+    {
+        m_x = pt.m_x;
+        m_y = pt.m_y;
+    }
     return *this;
 }
 
@@ -445,12 +454,12 @@ inline wxPoint2DDouble& wxPoint2DDouble::operator/=(const wxPoint2DDouble& pt)
 
 inline bool wxPoint2DDouble::operator==(const wxPoint2DDouble& pt) const
 {
-    return m_x == pt.m_x && m_y == pt.m_y;
+    return wxIsSameDouble(m_x, pt.m_x) && wxIsSameDouble(m_y, pt.m_y);
 }
 
 inline bool wxPoint2DDouble::operator!=(const wxPoint2DDouble& pt) const
 {
-    return m_x != pt.m_x || m_y != pt.m_y;
+    return !(*this == pt);
 }
 
 inline wxPoint2DDouble operator+(const wxPoint2DDouble& pt1 , const wxPoint2DDouble& pt2)
@@ -508,7 +517,7 @@ inline wxPoint2DDouble operator/(const wxPoint2DDouble& pt , wxInt32 n)
 // top left and bottom right corner, or by the top left corner and size. A point is contained within the rectangle if
 // left <= x < right  and top <= m_y < bottom , thus it is a half open interval.
 
-class WXDLLEXPORT wxRect2DDouble
+class WXDLLIMPEXP_CORE wxRect2DDouble
 {
 public:
     wxRect2DDouble()
@@ -522,13 +531,13 @@ public:
 */
         // single attribute accessors
 
-    inline wxPoint2DDouble GetPosition()
+    wxPoint2DDouble GetPosition() const
         { return wxPoint2DDouble(m_x, m_y); }
-    inline wxSize GetSize()
+    wxSize GetSize() const
         { return wxSize((int) m_width, (int) m_height); }
 
-    // for the edge and corner accessors there are two setters conterparts, the Set.. functions keep the other corners at their
-        // position whenever sensible, the Move.. functions keep the size of the rect and move the other corners apropriately
+    // for the edge and corner accessors there are two setters counterparts, the Set.. functions keep the other corners at their
+        // position whenever sensible, the Move.. functions keep the size of the rect and move the other corners appropriately
 
     inline wxDouble GetLeft() const { return m_x; }
     inline void SetLeft( wxDouble n ) { m_width += m_x - n; m_x = n; }
@@ -586,9 +595,9 @@ public:
         { return ( ( ( m_x <= rect.m_x ) && ( rect.m_x + rect.m_width <= m_x + m_width ) ) &&
                 ( ( m_y <= rect.m_y ) && ( rect.m_y + rect.m_height <= m_y + m_height ) ) ); }
     inline bool IsEmpty() const
-        { return ( m_width <= 0 || m_height <= 0 ); }
+        { return m_width <= 0 || m_height <= 0; }
     inline bool HaveEqualSize( const wxRect2DDouble &rect ) const
-        { return ( rect.m_width == m_width && rect.m_height == m_height ); }
+        { return wxIsSameDouble(rect.m_width, m_width) && wxIsSameDouble(rect.m_height, m_height); }
 
     inline void Inset( wxDouble x , wxDouble y )
         { m_x += x; m_y += y; m_width -= 2 * x; m_height -= 2 * y; }
@@ -623,9 +632,9 @@ public:
                 m_width *= ((wxDouble)num)/((wxDouble)denum); m_height *= ((wxDouble)num)/((wxDouble)denum);}
 
     wxRect2DDouble& operator = (const wxRect2DDouble& rect);
-    inline bool operator == (const wxRect2DDouble& rect)
-        { return (m_x==rect.m_x && m_y==rect.m_y && m_width==rect.m_width && m_height==rect.m_height); }
-    inline bool operator != (const wxRect2DDouble& rect)
+    inline bool operator == (const wxRect2DDouble& rect) const
+        { return wxIsSameDouble(m_x, rect.m_x) && wxIsSameDouble(m_y, rect.m_y) && HaveEqualSize(rect); }
+    inline bool operator != (const wxRect2DDouble& rect) const
         { return !(*this == rect); }
 
     wxDouble  m_x;
@@ -639,7 +648,7 @@ public:
 // top left and bottom right corner, or by the top left corner and size. A point is contained within the rectangle if
 // left <= x < right  and top <= m_y < bottom , thus it is a half open interval.
 
-class WXDLLEXPORT wxRect2DInt
+class WXDLLIMPEXP_CORE wxRect2DInt
 {
 public:
        wxRect2DInt() { m_x = m_y = m_width = m_height = 0; }
@@ -651,11 +660,11 @@ public:
 
         // single attribute accessors
 
-      inline wxPoint2DInt GetPosition() { return wxPoint2DInt(m_x, m_y); }
-       inline wxSize GetSize() { return wxSize(m_width, m_height); }
+       wxPoint2DInt GetPosition() const { return wxPoint2DInt(m_x, m_y); }
+       wxSize GetSize() const { return wxSize(m_width, m_height); }
 
-        // for the edge and corner accessors there are two setters conterparts, the Set.. functions keep the other corners at their
-        // position whenever sensible, the Move.. functions keep the size of the rect and move the other corners apropriately
+        // for the edge and corner accessors there are two setters counterparts, the Set.. functions keep the other corners at their
+        // position whenever sensible, the Move.. functions keep the size of the rect and move the other corners appropriately
 
       inline wxInt32 GetLeft() const { return m_x; }
        inline void SetLeft( wxInt32 n ) { m_width += m_x - n; m_x = n; }
@@ -774,7 +783,7 @@ inline bool wxRect2DInt::operator != (const wxRect2DInt& rect) const
     return !(*this == rect);
 }
 
-class wxTransform2D
+class WXDLLIMPEXP_CORE wxTransform2D
 {
 public :
     virtual ~wxTransform2D() { }
@@ -788,24 +797,6 @@ public :
     virtual wxPoint2DInt    InverseTransform( const wxPoint2DInt &pt ) const ;
     virtual wxRect2DInt        InverseTransform( const wxRect2DInt &r ) const ;
 };
-
-inline void    wxTransform2D::Transform( wxRect2DInt* r ) const
-    { wxPoint2DInt a = r->GetLeftTop() , b = r->GetRightBottom(); Transform( &a ); Transform( &b ); *r = wxRect2DInt( a , b ); }
-
-inline wxPoint2DInt    wxTransform2D::Transform( const wxPoint2DInt &pt ) const
-    { wxPoint2DInt res = pt; Transform( &res ); return res; }
-
-inline wxRect2DInt     wxTransform2D::Transform( const wxRect2DInt &r ) const
-    { wxRect2DInt res = r; Transform( &res ); return res; }
-
-inline void    wxTransform2D::InverseTransform( wxRect2DInt* r ) const
-    { wxPoint2DInt a = r->GetLeftTop() , b = r->GetRightBottom(); InverseTransform( &a ); InverseTransform( &b ); *r = wxRect2DInt( a , b ); }
-
-inline wxPoint2DInt    wxTransform2D::InverseTransform( const wxPoint2DInt &pt ) const
-    { wxPoint2DInt res = pt; InverseTransform( &res ); return res; }
-
-inline wxRect2DInt     wxTransform2D::InverseTransform( const wxRect2DInt &r ) const
-    { wxRect2DInt res = r; InverseTransform( &res ); return res; }
 
 
 #endif // wxUSE_GEOMETRY

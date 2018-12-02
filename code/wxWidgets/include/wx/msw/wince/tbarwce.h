@@ -4,17 +4,12 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     2003-07-12
-// RCS-ID:      $Id: tbarwce.h,v 1.8 2005/03/19 19:51:49 JS Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_BARWCE_H_
 #define _WX_BARWCE_H_
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-    #pragma interface "tbarwce.h"
-#endif
 
 #if wxUSE_TOOLBAR
 
@@ -23,7 +18,7 @@
 // Smartphones don't have toolbars, so use a dummy class
 #ifdef __SMARTPHONE__
 
-class WXDLLEXPORT wxToolBar : public wxToolBarBase
+class WXDLLIMPEXP_CORE wxToolBar : public wxToolBarBase
 {
 public:
     // ctors and dtor
@@ -33,7 +28,7 @@ public:
                 wxWindowID id,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
-                long style = wxNO_BORDER | wxTB_HORIZONTAL,
+                long style = wxTB_HORIZONTAL,
                 const wxString& name = wxToolBarNameStr)
     {
         Create(parent, id, pos, size, style, name);
@@ -43,7 +38,7 @@ public:
                 wxWindowID id,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
-                long style = wxNO_BORDER | wxTB_HORIZONTAL,
+                long style = wxTB_HORIZONTAL,
                 const wxString& name = wxToolBarNameStr);
 
     // override/implement base class virtuals
@@ -67,21 +62,22 @@ protected:
                                           wxObject *clientData,
                                           const wxString& shortHelp,
                                           const wxString& longHelp);
-    virtual wxToolBarToolBase *CreateTool(wxControl *control);
+    virtual wxToolBarToolBase *CreateTool(wxControl *control,
+                                          const wxString& label);
 
 private:
     DECLARE_EVENT_TABLE()
     DECLARE_DYNAMIC_CLASS(wxToolBar)
-    DECLARE_NO_COPY_CLASS(wxToolBar)
+    wxDECLARE_NO_COPY_CLASS(wxToolBar);
 };
 
 #else
 
 // For __POCKETPC__
 
-#include "wx/msw/tbar95.h"
+#include "wx/msw/toolbar.h"
 
-class WXDLLEXPORT wxToolMenuBar : public wxToolBar
+class WXDLLIMPEXP_CORE wxToolMenuBar : public wxToolBar
 {
 public:
     // ctors and dtor
@@ -91,7 +87,7 @@ public:
                 wxWindowID id,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
-                long style = wxNO_BORDER | wxTB_HORIZONTAL,
+                long style = wxTB_HORIZONTAL,
                 const wxString& name = wxToolBarNameStr,
                 wxMenuBar* menuBar = NULL)
     {
@@ -104,7 +100,7 @@ public:
                 wxWindowID id,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
-                long style = wxNO_BORDER | wxTB_HORIZONTAL,
+                long style = wxTB_HORIZONTAL,
                 const wxString& name = wxToolBarNameStr,
                 wxMenuBar* menuBar = NULL);
 
@@ -152,7 +148,8 @@ protected:
                                           wxObject *clientData,
                                           const wxString& shortHelp,
                                           const wxString& longHelp);
-    virtual wxToolBarToolBase *CreateTool(wxControl *control);
+    virtual wxToolBarToolBase *CreateTool(wxControl *control,
+                                          const wxString& label);
 
     // The menubar associated with this toolbar
     wxMenuBar*  m_menuBar;
@@ -160,7 +157,7 @@ protected:
 private:
     DECLARE_EVENT_TABLE()
     DECLARE_DYNAMIC_CLASS(wxToolMenuBar)
-    DECLARE_NO_COPY_CLASS(wxToolMenuBar)
+    wxDECLARE_NO_COPY_CLASS(wxToolMenuBar);
 };
 
 #endif

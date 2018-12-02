@@ -3,7 +3,6 @@
 // Purpose:     wxStaticLine class interface
 // Author:      Vadim Zeitlin
 // Created:     28.06.99
-// Version:     $Id: statline.h,v 1.14 2005/04/10 15:22:53 VZ Exp $
 // Copyright:   (c) 1999 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -28,13 +27,13 @@
 // ----------------------------------------------------------------------------
 
 // the default name for objects of class wxStaticLine
-extern WXDLLEXPORT_DATA(const wxChar*) wxStaticTextNameStr;
+extern WXDLLIMPEXP_DATA_CORE(const char) wxStaticLineNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxStaticLine - a line in a dialog
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxStaticLineBase : public wxControl
+class WXDLLIMPEXP_CORE wxStaticLineBase : public wxControl
 {
 public:
     // constructor
@@ -46,10 +45,13 @@ public:
     // get the default size for the "lesser" dimension of the static line
     static int GetDefaultSize() { return 2; }
 
-    // overriden base class virtuals
+    // overridden base class virtuals
     virtual bool AcceptsFocus() const { return false; }
 
 protected:
+    // choose the default border for this window
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
+
     // set the right size for the right dimension
     wxSize AdjustSize(const wxSize& size) const
     {
@@ -73,7 +75,7 @@ protected:
         return AdjustSize(wxDefaultSize);
     }
 
-    DECLARE_NO_COPY_CLASS(wxStaticLineBase)
+    wxDECLARE_NO_COPY_CLASS(wxStaticLineBase);
 };
 
 // ----------------------------------------------------------------------------
@@ -84,12 +86,14 @@ protected:
     #include "wx/univ/statline.h"
 #elif defined(__WXMSW__)
     #include "wx/msw/statline.h"
-#elif defined(__WXGTK__)
+#elif defined(__WXGTK20__)
     #include "wx/gtk/statline.h"
+#elif defined(__WXGTK__)
+    #include "wx/gtk1/statline.h"
 #elif defined(__WXPM__)
     #include "wx/os2/statline.h"
 #elif defined(__WXMAC__)
-    #include "wx/mac/statline.h"
+    #include "wx/osx/statline.h"
 #elif defined(__WXCOCOA__)
     #include "wx/cocoa/statline.h"
 #else // use generic implementation for all other platforms
@@ -98,5 +102,4 @@ protected:
 
 #endif // wxUSE_STATLINE
 
-#endif
-    // _WX_STATLINE_H_BASE_
+#endif // _WX_STATLINE_H_BASE_

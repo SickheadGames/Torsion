@@ -1,12 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        helpxxxx.h
+// Name:        wx/os2/helpwin.h
 // Purpose:     Help system: native implementation for your system.
 // Author:      David Webster
 // Modified by:
-// Created:      10/09/99
-// RCS-ID:      $Id: helpwin.h,v 1.8 2005/04/27 01:11:59 DW Exp $
+// Created:     10/09/99
 // Copyright:   (c) David Webster
-// Licence:   	wxWindows licence
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_HELPWIN_H_
@@ -18,13 +17,13 @@
 
 #include "wx/helpbase.h"
 
-class WXDLLEXPORT wxWinHelpController: public wxHelpControllerBase
+class WXDLLIMPEXP_CORE wxWinHelpController: public wxHelpControllerBase
 {
   DECLARE_CLASS(wxWinHelpController)
 
  public:
   wxWinHelpController();
-  ~wxWinHelpController();
+  virtual ~wxWinHelpController();
 
   // Must call this to set the filename and server name
   virtual bool Initialize(const wxString& file);

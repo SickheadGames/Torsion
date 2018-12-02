@@ -4,7 +4,6 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2003/02/15
-// RCS-ID:      $Id: 
 // Copyright:   (c) 2003 David Elliott
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -22,6 +21,9 @@ class wxCocoaNSControl
 public:
     virtual void CocoaTarget_action() {}
 //    virtual void Cocoa_didChangeText(void) = 0;
+
+    virtual ~wxCocoaNSControl() { }
+
 protected:
     static struct objc_object *sm_cocoaTarget;
 };

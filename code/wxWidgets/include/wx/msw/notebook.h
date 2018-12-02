@@ -1,19 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
-// Name:        msw/notebook.h
+// Name:        wx/msw/notebook.h
 // Purpose:     MSW/GTK compatible notebook (a.k.a. property sheet)
 // Author:      Robert Roebling
 // Modified by: Vadim Zeitlin for Windows version
-// RCS-ID:      $Id: notebook.h,v 1.65 2005/05/24 19:18:12 VZ Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _NOTEBOOK_H
 #define _NOTEBOOK_H
-
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-  #pragma interface "notebook.h"
-#endif
 
 #if wxUSE_NOTEBOOK
 
@@ -27,41 +22,7 @@
 // wxNotebook
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxNotebookPageInfo : public wxObject
-{
-public :
-    wxNotebookPageInfo() { m_page = NULL; m_imageId = -1; m_selected = false; }
-    virtual ~wxNotebookPageInfo() { }
-
-    void Create(wxNotebookPage *page,
-                const wxString& text,
-                bool selected,
-                int imageId)
-    {
-        m_page = page;
-        m_text = text;
-        m_selected = selected;
-        m_imageId = imageId;
-    }
-
-    wxNotebookPage* GetPage() const { return m_page; }
-    wxString GetText() const { return m_text; }
-    bool GetSelected() const { return m_selected; }
-    int GetImageId() const { return m_imageId; }
-
-private:
-    wxNotebookPage *m_page;
-    wxString m_text;
-    bool m_selected;
-    int m_imageId;
-
-    DECLARE_DYNAMIC_CLASS(wxNotebookPageInfo)
-};
-
-
-WX_DECLARE_EXPORTED_LIST(wxNotebookPageInfo, wxNotebookPageInfoList );
-
-class WXDLLEXPORT wxNotebook : public wxNotebookBase
+class WXDLLIMPEXP_CORE wxNotebook : public wxNotebookBase
 {
 public:
   // ctors
@@ -90,11 +51,12 @@ public:
   virtual size_t GetPageCount() const;
 
     // set the currently selected page, return the index of the previously
-    // selected one (or -1 on error)
+    // selected one (or wxNOT_FOUND on error)
     // NB: this function will _not_ generate wxEVT_NOTEBOOK_PAGE_xxx events
   int SetSelection(size_t nPage);
-    // get the currently selected page
-  int GetSelection() const { return m_nSelection; }
+
+    // changes selected page without sending events
+  int ChangeSelection(size_t nPage);
 
     // set/get the title of a page
   bool SetPageText(size_t nPage, const wxString& strText);
@@ -133,10 +95,7 @@ public:
                   wxNotebookPage *pPage,
                   const wxString& strText,
                   bool bSelect = false,
-                  int imageId = -1);
-
-  void AddPageInfo( wxNotebookPageInfo* info ) { AddPage( info->GetPage() , info->GetText() , info->GetSelected() , info->GetImageId() ); }
-  const wxNotebookPageInfoList& GetPageInfos() const;
+                  int imageId = NO_IMAGE);
 
     // Windows-only at present. Also, you must use the wxNB_FIXEDWIDTH
     // style.
@@ -151,7 +110,6 @@ public:
   // callbacks
   // ---------
   void OnSize(wxSizeEvent& event);
-  void OnSelChange(wxNotebookEvent& event);
   void OnNavigationKey(wxNavigationKeyEvent& event);
 
   // base class virtuals
@@ -160,7 +118,6 @@ public:
   virtual bool MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result);
   virtual bool MSWOnScroll(int orientation, WXWORD nSBCode,
                            WXWORD pos, WXHWND control);
-  virtual bool MSWTranslateMessage(WXMSG *wxmsg);
 
 #if wxUSE_CONSTRAINTS
   virtual void SetConstraintSizes(bool recurse = true);
@@ -183,14 +140,23 @@ public:
 
       return true;
   }
+
+  // draw child background
+  virtual bool MSWPrintChild(WXHDC hDC, wxWindow *win);
+
+  virtual bool MSWHasInheritableBackground() const { return true; }
 #endif // wxUSE_UXTHEME
+
+  // translate wxWin styles to the Windows ones
+  virtual WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle = NULL) const;
 
 protected:
   // common part of all ctors
   void Init();
 
-  // translate wxWin styles to the Windows ones
-  virtual WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle = NULL) const;
+  // hides the currently shown page and shows the given one (if not -1) and
+  // updates m_selection accordingly
+  void UpdateSelection(int selNew);
 
   // remove one page from the notebook, without deleting
   virtual wxNotebookPage *DoRemovePage(size_t nPage);
@@ -204,17 +170,14 @@ protected:
   void AdjustPageSize(wxNotebookPage *page);
 
 #if wxUSE_UXTHEME
+  // return the themed brush for painting our children
+  virtual WXHBRUSH MSWGetCustomBgBrush() { return m_hbrBackground; }
+
   // gets the bitmap of notebook background and returns a brush from it
   WXHBRUSH QueryBgBitmap();
 
   // creates the brush to be used for drawing the tab control background
   void UpdateBgBrush();
-
-  // return the themed brush for painting our children
-  virtual WXHBRUSH MSWGetBgBrushForChild(WXHDC hDC, WXHWND hWnd);
-
-  // draw child background
-  virtual bool MSWPrintChild(WXHDC hDC, wxWindow *win);
 
   // common part of QueryBgBitmap() and MSWPrintChild()
   //
@@ -230,12 +193,10 @@ protected:
 
   // true if we have already subclassed our updown control
   bool m_hasSubclassedUpdown;
+
+  // true if we already refreshed the current page after showing the window
+  bool m_doneUpdateHack;
 #endif // __WXWINCE__
-
-  // the current selection (-1 if none)
-  int m_nSelection;
-
-  wxNotebookPageInfoList m_pageInfos;
 
 #if wxUSE_UXTHEME
   // background brush used to paint the tab control

@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: fontdlgg.h,v 1.18.2.1 2006/03/02 12:57:18 JS Exp $
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,19 +11,12 @@
 #ifndef _WX_GENERIC_FONTDLGG_H
 #define _WX_GENERIC_FONTDLGG_H
 
-#if defined(__GNUG__) && !defined(NO_GCC_PRAGMA)
-#pragma interface "fontdlgg.h"
-#endif
-
-#include "wx/setup.h"
 #include "wx/gdicmn.h"
 #include "wx/font.h"
-#include "wx/dialog.h"
-#include "wx/cmndata.h"
 
 #ifdef __WXWINCE__
 #define USE_SPINCTRL_FOR_POINT_SIZE 1
-class WXDLLEXPORT wxSpinEvent;
+class WXDLLIMPEXP_FWD_CORE wxSpinEvent;
 #else
 #define USE_SPINCTRL_FOR_POINT_SIZE 0
 #endif
@@ -33,10 +25,10 @@ class WXDLLEXPORT wxSpinEvent;
  * FONT DIALOG
  */
 
-class WXDLLEXPORT wxChoice;
-class WXDLLEXPORT wxText;
-class WXDLLEXPORT wxCheckBox;
-class WXDLLEXPORT wxFontPreviewer;
+class WXDLLIMPEXP_FWD_CORE wxChoice;
+class WXDLLIMPEXP_FWD_CORE wxText;
+class WXDLLIMPEXP_FWD_CORE wxCheckBox;
+class WXDLLIMPEXP_FWD_CORE wxFontPreviewer;
 
 enum
 {
@@ -48,19 +40,22 @@ enum
     wxID_FONT_SIZE
 };
 
-class WXDLLEXPORT wxGenericFontDialog : public wxFontDialogBase
+class WXDLLIMPEXP_CORE wxGenericFontDialog : public wxFontDialogBase
 {
 public:
     wxGenericFontDialog() { Init(); }
+    wxGenericFontDialog(wxWindow *parent)
+        : wxFontDialogBase(parent) { Init(); }
     wxGenericFontDialog(wxWindow *parent, const wxFontData& data)
         : wxFontDialogBase(parent, data) { Init(); }
     virtual ~wxGenericFontDialog();
 
     virtual int ShowModal();
 
+#if WXWIN_COMPATIBILITY_2_6
     // deprecated, for backwards compatibility only
-    wxGenericFontDialog(wxWindow *parent, const wxFontData *data)
-        : wxFontDialogBase(parent, data) { Init(); }
+    wxDEPRECATED( wxGenericFontDialog(wxWindow *parent, const wxFontData *data) );
+#endif // WXWIN_COMPATIBILITY_2_6
 
     // Internal functions
     void OnCloseWindow(wxCloseEvent& event);
@@ -75,21 +70,26 @@ public:
 #endif
 
 protected:
-    // common part of all ctors
-    void Init();
 
     virtual bool DoCreate(wxWindow *parent);
 
-    wxFont dialogFont;
+private:
 
-    wxChoice *familyChoice;
-    wxChoice *styleChoice;
-    wxChoice *weightChoice;
-    wxChoice *colourChoice;
-    wxCheckBox *underLineCheckBox;
+    // common part of all ctors
+    void Init();
+
+    void DoChangeFont();
+
+    wxFont m_dialogFont;
+
+    wxChoice *m_familyChoice;
+    wxChoice *m_styleChoice;
+    wxChoice *m_weightChoice;
+    wxChoice *m_colourChoice;
+    wxCheckBox *m_underLineCheckBox;
 
 #if !USE_SPINCTRL_FOR_POINT_SIZE
-    wxChoice   *pointSizeChoice;
+    wxChoice   *m_pointSizeChoice;
 #endif
 
     wxFontPreviewer *m_previewer;
@@ -100,12 +100,10 @@ protected:
     DECLARE_DYNAMIC_CLASS(wxGenericFontDialog)
 };
 
-WXDLLEXPORT const wxChar *wxFontFamilyIntToString(int family);
-WXDLLEXPORT const wxChar *wxFontWeightIntToString(int weight);
-WXDLLEXPORT const wxChar *wxFontStyleIntToString(int style);
-WXDLLEXPORT int wxFontFamilyStringToInt(wxChar *family);
-WXDLLEXPORT int wxFontWeightStringToInt(wxChar *weight);
-WXDLLEXPORT int wxFontStyleStringToInt(wxChar *style);
+#if WXWIN_COMPATIBILITY_2_6
+    // deprecated, for backwards compatibility only
+inline wxGenericFontDialog::wxGenericFontDialog(wxWindow *parent, const wxFontData *data)
+                           :wxFontDialogBase(parent) { Init(); InitFontData(data); Create(parent); }
+#endif // WXWIN_COMPATIBILITY_2_6
 
 #endif // _WX_GENERIC_FONTDLGG_H
-
