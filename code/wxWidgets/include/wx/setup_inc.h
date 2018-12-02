@@ -30,7 +30,7 @@
 // in the version after it completely.
 //
 // Recommended setting: 0 (please update your code)
-#define WXWIN_COMPATIBILITY_2_6 0
+#define WXWIN_COMPATIBILITY_2_6 1
 
 // This setting determines the compatibility with 2.8 API: set it to 0 to
 // flag all cases of using deprecated functions.

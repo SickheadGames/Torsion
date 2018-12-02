@@ -65,7 +65,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>tinyxml2d_stc.lib;comctl32.lib;wxbase30ud.lib;wxmsw30ud_core.lib;wxmsw30ud_adv.lib;wxbase30ud_net.lib;wxmsw30ud_stc.lib;wxmsw30ud_propgrid.lib;wxjpegd.lib;Ws2_32.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>tinyxml2d_stc.lib;comctl32.lib;wxbase30ud.lib;wxmsw30ud_core.lib;wxmsw30ud_adv.lib;wxbase30ud_net.lib;wxmsw30ud_stc.lib;wxmsw30ud_propgrid.lib;wxregexud.lib;ws2_32.lib;rpcrt4.lib;winmm.lib;Shell32.lib;User32.lib;Gdi32.lib;advapi32.lib;wsock32.lib;wxpngd.lib;wxzlibd.lib;wxjpegd.lib;wxtiffd.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\wxWidgets\lib\vc140_dll;..\wxWidgets\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)torsion_d.pdb</ProgramDatabaseFile>
